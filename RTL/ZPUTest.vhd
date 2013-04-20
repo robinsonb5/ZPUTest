@@ -1,0 +1,277 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.numeric_std.ALL;
+use work.zpu_config.all;
+use work.zpupkg.ALL;
+
+entity ZPUTest is
+	port (
+		clk 			: in std_logic;
+--		clk50			: in std_logic;
+		src 			: in std_logic_vector(15 downto 0);
+		counter 		: buffer unsigned(15 downto 0);
+		reset_in 	: in std_logic;
+		keys			: in std_logic_vector(3 downto 0);
+
+		-- VGA
+		vga_red 		: out unsigned(3 downto 0);
+		vga_green 	: out unsigned(3 downto 0);
+		vga_blue 	: out unsigned(3 downto 0);
+		vga_hsync 	: out std_logic;
+		vga_vsync 	: buffer std_logic;
+
+		-- SDRAM
+		sdr_data		: inout std_logic_vector(15 downto 0);
+		sdr_addr		: out std_logic_vector(11 downto 0);
+		sdr_dqm 		: out std_logic_vector(1 downto 0);
+		sdr_we 		: out std_logic;
+		sdr_cas 		: out std_logic;
+		sdr_ras 		: out std_logic;
+		sdr_cs		: out std_logic;
+		sdr_ba		: out std_logic_vector(1 downto 0);
+		sdr_clk		: out std_logic;
+		sdr_clkena	: out std_logic
+	);
+end entity;
+
+architecture rtl of ZPUTest is
+
+--
+signal reset : std_logic := '0';
+signal reset_counter : unsigned(15 downto 0) := X"FFFF";
+signal tg68_ready : std_logic;
+signal sdr_ready : std_logic;
+signal ready : std_logic;
+signal req_pending : std_logic :='0';
+--signal write_pending : std_logic :='0';
+signal dtack1 : std_logic;
+signal clk100 : std_logic;
+signal currentX : unsigned(11 downto 0);
+signal currentY : unsigned(11 downto 0);
+signal vga_newframe : std_logic;
+signal end_of_line : std_logic;
+signal end_of_pixel : std_logic;
+signal end_of_frame : std_logic;
+
+signal ramaddress : std_logic_vector(23 downto 0);
+signal datatoram : std_logic_vector(15 downto 0);
+signal datafromram : std_logic_vector(15 downto 0);
+signal ramrw : std_logic;
+signal bursttoram : std_logic;
+signal burstfromram : std_logic;
+
+signal vga_addr :  std_logic_vector(23 downto 0); -- to SDRAM
+signal vga_data : std_logic_vector(15 downto 0);	-- from SDRAM
+signal vga_fill : std_logic; -- High when data is being written from SDRAM controller
+signal vga_req : std_logic; -- Request service from SDRAM controller
+signal vga_reservebank : std_logic; -- Keep bank clear for instant access.
+signal vga_reserveaddr : std_logic_vector(23 downto 0); -- to SDRAM
+signal vga_refresh : std_logic;
+
+signal traceclock : std_logic;
+signal traceclock2 : std_logic;
+
+
+-- ZPU signals
+
+signal mem_busy           : std_logic;
+signal mem_read             : std_logic_vector(wordSize-1 downto 0);
+signal mem_write            : std_logic_vector(wordSize-1 downto 0);
+signal mem_addr             : std_logic_vector(maxAddrBitIncIO downto 0);
+signal mem_writeEnable      : std_logic; 
+signal mem_readEnable       : std_logic;
+signal mem_writeMask        : std_logic_vector(wordBytes-1 downto 0);
+signal zpu_enable               : std_logic;
+signal zpu_interrupt            : std_logic;
+signal zpu_break                : std_logic;
+
+--
+
+type sdrstate is (init,write1,write2,write3,write4,read1,read2,read3,read4,waitread,waitwrite,waitkey,
+	burstwrite1,burstwrite2,burstwrite3,burstwrite4);
+signal ramstate : sdrstate;
+signal nextstate : sdrstate;
+
+begin
+
+sdr_clkena <='1';
+
+mypll : ENTITY work.PLL
+	port map
+	(
+		inclk0 => clk,
+		c0 => sdr_clk,
+		c1 => clk100,
+		locked => open
+	);
+
+
+process(clk100)
+begin
+	ready <= tg68_ready and sdr_ready and reset;
+
+	if reset_in='0' then
+		reset_counter<=X"FFFF";
+		reset<='0';
+	elsif rising_edge(clk100) then
+		reset_counter<=reset_counter-1;
+		if reset_counter=X"0000" then
+			reset<='1'; --  and sdr_ready;
+		end if;
+	end if;
+end process;
+
+
+---- SDRAM
+--mysdram : entity work.sdram 
+--	port map
+--	(
+--	-- Physical connections to the SDRAM
+--		sdata => sdr_data,
+--		sdaddr => sdr_addr,
+--		sd_we	=> sdr_we,
+--		sd_ras => sdr_ras,
+--		sd_cas => sdr_cas,
+--		sd_cs	=> sdr_cs,
+--		dqm => sdr_dqm,
+--		ba	=> sdr_ba,
+--
+--	-- Housekeeping
+--		sysclk => clk100,
+--		reset => reset_in,
+--		reset_out => sdr_ready,
+--
+--		vga_addr => vga_addr,
+--		vga_data => vga_data,
+--		vga_fill => vga_fill,
+--		vga_req => vga_req,
+--		vga_reserveaddr => vga_reserveaddr,
+--		vga_reservebank => vga_reservebank,
+--		vga_refresh => vga_refresh,
+--
+--		vga_newframe => vga_newframe,
+----		vga_req => vga_req,
+----		vga_data => vga_data,
+----		vga_refresh => end_of_line,
+--
+--		datawr1 => datatoram,
+--		Addr1 => ramaddress,
+--		req1 => req_pending,
+--		wr1 => ramrw,
+--		wrL1 => '0', -- Always access full words for now...
+--		wrU1 => '0', -- FIXME - need to make use of these.
+--		dataout1 => datafromram,
+--		dtack1 => dtack1
+--	);
+--
+--
+--process(clk100,reset)
+--begin
+--
+--	if reset='0' then
+--		ramaddress<=X"100000";
+--		ramrw<='1';
+--		req_pending<='0';
+--		ramstate<=read1;
+--	elsif rising_edge(clk100) then
+--		case ramstate is
+--			when read1 =>
+--				req_pending<='1';
+--				ramstate <= waitread;
+--				nextstate <= write1;
+--				ramrw<='1';
+--			when write1 =>
+--				req_pending<='1';
+--				ramstate <= waitwrite;
+--				nextstate <= read1;
+--				ramrw<='0';
+--			when waitread =>
+--				if dtack1='0' then
+--					datatoram<=std_logic_vector(unsigned(datafromram)+1);
+--					req_pending<='0';
+--					ramstate<=nextstate;
+--				end if;
+--			when waitwrite =>
+--				if dtack1='0' then
+--					ramaddress(18 downto 0)<=std_logic_vector(unsigned(ramaddress(18 downto 0))+2);
+--					req_pending<='0';
+--					ramrw<='1';
+--					ramstate<=nextstate;
+--				end if;
+--			when others =>
+--				null;
+--		end case;
+--	end if;
+--end process;
+--
+--	myvga : entity work.vga_controller
+--		port map (
+--		clk => clk100,
+--		reset => reset,
+--
+--		reg_addr_in => X"800",
+--		reg_data_in => X"4849",
+--		reg_rw => '0',
+--		reg_uds => '0',
+--		reg_lds => '0',
+--
+--		sdr_addrout => vga_addr,
+--		sdr_datain => vga_data, 
+--		sdr_fill => vga_fill,
+--		sdr_req => vga_req,
+--		sdr_reservebank => vga_reservebank,
+--		sdr_reserveaddr => vga_reserveaddr,
+--		sdr_refresh => vga_refresh,
+--
+--		hsync => vga_hsync,
+--		vsync => vga_vsync,
+--		red => vga_red,
+--		green => vga_green,
+--		blue => vga_blue
+--	);
+
+
+	 zpu: zpu_core 
+    port map (
+        clk                 => clk100,
+        reset               => not reset,
+        enable              => zpu_enable,
+        in_mem_busy         => mem_busy, 
+        mem_read            => mem_read,
+        mem_write           => mem_write, 
+        out_mem_addr        => mem_addr, 
+        out_mem_writeEnable => mem_writeEnable,  
+        out_mem_readEnable  => mem_readEnable,
+        mem_writeMask       => mem_writeMask, 
+        interrupt           => zpu_interrupt,
+        break               => zpu_break
+    );
+
+process(clk100)
+begin
+	mem_busy<='0';
+	zpu_enable<='1';
+	zpu_interrupt<='0';
+
+	if rising_edge(clk100) then
+	
+		if mem_writeEnable='1' then
+			if mem_addr=X"FFFFFF04" then -- Need to make registers 32-bit aligned for ZPU
+				counter<=unsigned(mem_write(15 downto 0));
+			end if;		
+		end if;
+	end if;
+--	
+--signal mem_read             : std_logic_vector(wordSize-1 downto 0);
+--signal mem_write            : std_logic_vector(wordSize-1 downto 0);
+--signal mem_addr             : std_logic_vector(maxAddrBitIncIO downto 0);
+--signal mem_writeEnable      : std_logic; 
+--signal mem_readEnable       : std_logic;
+--signal mem_writeMask        : std_logic_vector(wordBytes-1 downto 0);
+--signal zpu_enable               : std_logic;
+--signal zpu_interrupt            : std_logic;
+--signal zpu_break                : std_logic;
+
+end process;
+	
+end architecture;
