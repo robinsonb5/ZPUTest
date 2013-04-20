@@ -1,4 +1,4 @@
-This project contains my experiments with the ZPU soft processor core.
+This project contains my experiments with the ZPU - the Zylin soft processor core.
 
 My aim is to see just how far the "small" variant of the core can be be taken
 while keeping it under 1000 logic elements.
