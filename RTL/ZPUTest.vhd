@@ -256,7 +256,7 @@ begin
 	if rising_edge(clk100) then
 	
 		if mem_writeEnable='1' then
-			if mem_addr=X"FFFFFF04" then -- Need to make registers 32-bit aligned for ZPU
+			if mem_addr=X"FFFFFF80" then -- Need to make registers 32-bit aligned for ZPU
 				counter<=unsigned(mem_write(15 downto 0));
 			end if;		
 		end if;
