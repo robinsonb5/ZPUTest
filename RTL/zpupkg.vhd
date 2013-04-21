@@ -1,6 +1,6 @@
 -- ZPU
 --
--- Copyright 2004-2008 oharboe - Øyvind Harboe - oyvind.harboe@zylin.com
+-- Copyright 2004-2008 oharboe - ï¿½yvind Harboe - oyvind.harboe@zylin.com
 -- 
 -- The FreeBSD license
 -- 
@@ -76,6 +76,19 @@ package zpupkg is
       );
   end component dualport_ram;
 
+  component stackram is
+    port (
+      clk             : in  std_logic;
+      memAWriteEnable : in  std_logic;
+      memAAddr        : in  std_logic_vector(maxAddrBitBRAM downto minAddrBit);
+      memAWrite       : in  std_logic_vector(wordSize-1 downto 0);
+      memARead        : out std_logic_vector(wordSize-1 downto 0);
+      memBWriteEnable : in  std_logic;
+      memBAddr        : in  std_logic_vector(maxAddrBitBRAM downto minAddrBit);
+      memBWrite       : in  std_logic_vector(wordSize-1 downto 0);
+      memBRead        : out std_logic_vector(wordSize-1 downto 0)
+      );
+  end component stackram;
 
   component dram is
     port (

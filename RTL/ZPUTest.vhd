@@ -36,41 +36,13 @@ end entity;
 
 architecture rtl of ZPUTest is
 
---
+signal clk100 : std_logic;
 signal reset : std_logic := '0';
 signal reset_counter : unsigned(15 downto 0) := X"FFFF";
-signal tg68_ready : std_logic;
-signal sdr_ready : std_logic;
-signal ready : std_logic;
-signal req_pending : std_logic :='0';
---signal write_pending : std_logic :='0';
-signal dtack1 : std_logic;
-signal clk100 : std_logic;
-signal currentX : unsigned(11 downto 0);
-signal currentY : unsigned(11 downto 0);
-signal vga_newframe : std_logic;
-signal end_of_line : std_logic;
-signal end_of_pixel : std_logic;
-signal end_of_frame : std_logic;
 
-signal ramaddress : std_logic_vector(23 downto 0);
-signal datatoram : std_logic_vector(15 downto 0);
-signal datafromram : std_logic_vector(15 downto 0);
-signal ramrw : std_logic;
-signal bursttoram : std_logic;
-signal burstfromram : std_logic;
-
-signal vga_addr :  std_logic_vector(23 downto 0); -- to SDRAM
-signal vga_data : std_logic_vector(15 downto 0);	-- from SDRAM
-signal vga_fill : std_logic; -- High when data is being written from SDRAM controller
-signal vga_req : std_logic; -- Request service from SDRAM controller
-signal vga_reservebank : std_logic; -- Keep bank clear for instant access.
-signal vga_reserveaddr : std_logic_vector(23 downto 0); -- to SDRAM
-signal vga_refresh : std_logic;
-
-signal traceclock : std_logic;
-signal traceclock2 : std_logic;
-
+-- State machine
+type SOCStates is (WAITING,READ1,WRITE1,PAUSE);
+signal currentstate : SOCStates;
 
 -- ZPU signals
 
@@ -84,6 +56,11 @@ signal mem_writeMask        : std_logic_vector(wordBytes-1 downto 0);
 signal zpu_enable               : std_logic;
 signal zpu_interrupt            : std_logic;
 signal zpu_break                : std_logic;
+
+-- External RAM signal (actually M4k for now)
+
+signal externram_wren : std_logic;
+signal externram_data : std_logic_vector(wordSize-1 downto 0);
 
 --
 
@@ -108,8 +85,6 @@ mypll : ENTITY work.PLL
 
 process(clk100)
 begin
-	ready <= tg68_ready and sdr_ready and reset;
-
 	if reset_in='0' then
 		reset_counter<=X"FFFF";
 		reset<='0';
@@ -120,116 +95,6 @@ begin
 		end if;
 	end if;
 end process;
-
-
----- SDRAM
---mysdram : entity work.sdram 
---	port map
---	(
---	-- Physical connections to the SDRAM
---		sdata => sdr_data,
---		sdaddr => sdr_addr,
---		sd_we	=> sdr_we,
---		sd_ras => sdr_ras,
---		sd_cas => sdr_cas,
---		sd_cs	=> sdr_cs,
---		dqm => sdr_dqm,
---		ba	=> sdr_ba,
---
---	-- Housekeeping
---		sysclk => clk100,
---		reset => reset_in,
---		reset_out => sdr_ready,
---
---		vga_addr => vga_addr,
---		vga_data => vga_data,
---		vga_fill => vga_fill,
---		vga_req => vga_req,
---		vga_reserveaddr => vga_reserveaddr,
---		vga_reservebank => vga_reservebank,
---		vga_refresh => vga_refresh,
---
---		vga_newframe => vga_newframe,
-----		vga_req => vga_req,
-----		vga_data => vga_data,
-----		vga_refresh => end_of_line,
---
---		datawr1 => datatoram,
---		Addr1 => ramaddress,
---		req1 => req_pending,
---		wr1 => ramrw,
---		wrL1 => '0', -- Always access full words for now...
---		wrU1 => '0', -- FIXME - need to make use of these.
---		dataout1 => datafromram,
---		dtack1 => dtack1
---	);
---
---
---process(clk100,reset)
---begin
---
---	if reset='0' then
---		ramaddress<=X"100000";
---		ramrw<='1';
---		req_pending<='0';
---		ramstate<=read1;
---	elsif rising_edge(clk100) then
---		case ramstate is
---			when read1 =>
---				req_pending<='1';
---				ramstate <= waitread;
---				nextstate <= write1;
---				ramrw<='1';
---			when write1 =>
---				req_pending<='1';
---				ramstate <= waitwrite;
---				nextstate <= read1;
---				ramrw<='0';
---			when waitread =>
---				if dtack1='0' then
---					datatoram<=std_logic_vector(unsigned(datafromram)+1);
---					req_pending<='0';
---					ramstate<=nextstate;
---				end if;
---			when waitwrite =>
---				if dtack1='0' then
---					ramaddress(18 downto 0)<=std_logic_vector(unsigned(ramaddress(18 downto 0))+2);
---					req_pending<='0';
---					ramrw<='1';
---					ramstate<=nextstate;
---				end if;
---			when others =>
---				null;
---		end case;
---	end if;
---end process;
---
---	myvga : entity work.vga_controller
---		port map (
---		clk => clk100,
---		reset => reset,
---
---		reg_addr_in => X"800",
---		reg_data_in => X"4849",
---		reg_rw => '0',
---		reg_uds => '0',
---		reg_lds => '0',
---
---		sdr_addrout => vga_addr,
---		sdr_datain => vga_data, 
---		sdr_fill => vga_fill,
---		sdr_req => vga_req,
---		sdr_reservebank => vga_reservebank,
---		sdr_reserveaddr => vga_reserveaddr,
---		sdr_refresh => vga_refresh,
---
---		hsync => vga_hsync,
---		vsync => vga_vsync,
---		red => vga_red,
---		green => vga_green,
---		blue => vga_blue
---	);
-
 
 	 zpu: zpu_core 
     port map (
@@ -247,20 +112,59 @@ end process;
         break               => zpu_break
     );
 
+	 
+	externram_wren <= mem_writeEnable when mem_addr(31 downto 24)=X"00" else '0';
+
+	ram : entity work.ExternalRAM
+	port map (
+		address => mem_addr(12 downto 2),
+		clock	=> clk100,
+		data => mem_write,
+		wren => externram_wren,
+		q => externram_data
+	);
+
 process(clk100)
 begin
-	mem_busy<='0';
 	zpu_enable<='1';
 	zpu_interrupt<='0';
 
 	if rising_edge(clk100) then
-	
-		if mem_writeEnable='1' then
-			if mem_addr=X"FFFFFF80" then -- Need to make registers 32-bit aligned for ZPU
-				counter<=unsigned(mem_write(15 downto 0));
-			end if;		
-		end if;
+		mem_busy<='1';
+
+		case currentstate is
+			when WAITING =>
+				if mem_writeEnable='1' then
+					if mem_addr(31 downto 24)=X"00" then
+						currentstate<=WRITE1;
+					else
+						if mem_addr=X"FFFFFF80" then -- Need to make registers 32-bit aligned for ZPU
+							counter<=unsigned(mem_write(15 downto 0));
+						end if;
+						mem_busy<='0';
+					end if;		
+				elsif mem_readEnable='1' then
+					currentstate<=READ1;
+				end if;
+
+			when READ1 =>
+				mem_read<=externram_data;
+				mem_busy<='0';
+				currentstate<=WAITING;
+
+			when WRITE1 =>
+				mem_busy<='0';
+				currentstate<=PAUSE;
+				
+			when PAUSE =>
+				currentstate<=WAITING;
+
+			when others =>
+				currentstate<=WAITING;
+				null;
+		end case;
 	end if;
+
 --	
 --signal mem_read             : std_logic_vector(wordSize-1 downto 0);
 --signal mem_write            : std_logic_vector(wordSize-1 downto 0);

@@ -253,22 +253,22 @@ begin
 
   -- move out calculation of the opcode to a seperate process
   -- to make things a bit easier to read
-  decodeControl : process(memBRead, pc, tOpcode_sel)
+  decodeControl : process(mem_read, pc, tOpcode_sel)
     variable tOpcode : std_logic_vector(OpCode_Size-1 downto 0);
   begin
 
     -- simplify opcode selection a bit so it passes more synthesizers
     case (tOpcode_sel) is
 
-      when 0 => tOpcode := std_logic_vector(memBRead(31 downto 24));
+      when 0 => tOpcode := std_logic_vector(mem_read(31 downto 24));
 
-      when 1 => tOpcode := std_logic_vector(memBRead(23 downto 16));
+      when 1 => tOpcode := std_logic_vector(mem_read(23 downto 16));
 
-      when 2 => tOpcode := std_logic_vector(memBRead(15 downto 8));
+      when 2 => tOpcode := std_logic_vector(mem_read(15 downto 8));
 
-      when 3 => tOpcode := std_logic_vector(memBRead(7 downto 0));
+      when 3 => tOpcode := std_logic_vector(mem_read(7 downto 0));
 
-      when others => tOpcode := std_logic_vector(memBRead(7 downto 0));
+      when others => tOpcode := std_logic_vector(mem_read(7 downto 0));
     end case;
 
     sampledOpcode <= tOpcode;
@@ -346,13 +346,15 @@ begin
 --    out_mem_addr    <= (others => DontCareValue);
 --    mem_write       <= (others => DontCareValue);
       spOffset        := (others => DontCareValue);
-      memAAddr        <= (others => DontCareValue);
+		
+		-- We want memAAddr to remain stable since the length of the fetch depends on external RAM.
+--      memAAddr        <= (others => DontCareValue);
       memBAddr        <= (others => DontCareValue);
 
       out_mem_writeEnable <= '0';
       out_mem_readEnable  <= '0';
       begin_inst          <= '0';
-      out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
+--      out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
       mem_write           <= std_logic_vector(memBRead);
 
       decodedOpcode <= sampledDecodedOpcode;
@@ -533,13 +535,18 @@ begin
 
         when State_Fetch =>
           -- FIXME - AMR: need to fetch instruction from External RAM.
+			 out_mem_addr <= (others => '0');
+          out_mem_addr(maxAddrBit downto 0)<=std_logic_vector(pc(maxAddrBit downto 0));
+          out_mem_readEnable <= '1';
 
           -- We need to resync. During the *next* cycle
           -- we'll fetch the opcode @ pc and thus it will
           -- be available for State_Execute the cycle after
           -- next
-          memBAddr <= pc(maxAddrBit downto minAddrBit);
-          state    <= State_FetchNext;
+--          memBAddr <= pc(maxAddrBit downto minAddrBit);
+			 if in_mem_busy='0' then
+				 state    <= State_FetchNext;
+			 end if;
 
         when State_FetchNext =>
           -- at this point memARead contains the value that is either
@@ -568,7 +575,7 @@ begin
           memAWrite       <= memBRead;
           state           <= State_Resync;
 
-        when State_AddSP =>
+		  when State_AddSP =>
           state <= State_Add;
 
         when State_Add =>
