@@ -97,6 +97,9 @@ begin
 end process;
 
 	 zpu: zpu_core 
+	 generic map (
+			HARDWARE_MULTIPLY => false
+			)
     port map (
         clk                 => clk100,
         reset               => not reset,
@@ -138,13 +141,26 @@ begin
 					if mem_addr(31 downto 24)=X"00" then
 						currentstate<=WRITE1;
 					else
-						if mem_addr=X"FFFFFF80" then -- Need to make registers 32-bit aligned for ZPU
-							counter<=unsigned(mem_write(15 downto 0));
-						end if;
+						case mem_addr is
+							when X"FFFFFF80" => -- Need to make registers 32-bit aligned for ZPU
+								counter<=unsigned(mem_write(15 downto 0));
+							when others =>
+								null;
+						end case;
 						mem_busy<='0';
 					end if;		
 				elsif mem_readEnable='1' then
-					currentstate<=READ1;
+					if mem_addr(31 downto 24)=X"00" then
+						currentstate<=READ1;
+					else
+						case mem_addr is
+							when X"FFFFFF84" => -- Need to make registers 32-bit aligned for ZPU
+								mem_read<=X"0000"&src;
+							when others =>
+								null;
+						end case;
+						mem_busy<='0';
+					end if;		
 				end if;
 
 			when READ1 =>

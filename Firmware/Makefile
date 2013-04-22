@@ -15,7 +15,7 @@ LIBDIR   =
 # Commandline options for each tool.
 ZPUOPTS= -mno-poppcrel -mno-compare -mno-eq -mno-byteop -mno-shortop -mno-callpcrel \
   -mno-call -mno-lshiftrt -mno-ashiftl -mno-ashiftrt -mno-neqbranch -mno-pushspadd \
-  -mno-neg -mno-mod -mno-div -mno-mult
+  -mno-neg -mno-mod -mno-div
 
 CFLAGS  = -I. -c -O3 $(ZPUOPTS)
 AFLAGS  = 

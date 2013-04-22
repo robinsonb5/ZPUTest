@@ -32,7 +32,8 @@
 -- are those of the authors and should not be interpreted as representing
 -- official policies, either expressed or implied, of the ZPU Project.
 
--- Targetting EP3C25, LE count: 489 / 208
+-- Targetting EP3C25, LE count: 663 / 247
+
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -44,6 +45,9 @@ use work.zpupkg.all;
 
 
 entity zpu_core is
+  generic (
+    HARDWARE_MULTIPLY : boolean := true
+  );
   port ( 
     clk                 : in std_logic;
     -- asynchronous reset signal
@@ -124,7 +128,8 @@ architecture behave of zpu_core is
     State_ReadIODone,
     State_Decode,
     State_Resync,
-    State_Interrupt
+    State_Interrupt,
+	 State_Mult
     );
 
   type DecodedOpcodeType is (
@@ -146,7 +151,8 @@ architecture behave of zpu_core is
     Decoded_Flip,
     Decoded_Store,
     Decoded_PopSP,
-    Decoded_Interrupt
+    Decoded_Interrupt,
+	 Decoded_Mult
     );
 
 
@@ -173,7 +179,6 @@ architecture behave of zpu_core is
   signal  tOpcode_sel        : index;
   --
   signal  inInterrupt        : std_logic;
-
 
 
 begin
@@ -280,7 +285,10 @@ begin
     elsif (tOpcode(7 downto 5) = OpCode_LoadSP) then
       sampledDecodedOpcode <= Decoded_LoadSP;
     elsif (tOpcode(7 downto 5) = OpCode_Emulate) then
-      sampledDecodedOpcode <= Decoded_Emulate;
+		sampledDecodedOpcode <= Decoded_Emulate;
+		if HARDWARE_MULTIPLY=true and tOpcode(5 downto 0) = OpCode_Mult then
+			sampledDecodedOpcode <= Decoded_Mult;
+		end if;
     elsif (tOpcode(7 downto 4) = OpCode_AddSP) then
       sampledDecodedOpcode <= Decoded_AddSP;
     else
@@ -316,6 +324,7 @@ begin
 
   opcodeControl: process(clk, reset)
     variable spOffset : unsigned(4 downto 0);
+    variable tMultResult    : unsigned(wordSize*2-1 downto 0);
   begin
 
     if reset = '1' then
@@ -363,6 +372,10 @@ begin
         inInterrupt <= '0';             -- no longer in an interrupt
       end if;
 
+		if HARDWARE_MULTIPLY=true then
+			tMultResult := memARead * memBRead;
+		end if;
+
       case state is
 
         when State_Execute =>
@@ -371,6 +384,7 @@ begin
           -- memBRead contains opcode word
           -- memARead contains top of stack
           pc    <= pc + 1;
+			 -- FIXME - invalidate opcode cache if necessary
 
           -- trace
           begin_inst                             <= '1';
@@ -471,6 +485,10 @@ begin
               sp    <= sp + 1;
               state <= State_And;
 
+			   when Decoded_Mult =>
+              sp    <= sp + 1;
+              state <= State_Mult;
+
             when Decoded_Load =>
 --              if (memARead(ioBit) = '1') then
                 out_mem_addr       <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
@@ -534,10 +552,11 @@ begin
           end if;
 
         when State_Fetch =>
-          -- FIXME - AMR: need to fetch instruction from External RAM.
+			 -- AMR - fetch from external RAM, not Block RAM.
 			 out_mem_addr <= (others => '0');
           out_mem_addr(maxAddrBit downto 0)<=std_logic_vector(pc(maxAddrBit downto 0));
           out_mem_readEnable <= '1';
+          -- FIXME - don't refetch if data is still valid.
 
           -- We need to resync. During the *next* cycle
           -- we'll fetch the opcode @ pc and thus it will
@@ -584,7 +603,13 @@ begin
           memAWrite       <= memARead + memBRead;
           state           <= State_Fetch;
 
-        when State_Or =>
+        when State_Mult =>
+          memAAddr        <= sp;
+          memAWriteEnable <= '1';
+          memAWrite       <= tMultResult(wordSize-1 downto 0);
+          state           <= State_Fetch;
+
+		  when State_Or =>
           memAAddr        <= sp;
           memAWriteEnable <= '1';
           memAWrite       <= memARead or memBRead;

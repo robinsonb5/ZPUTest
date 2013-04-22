@@ -121,6 +121,9 @@ package zpupkg is
 
 
   component zpu_core is
+  generic (
+    HARDWARE_MULTIPLY : boolean := true
+  );
     port ( 
       clk                 : in  std_logic;
       reset               : in  std_logic;
