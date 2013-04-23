@@ -5,21 +5,25 @@ AS      = $(BASE)-as
 CP      = $(BASE)-objcopy
 DUMP    = $(BASE)-objdump
 
+BUILD_DIR=zpu_obj
+
 PRJ = countertest
-SRC = countertest.c
-OBJ = $(SRC:.c=.o)
+SRC = countertest.c # spi.c
+OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC))
 
 LINKMAP  = 
 LIBDIR   = 
 
 # Commandline options for each tool.
-ZPUOPTS= -mno-poppcrel -mno-compare -mno-eq -mno-byteop -mno-shortop -mno-callpcrel \
-  -mno-call -mno-lshiftrt -mno-ashiftl -mno-ashiftrt -mno-neqbranch -mno-pushspadd \
+ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
+  -mno-call -mno-neqbranch -mno-pushspadd \
   -mno-neg -mno-mod -mno-div
 
-CFLAGS  = -I. -c -O3 $(ZPUOPTS)
+ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
+
+CFLAGS  = -I. -c -O3 $(ZPUOPTS2)
 AFLAGS  = 
-LFLAGS  = 
+LFLAGS  =  
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 
@@ -32,7 +36,7 @@ LIBS       =
 all: $(PRJ).rom $(PRJ).mif
 
 clean:
-	rm -f *.o *.hex *.elf *.map *.lst *.srec *.mif *.rom *~ */*.o $(ROMGEN) *.bin
+	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec *.mif *.rom *~ */*.o $(ROMGEN) *.bin
 
 $(ROMGEN): $(ROMGEN).c
 	gcc  -o $@ $<
@@ -60,6 +64,6 @@ $(PRJ).elf: $(OBJ)
 $(PRJ).rom: $(PRJ).bin $(ROMGEN)
 	./$(ROMGEN) $< >$@
 
-%.o: %.c
+$(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS)  -o $@ -c $<
 

@@ -30,7 +30,11 @@ entity ZPUTest is
 		sdr_cs		: out std_logic;
 		sdr_ba		: out std_logic_vector(1 downto 0);
 		sdr_clk		: out std_logic;
-		sdr_clkena	: out std_logic
+		sdr_clkena	: out std_logic;
+		
+		-- UART
+		rs232_rxd	: in std_logic;
+		rs232_txd	: out std_logic
 	);
 end entity;
 
@@ -43,6 +47,16 @@ signal reset_counter : unsigned(15 downto 0) := X"FFFF";
 -- State machine
 type SOCStates is (WAITING,READ1,WRITE1,PAUSE);
 signal currentstate : SOCStates;
+
+-- UART signals
+
+signal ser_txdata : std_logic_vector(7 downto 0);
+signal ser_txready : std_logic;
+signal ser_rxdata : std_logic_vector(7 downto 0);
+signal ser_rxrecv : std_logic;
+signal ser_txgo : std_logic;
+signal ser_rxint : std_logic;
+signal ser_clock_divisor : unsigned(15 downto 0);
 
 -- ZPU signals
 
@@ -96,6 +110,27 @@ begin
 	end if;
 end process;
 
+
+-- UART
+
+	myuart : entity work.simple_uart
+		port map(
+			clk => clk100,
+			reset => reset, -- active low
+			txdata => ser_txdata,
+			txready => ser_txready,
+			txgo => ser_txgo,
+			rxdata => ser_rxdata,
+			rxint => ser_rxint,
+			txint => open,
+			clock_divisor => ser_clock_divisor,
+			rxd => rs232_rxd,
+			txd => rs232_txd
+		);
+
+
+-- Main CPU
+
 	 zpu: zpu_core 
 	 generic map (
 			HARDWARE_MULTIPLY => true
@@ -135,27 +170,49 @@ begin
 	if rising_edge(clk100) then
 		mem_busy<='1';
 
+		ser_txgo<='0';
+		if ser_rxint='1' then
+			ser_rxrecv<='1';
+		end if;
+		
 		case currentstate is
 			when WAITING =>
+			
+				-- Write from CPU
 				if mem_writeEnable='1' then
-					if mem_addr(31 downto 24)=X"00" then
+					if mem_addr(31 downto 24)=X"00" then -- Write goes to main RAM
 						currentstate<=WRITE1;
-					else
+					else -- Write goes to peripherals.
 						case mem_addr is
-							when X"FFFFFF80" => -- Need to make registers 32-bit aligned for ZPU
+							when X"FFFFFF84" => -- UART
+								ser_txdata<=mem_write(7 downto 0);
+								ser_txgo<='1';
+								
+							when X"FFFFFF88" => -- UART Clock divisor
+								ser_clock_divisor<=unsigned(mem_write(15 downto 0));
+								
+							when X"FFFFFF90" => -- HEX display
 								counter<=unsigned(mem_write(15 downto 0));
 							when others =>
 								null;
 						end case;
 						mem_busy<='0';
 					end if;		
+					
+
 				elsif mem_readEnable='1' then
 					if mem_addr(31 downto 24)=X"00" then
 						currentstate<=READ1;
 					else
 						case mem_addr is
-							when X"FFFFFF84" => -- Need to make registers 32-bit aligned for ZPU
+							when X"FFFFFF84" => -- UART
+								mem_read<=(others=>'0');
+								mem_read(9 downto 0)<=ser_rxrecv&ser_txready&ser_rxdata;
+								ser_rxrecv<='0';	-- Clear rx flag.
+								
+							when X"FFFFFF8C" => -- Flags (switches) register
 								mem_read<=X"0000"&src;
+								
 							when others =>
 								null;
 						end case;
