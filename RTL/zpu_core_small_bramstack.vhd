@@ -102,6 +102,7 @@ architecture behave of zpu_core is
   signal busy       : std_logic;
   --
   signal begin_inst : std_logic;
+  signal fetchneeded : std_logic;
 
 
   signal trace_opcode      : std_logic_vector(7 downto 0);
@@ -343,6 +344,7 @@ begin
       memAWrite           <= (others => '0');
       memBWrite           <= (others => '0');
       inInterrupt         <= '0';
+		fetchneeded			  <= '1';
 
     elsif (clk'event and clk = '1') then
       memAWriteEnable <= '0';
@@ -384,7 +386,9 @@ begin
           -- memBRead contains opcode word
           -- memARead contains top of stack
           pc    <= pc + 1;
-			 -- FIXME - invalidate opcode cache if necessary
+			 if pc(1 downto 0)="11" then -- We fetch four bytes at a time.
+				fetchneeded<='1'; 
+			 end if;
 
           -- trace
           begin_inst                             <= '1';
@@ -411,6 +415,7 @@ begin
               memAWrite                      <= (others => DontCareValue);
               memAWrite(maxAddrBit downto 0) <= pc;
               pc                             <= to_unsigned(32, maxAddrBit+1);  -- interrupt address
+				  fetchneeded<='1'; -- Need to set this any time PC changes.
               report "ZPU jumped to interrupt!" severity note;
 
             when Decoded_Im =>
@@ -451,6 +456,8 @@ begin
               -- 0000 00aa aaa0 0000
               pc                             <= (others => '0');
               pc(9 downto 5)                 <= unsigned(opcode(4 downto 0));
+				  fetchneeded<='1'; -- Need to set this any time pc changes.
+
 
             when Decoded_AddSP =>
               memAAddr <= sp;
@@ -470,6 +477,7 @@ begin
 
             when Decoded_PopPC =>
               pc    <= memARead(maxAddrBit downto 0);
+				  fetchneeded<='1'; -- Need to set this any time PC changes.
               sp    <= sp + 1;
               state <= State_Resync;
 
@@ -538,6 +546,7 @@ begin
             memAWriteEnable <= '1';
             memAWrite       <= unsigned(mem_read);
           end if;
+			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
         when State_WriteIO =>
           sp                  <= sp + 1;
@@ -545,6 +554,7 @@ begin
           out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
           mem_write           <= std_logic_vector(memBRead);
           state               <= State_WriteIODone;
+			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
         when State_WriteIODone =>
           if (in_mem_busy = '0') then
@@ -555,7 +565,7 @@ begin
 			 -- AMR - fetch from external RAM, not Block RAM.
 			 out_mem_addr <= (others => '0');
           out_mem_addr(maxAddrBit downto 0)<=std_logic_vector(pc(maxAddrBit downto 0));
-          out_mem_readEnable <= '1';
+          out_mem_readEnable <= fetchneeded;
           -- FIXME - don't refetch if data is still valid.
 
           -- We need to resync. During the *next* cycle
@@ -563,7 +573,7 @@ begin
           -- be available for State_Execute the cycle after
           -- next
 --          memBAddr <= pc(maxAddrBit downto minAddrBit);
-			 if in_mem_busy='0' then
+			 if in_mem_busy='0' or fetchneeded='0' then
 				 state    <= State_FetchNext;
 			 end if;
 
@@ -571,6 +581,7 @@ begin
           -- at this point memARead contains the value that is either
           -- from the top of stack or should be copied to the top of the stack
           memAWriteEnable <= '1';
+		    fetchneeded<='0';
           memAWrite       <= memARead;
           memAAddr        <= sp;
           memBAddr        <= sp + 1;

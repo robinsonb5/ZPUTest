@@ -98,7 +98,7 @@ end process;
 
 	 zpu: zpu_core 
 	 generic map (
-			HARDWARE_MULTIPLY => false
+			HARDWARE_MULTIPLY => true
 			)
     port map (
         clk                 => clk100,
