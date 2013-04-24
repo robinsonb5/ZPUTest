@@ -177,20 +177,61 @@ assign	GPIO_1		=	36'hzzzzzzzzz;
 //	Audio
 
 wire	[15:0]	mSEG7_DIG;
-reg		[27:0]	Cont;
 reg		[9:0]	mLEDR;
 reg				ST;
 
-always@(posedge CLOCK_50)		Cont	<=	Cont+1'b1;
 
-// assign	mSEG7_DIG	=	{	Cont[27:24],Cont[27:24],Cont[27:24],Cont[27:24]	};
+// Clocks
+
+wire clk100;
+
+PLL mypll
+(
+	.inclk0(CLOCK_50),
+	.c0(DRAM_CLK),
+	.c1(clk100)
+);
+
+
+wire [7:0] red;
+wire [7:0] green;
+wire [7:0] blue;
+wire [3:0] ored;
+wire [3:0] ogreen;
+wire [3:0] oblue;
+
+wire vga_window;
+
+assign VGA_R = ored;
+assign VGA_G = ogreen;
+assign VGA_B = oblue;
 
 SEG7_LUT_4 			u0	(	HEX0,HEX1,HEX2,HEX3,mSEG7_DIG );
 
+video_vga_dither
+# (
+	.outbits(4) )
+mydither (
+	.clk(clk100),
+	.hsync(VGA_HS),
+	.vsync(VGA_VS),
+	.vid_ena(vga_window),
+	.iRed(red),
+	.iGreen(green),
+	.iBlue(blue),
+	.oRed(ored),
+	.oGreen(ogreen),
+	.oBlue(oblue)
+);
+
+defparam myZPUTest.sdram_rows = 12;
+defparam myZPUTest.sdram_cols = 8;
+defparam myZPUTest.sysclk_frequency = 1000;
+defparam myZPUTest.spi_maxspeed = 4;
+
 ZPUTest myZPUTest
 (	
-	.clk(CLOCK_50),
-//	.clk50(CLOCK_50),
+	.clk(clk100),
 	.src({SW[9:5],SW[5],SW[5],SW[4],SW[4],SW[4],SW[3],SW[3],SW[3:0]}),
 	.reset_in(!SW[0]^KEY[0]),
 	.counter(mSEG7_DIG),
@@ -199,9 +240,10 @@ ZPUTest myZPUTest
 	// video
 	.vga_hsync(VGA_HS),
 	.vga_vsync(VGA_VS),
-	.vga_red(VGA_R),
-	.vga_green(VGA_G),
-	.vga_blue(VGA_B),
+	.vga_red(red),
+	.vga_green(green),
+	.vga_blue(blue),
+	.vga_window(vga_window),
 	
 	// sdram
 	.sdr_data(DRAM_DQ),
@@ -212,7 +254,7 @@ ZPUTest myZPUTest
 	.sdr_ras(DRAM_RAS_N),
 	.sdr_cs(DRAM_CS_N),
 	.sdr_ba({DRAM_BA_1,DRAM_BA_0}),
-	.sdr_clk(DRAM_CLK),
+//	.sdr_clk(DRAM_CLK),
 	.sdr_clkena(DRAM_CKE),
 	
 	// RS232

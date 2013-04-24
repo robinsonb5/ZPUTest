@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
 
--- Simplistic UART, handles 8N1 RS232 Rx/Tx with baud rate specified by a generic.
+-- Simplistic UART, handles 8N1 RS232 Rx/Tx with baud rate specified by a signal.
 
 
 entity simple_uart is

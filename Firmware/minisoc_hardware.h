@@ -5,16 +5,15 @@
    Based on the similar TG68MiniSOC project, but with
    changes to suit the ZPU's archicture */
 
-#define VGABASE 0x80000000
+#define VGABASE 0xFFFE0000
 
 #define FRAMEBUFFERPTR 0
 
 #define SP0PTR 0x100
 #define SP0XPOS 0x104
-#define SP0YPOS 0x106
+#define SP0YPOS 0x108
 
-#define HW_VGA(x) *(volatile unsigned int *)(VGABASE+x)
-#define HW_VGA_L(x) *(volatile unsigned long *)(VGABASE+x)
+#define HW_VGA(x) *(volatile unsigned long *)(VGABASE+x)
 #define VGA_INT_VBLANK 1
 
 /*

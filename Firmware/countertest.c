@@ -16,10 +16,17 @@ void putserial(char *msg)
 int main(int argc,char *argv)
 {
 	int c=0;
+	long p=0;
 	HW_PER(PER_UART_CLKDIV)=1000000/1152;
 	putserial("Hello world!\n");
 	while(1)
-		HW_PER(PER_HEX)=HW_PER(PER_FLAGS)*++c; // ++c;
+	{
+		int d=-65535;
+		while(d++)
+			HW_PER(PER_HEX)=d;
+		HW_VGA(FRAMEBUFFERPTR)=p;
+		p+=1280;
+	}
 	return(0);
 }
 
