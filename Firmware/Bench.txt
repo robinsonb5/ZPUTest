@@ -1,0 +1,8 @@
+Hardware compare / neqbranch enabled:
+105 frames in 20 seconds -> 5.25 fps
+781 LEs
+
+Hardware compare / neqbranch disabled:
+38 frames in 20 seconds -> 1.9 fps
+621 LEs
+

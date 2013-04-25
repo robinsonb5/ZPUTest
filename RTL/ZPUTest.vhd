@@ -112,6 +112,15 @@ signal externram_data : std_logic_vector(wordSize-1 downto 0);
 -- SDRAM signals
 
 signal sdr_ready : std_logic;
+signal sdram_write : std_logic_vector(15 downto 0);
+signal sdram_addr : std_logic_vector(31 downto 0);
+signal sdram_req : std_logic;
+signal sdram_wr : std_logic;
+signal sdram_read : std_logic_vector(15 downto 0);
+signal sdram_ack : std_logic;
+
+type sdram_states is (read1, read2, read3, write1, write2, write3, idle);
+signal sdram_state : sdram_states;
 
 --
 
@@ -155,14 +164,14 @@ mysdram : entity work.sdram
 
 		vga_newframe => vga_newframe,
 
-		datawr1 => (others => 'X'),
-		Addr1 => (others => 'X'),
-		req1 => '0',
-		wr1 => '1',
+		datawr1 => sdram_write,
+		Addr1 => sdram_addr,
+		req1 => sdram_req,
+		wr1 => sdram_wr,
 		wrL1 => '0',
 		wrU1 => '0',
-		dataout1 => open,
-		dtack1 => open
+		dataout1 => sdram_read,
+		dtack1 => sdram_ack
 	);
 
 -- Video
@@ -312,9 +321,8 @@ begin
 							end case;
 							mem_busy<='0';
 						when others => -- SDRAM access
-							mem_busy<='0';
+							sdram_state<=write1;
 					end case;
-					
 
 				elsif mem_readEnable='1' then
 					case mem_addr(31 downto 16) is
@@ -342,7 +350,7 @@ begin
 							mem_busy<='0';
 
 						when others => -- SDRAM
-							mem_busy<='0';
+							sdram_state<=read1;
 					end case;
 				end if;
 
@@ -362,8 +370,56 @@ begin
 				currentstate<=WAITING;
 				null;
 		end case;
-	end if;
+	
+	-- SDRAM state machine
+	
+		case sdram_state is
+			when read1 => -- read first word from RAM
+				sdram_addr<=mem_Addr;
+				sdram_wr<='1';
+				sdram_req<='1';
+				if sdram_ack='0' then -- is first word ready?
+					mem_read(31 downto 16)<=sdram_read;
+					sdram_req<='0';
+					sdram_state<=read2;
+				end if;
+			when read2 =>	-- Prepare for second word...
+				sdram_addr(1)<='1';
+				sdram_req<='1';
+				sdram_state<=read3;
+			when read3 =>  -- Wait for second word...
+				if sdram_ack='0' then -- is first word ready?
+					mem_read(15 downto 0)<=sdram_read;
+					sdram_req<='0';
+					sdram_state<=idle;
+					mem_busy<='0';
+				end if;
+			when write1 => -- read first word from RAM
+				sdram_addr<=mem_Addr;
+				sdram_wr<='0';
+				sdram_req<='1';
+				sdram_write<=mem_write(31 downto 16);
+				if sdram_ack='0' then -- is first word ready?
+					sdram_req<='0';
+					sdram_state<=write2;
+				end if;
+			when write2 =>	-- Prepare for second word...
+				sdram_addr(1)<='1';
+				sdram_req<='1';
+				sdram_write<=mem_write(15 downto 0);
+				sdram_state<=write3;
+			when write3 =>  -- Wait for second word...
+				if sdram_ack='0' then -- is first word ready?
+					sdram_req<='0';
+					sdram_state<=idle;
+					mem_busy<='0';
+				end if;
+			when others =>
+				null;
 
+		end case;
+
+	end if; -- rising-edge(clk)
 --	
 --signal mem_read             : std_logic_vector(wordSize-1 downto 0);
 --signal mem_write            : std_logic_vector(wordSize-1 downto 0);

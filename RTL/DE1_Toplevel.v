@@ -234,7 +234,7 @@ defparam myZPUTest.spi_maxspeed = 4;
 ZPUTest myZPUTest
 (	
 	.clk(clk100),
-	.clk2(clk200),
+	.clk2(clk100),
 	.src({SW[9:5],SW[5],SW[5],SW[4],SW[4],SW[4],SW[3],SW[3],SW[3:0]}),
 	.reset_in(!SW[0]^KEY[0]),
 	.counter(mSEG7_DIG),

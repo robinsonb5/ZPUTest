@@ -21,7 +21,7 @@ void putserial(char *msg)
 void ClearFramebuffer()
 {
 	int *fb=(int *)FRAMEBUFFER;
-	int c=FB_WIDTH*FB_HEIGHT/4;
+	int c=FB_WIDTH*FB_HEIGHT/2;
 	while(--c)
 		*fb++=0;
 }
@@ -30,7 +30,7 @@ void ClearFramebuffer()
 void FillFramebuffer(int s)
 {
 	int *fb=(int *)FRAMEBUFFER;
-	int c=FB_WIDTH*FB_HEIGHT/4;
+	int c=FB_WIDTH*FB_HEIGHT/2;
 	while(--c)
 		*fb++=s++;
 }
@@ -47,7 +47,7 @@ int main(int argc,char *argv)
 	while(1)
 	{
 		HW_PER(PER_HEX)=c;
-		FillFramebuffer(c);
+		FillFramebuffer(++c);
 	}
 	return(0);
 }
