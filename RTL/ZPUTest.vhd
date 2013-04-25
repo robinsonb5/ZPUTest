@@ -13,6 +13,7 @@ entity ZPUTest is
 	);
 	port (
 		clk 			: in std_logic;
+		clk2			: in std_logic;
 --		clk50			: in std_logic;
 		src 			: in std_logic_vector(15 downto 0);
 		counter 		: buffer unsigned(15 downto 0);
@@ -236,10 +237,12 @@ end process;
 
 	 zpu: zpu_core 
 	 generic map (
-			HARDWARE_MULTIPLY => true
-			)
+			HARDWARE_MULTIPLY => false,
+			COMPARISON_SUB => true,
+			EQBRANCH => true
+		)
     port map (
-        clk                 => clk,
+        clk                 => clk2,
         reset               => not reset,
         enable              => zpu_enable,
         in_mem_busy         => mem_busy, 
@@ -259,7 +262,7 @@ end process;
 	ram : entity work.ExternalRAM
 	port map (
 		address => mem_addr(12 downto 2),
-		clock	=> clk,
+		clock	=> clk2,
 		data => mem_write,
 		wren => externram_wren,
 		q => externram_data
@@ -270,7 +273,7 @@ begin
 	zpu_enable<='1';
 	zpu_interrupt<='0';
 
-	if rising_edge(clk) then
+	if rising_edge(clk2) then
 		mem_busy<='1';
 
 		ser_txgo<='0';

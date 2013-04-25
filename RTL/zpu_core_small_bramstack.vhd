@@ -47,7 +47,8 @@ use work.zpupkg.all;
 entity zpu_core is
   generic (
     HARDWARE_MULTIPLY : boolean := true;
-	 COMPARISON_SUB : boolean := true
+	 COMPARISON_SUB : boolean := true;
+	 EQBRANCH : boolean := true
   );
   port ( 
     clk                 : in std_logic;
@@ -133,7 +134,8 @@ architecture behave of zpu_core is
 	 State_Mult,
 	 State_Eq,
 	 State_Neq,
-	 State_Sub
+	 State_Sub,
+	 State_IncSP
     );
 
   type DecodedOpcodeType is (
@@ -159,7 +161,8 @@ architecture behave of zpu_core is
 	 Decoded_Mult,
 	 Decoded_Sub,
 	 Decoded_Eq,
-	 Decoded_Neq
+	 Decoded_Neq,
+	 Decoded_EqBranch
     );
 
 
@@ -189,6 +192,8 @@ architecture behave of zpu_core is
 
   signal comparison_sub_result : unsigned(wordSize downto 0); -- Extra bit needed for signed comparisons
 
+  signal eqbranch_zero : std_logic;
+  
 begin
 
   -- generate a trace file.
@@ -304,6 +309,12 @@ begin
 				sampledDecodedOpcode <= Decoded_Sub;
 			end if;
 		end if;
+		if EQBRANCH=true then
+			if tOpcode(5 downto 0) = OpCode_EqBranch
+				or tOpcode(5 downto 0)= OpCode_NeqBranch then
+				sampledDecodedOpcode <= Decoded_EqBranch;
+			end if;
+		end if;
     elsif (tOpcode(7 downto 4) = OpCode_AddSP) then
       sampledDecodedOpcode <= Decoded_AddSP;
     else
@@ -394,6 +405,11 @@ begin
 
 		if COMPARISON_SUB=true then
 			comparison_sub_result<=unsigned(memBRead(wordsize-1)&memBRead)-unsigned(memARead(wordsize-1)&memARead);
+		end if;
+
+		eqbranch_zero<='0';
+		if EQBRANCH=true and memBRead=X"00000000" then
+			eqbranch_zero <='1';
 		end if;
 
       case state is
@@ -500,6 +516,16 @@ begin
 				  fetchneeded<='1'; -- Need to set this any time PC changes.
               sp    <= sp + 1;
               state <= State_Resync;
+
+				when Decoded_EqBranch =>
+					if EQBRANCH=true then
+						sp    <= sp + 1;
+						if (eqbranch_zero xor opcode(0))='0' then -- eqbranch is 55, neqbranch is 56
+							pc    <= pc+memARead(maxAddrBit downto 0);
+							fetchneeded<='1'; -- Need to set this any time PC changes.
+						end if;
+						state <= State_IncSP;
+					end if;
 
             when Decoded_Add =>
               sp    <= sp + 1;
@@ -659,6 +685,10 @@ begin
           memAWriteEnable <= '1';
           memAWrite       <= memARead or memBRead;
           state           <= State_Fetch;
+
+			when State_IncSP =>
+				sp<=sp+1;
+				state <= State_Resync;
 
         when State_Resync =>
           memAAddr <= sp;
