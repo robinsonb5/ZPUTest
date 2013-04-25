@@ -7,9 +7,13 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
-PRJ = countertest
-SRC = countertest.c # spi.c
-OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC))
+CT_PRJ = countertest
+CT_SRC = countertest.c # spi.c
+CT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CT_SRC))
+
+FB_PRJ = fbtest
+FB_SRC = fbtest.c # spi.c
+FB_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
 
 LINKMAP  = 
 LIBDIR   = 
@@ -33,7 +37,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(PRJ).rom $(PRJ).mif
+all: $(CT_PRJ).mif $(FB_PRJ).mif
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -50,18 +54,21 @@ $(PRJ).hex: $(PRJ).elf
 	$(CP) $(CPFLAGS) $< $@
 
 # Convert ELF binary to SREC file
-$(PRJ).srec: $(PRJ).elf
+%.srec: %.elf
 	$(CP) $(CP_SRECFLAGS) $< $@
 
 # Convert SREC to .mif file
-$(PRJ).mif: $(PRJ).srec
+%.mif: %.srec
 	srec_cat $< -o $@ -mif 32
 
 # Link - this produces an ELF binary.
-$(PRJ).elf: $(OBJ)
+$(CT_PRJ).elf: $(CT_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
-$(PRJ).rom: $(PRJ).bin $(ROMGEN)
+$(FB_PRJ).elf: $(FB_OBJ)
+	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
+
+%.rom: %.bin $(ROMGEN)
 	./$(ROMGEN) $< >$@
 
 $(BUILD_DIR)/%.o: %.c
