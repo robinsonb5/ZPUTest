@@ -46,7 +46,8 @@ use work.zpupkg.all;
 
 entity zpu_core is
   generic (
-    HARDWARE_MULTIPLY : boolean := true
+    HARDWARE_MULTIPLY : boolean := true;
+	 COMPARISON_SUB : boolean := true
   );
   port ( 
     clk                 : in std_logic;
@@ -80,18 +81,18 @@ end zpu_core;
 architecture behave of zpu_core is
 
   signal memAWriteEnable : std_logic;
-  signal memAAddr        : unsigned(maxAddrBit downto minAddrBit);
+  signal memAAddr        : unsigned(maxAddrBitStackBRAM downto minAddrBit);
   signal memAWrite       : unsigned(wordSize-1 downto 0);
   signal memARead        : unsigned(wordSize-1 downto 0);
   signal memBWriteEnable : std_logic;
-  signal memBAddr        : unsigned(maxAddrBit downto minAddrBit);
+  signal memBAddr        : unsigned(maxAddrBitStackBRAM downto minAddrBit);
   signal memBWrite       : unsigned(wordSize-1 downto 0);
   signal memBRead        : unsigned(wordSize-1 downto 0);
 
 
 
   signal pc : unsigned(maxAddrBit downto 0);
-  signal sp : unsigned(maxAddrBit downto minAddrBit);
+  signal sp : unsigned(maxAddrBitStackBRAM downto minAddrBit);
 
   -- this signal is set upon executing an IM instruction
   -- the subsequence IM instruction will then behave differently.
@@ -103,7 +104,6 @@ architecture behave of zpu_core is
   --
   signal begin_inst : std_logic;
   signal fetchneeded : std_logic;
-
 
   signal trace_opcode      : std_logic_vector(7 downto 0);
   signal trace_pc          : std_logic_vector(maxAddrBitIncIO downto 0);
@@ -130,7 +130,10 @@ architecture behave of zpu_core is
     State_Decode,
     State_Resync,
     State_Interrupt,
-	 State_Mult
+	 State_Mult,
+	 State_Eq,
+	 State_Neq,
+	 State_Sub
     );
 
   type DecodedOpcodeType is (
@@ -153,7 +156,10 @@ architecture behave of zpu_core is
     Decoded_Store,
     Decoded_PopSP,
     Decoded_Interrupt,
-	 Decoded_Mult
+	 Decoded_Mult,
+	 Decoded_Sub,
+	 Decoded_Eq,
+	 Decoded_Neq
     );
 
 
@@ -181,6 +187,7 @@ architecture behave of zpu_core is
   --
   signal  inInterrupt        : std_logic;
 
+  signal comparison_sub_result : unsigned(wordSize downto 0); -- Extra bit needed for signed comparisons
 
 begin
 
@@ -290,6 +297,13 @@ begin
 		if HARDWARE_MULTIPLY=true and tOpcode(5 downto 0) = OpCode_Mult then
 			sampledDecodedOpcode <= Decoded_Mult;
 		end if;
+		if COMPARISON_SUB=true then
+			if tOpcode(5 downto 0) = OpCode_Eq then
+				sampledDecodedOpcode <= Decoded_Eq;
+			elsif tOpcode(5 downto 0)= OpCode_Sub then
+				sampledDecodedOpcode <= Decoded_Sub;
+			end if;
+		end if;
     elsif (tOpcode(7 downto 4) = OpCode_AddSP) then
       sampledDecodedOpcode <= Decoded_AddSP;
     else
@@ -331,7 +345,7 @@ begin
     if reset = '1' then
       state               <= State_Resync;
       break               <= '0';
-      sp                  <= unsigned(spStart(maxAddrBit downto minAddrBit));
+      sp                  <= unsigned(spStart(maxAddrBitStackBRAM downto minAddrBit));
       pc                  <= (others => '0');
       idim_flag           <= '0';
       begin_inst          <= '0';
@@ -378,6 +392,10 @@ begin
 			tMultResult := memARead * memBRead;
 		end if;
 
+		if COMPARISON_SUB=true then
+			comparison_sub_result<=unsigned(memBRead(wordsize-1)&memBRead)-unsigned(memARead(wordsize-1)&memARead);
+		end if;
+
       case state is
 
         when State_Execute =>
@@ -396,7 +414,7 @@ begin
           trace_pc(maxAddrBit downto 0)          <= std_logic_vector(pc);
           trace_opcode                           <= opcode;
           trace_sp                               <= (others => '0');
-          trace_sp(maxAddrBit downto minAddrBit) <= std_logic_vector(sp);
+          trace_sp(maxAddrBitStackBRAM downto minAddrBit) <= std_logic_vector(sp);
           trace_topOfStack                       <= std_logic_vector(memARead);
           trace_topOfStackB                      <= std_logic_vector(memBRead);
 
@@ -473,7 +491,9 @@ begin
               memAAddr                                <= sp - 1;
               sp                                      <= sp - 1;
               memAWrite                               <= (others => DontCareValue);
-              memAWrite(maxAddrBit downto minAddrBit) <= sp;
+				  memAWrite(maxAddrBitIncIO) <='0'; -- Mark address as being in the stack
+				  memAWrite(stackBit) <='1'; -- Mark address as being in the stack
+              memAWrite(maxAddrBitStackBRAM downto minAddrBit) <= sp;
 
             when Decoded_PopPC =>
               pc    <= memARead(maxAddrBit downto 0);
@@ -484,6 +504,10 @@ begin
             when Decoded_Add =>
               sp    <= sp + 1;
               state <= State_Add;
+
+			   when Decoded_Sub =>
+              sp    <= sp + 1;
+              state <= State_Sub;
 
             when Decoded_Or =>
               sp    <= sp + 1;
@@ -498,21 +522,25 @@ begin
               state <= State_Mult;
 
             when Decoded_Load =>
---              if (memARead(ioBit) = '1') then
+              if memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
+                memAAddr <= memARead(maxAddrBitStackBRAM downto minAddrBit);
+				  else
                 out_mem_addr       <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
                 out_mem_readEnable <= '1';
                 state              <= State_ReadIO;
---              else
---                memAAddr <= memARead(maxAddrBit downto minAddrBit);
---              end if;
+             end if;
+
+				when Decoded_Eq =>
+					sp <= sp + 1;
+					state <= State_Eq;
 
             when Decoded_Not =>
-              memAAddr        <= sp(maxAddrBit downto minAddrBit);
+              memAAddr        <= sp(maxAddrBitStackBRAM downto minAddrBit);
               memAWriteEnable <= '1';
               memAWrite       <= not memARead;
 
             when Decoded_Flip =>
-              memAAddr        <= sp(maxAddrBit downto minAddrBit);
+              memAAddr        <= sp(maxAddrBitStackBRAM downto minAddrBit);
               memAWriteEnable <= '1';
               for i in 0 to wordSize-1 loop
                 memAWrite(i) <= memARead(wordSize-1-i);
@@ -521,14 +549,14 @@ begin
             when Decoded_Store =>
               memBAddr <= sp + 1;
               sp       <= sp + 1;
---              if (memARead(ioBit) = '1') then
+              if memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
+                state <= State_Store;
+				  else
                 state <= State_WriteIO;
---              else
---                state <= State_Store;
---              end if;
+              end if;
 
             when Decoded_PopSP =>
-              sp    <= memARead(maxAddrBit downto minAddrBit);
+              sp    <= memARead(maxAddrBitStackBRAM downto minAddrBit);
               state <= State_Resync;
 
             when Decoded_Nop =>
@@ -601,7 +629,7 @@ begin
         when State_Store =>
           sp              <= sp + 1;
           memAWriteEnable <= '1';
-          memAAddr        <= memARead(maxAddrBit downto minAddrBit);
+          memAAddr        <= memARead(maxAddrBitStackBRAM downto minAddrBit);
           memAWrite       <= memBRead;
           state           <= State_Resync;
 
@@ -614,7 +642,13 @@ begin
           memAWrite       <= memARead + memBRead;
           state           <= State_Fetch;
 
-        when State_Mult =>
+        when State_Sub =>
+          memAAddr        <= sp;
+          memAWriteEnable <= '1';
+          memAWrite       <= comparison_sub_result(wordSize-1 downto 0);
+          state           <= State_Fetch;
+
+			 when State_Mult =>
           memAAddr        <= sp;
           memAWriteEnable <= '1';
           memAWrite       <= tMultResult(wordSize-1 downto 0);
@@ -636,6 +670,15 @@ begin
           memAWrite       <= memARead and memBRead;
           state           <= State_Fetch;
 
+		  when State_Eq =>
+				memAAddr <= sp;
+				memAWriteEnable <= '1';
+				memAWrite       <= (others =>'0');
+				if comparison_sub_result='0'&X"00000000" then
+					memAWrite(0) <= '1';
+				end if;
+				state <= State_Fetch;
+			 
         when others =>
           null;
 

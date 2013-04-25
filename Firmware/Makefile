@@ -36,7 +36,7 @@ LIBS       =
 all: $(PRJ).rom $(PRJ).mif
 
 clean:
-	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec *.mif *.rom *~ */*.o $(ROMGEN) *.bin
+	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
 
 $(ROMGEN): $(ROMGEN).c
 	gcc  -o $@ $<
