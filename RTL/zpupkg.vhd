@@ -126,7 +126,8 @@ package zpupkg is
     HARDWARE_MULTIPLY : boolean := true;
 	 COMPARISON_SUB : boolean := true;
 	 EQBRANCH : boolean := true;
-	 MMAP_STACK : boolean := true
+	 MMAP_STACK : boolean := true;
+	 STOREB : boolean := true
   );
     port ( 
       clk                 : in  std_logic;

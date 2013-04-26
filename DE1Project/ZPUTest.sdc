@@ -1,6 +1,6 @@
-## Generated SDC file "ZPUTest.sdc"
+## Generated SDC file "hello_led.out.sdc"
 
-## Copyright (C) 1991-2012 Altera Corporation
+## Copyright (C) 1991-2011 Altera Corporation
 ## Your use of Altera Corporation's design tools, logic functions 
 ## and other software and tools, and its AMPP partner logic 
 ## functions, and any output files from any of the foregoing 
@@ -17,12 +17,12 @@
 
 ## VENDOR  "Altera"
 ## PROGRAM "Quartus II"
-## VERSION "Version 12.0 Build 232 07/05/2012 Service Pack 1 SJ Web Edition"
+## VERSION "Version 11.1 Build 216 11/23/2011 Service Pack 1 SJ Web Edition"
 
-## DATE    "Mon Apr 22 00:22:21 2013"
+## DATE    "Fri Jul 06 23:05:47 2012"
 
 ##
-## DEVICE  "EP2C20F484C7"
+## DEVICE  "EP3C25Q240C8"
 ##
 
 
@@ -38,44 +38,45 @@ set_time_format -unit ns -decimal_places 3
 # Create Clock
 #**************************************************************
 
-create_clock -name {altera_reserved_tck} -period 100.000 -waveform { 0.000 50.000 } [get_ports {altera_reserved_tck}]
-create_clock -name CLOCK_50 -period 20 [get_ports {CLOCK_50}]
+create_clock -name {clk_50} -period 20.000 -waveform { 0.000 0.500 } [get_ports {CLOCK_50}]
+
 
 #**************************************************************
 # Create Generated Clock
 #**************************************************************
 
-derive_pll_clocks
+derive_pll_clocks 
+create_generated_clock -name sd1clk_pin -source [get_pins {mypll|altpll_component|pll|clk[0]}] [get_ports {DRAM_CLK}]
 
 #**************************************************************
 # Set Clock Latency
 #**************************************************************
 
 
-
 #**************************************************************
 # Set Clock Uncertainty
 #**************************************************************
 
-
+derive_clock_uncertainty;
 
 #**************************************************************
 # Set Input Delay
 #**************************************************************
 
-
+set_input_delay -clock sd1clk_pin -max 5.8 [get_ports DRAM_DQ*]
+set_input_delay -clock sd1clk_pin -min 3.2 [get_ports DRAM_DQ*]
 
 #**************************************************************
 # Set Output Delay
 #**************************************************************
 
-
+set_output_delay -clock sd1clk_pin -max 1.5 [get_ports DRAM_*]
+set_output_delay -clock sd1clk_pin -min -0.8 [get_ports DRAM_*]
 
 #**************************************************************
 # Set Clock Groups
 #**************************************************************
 
-set_clock_groups -asynchronous -group [get_clocks {altera_reserved_tck}] 
 
 
 #**************************************************************
@@ -88,7 +89,10 @@ set_clock_groups -asynchronous -group [get_clocks {altera_reserved_tck}]
 # Set Multicycle Path
 #**************************************************************
 
+#set_multicycle_path -from [get_clocks {mypll|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
+#set_multicycle_path -from [get_clocks {mypll2|altpll_component|auto_generated|pll1|clk[0]}] -to [get_clocks {sd2clk_pin}] -setup -end 2
 
+set_multicycle_path -from [get_clocks {sd1clk_pin}] -to [get_clocks {mypll|altpll_component|pll|clk[1]}] -setup -end 2
 
 #**************************************************************
 # Set Maximum Delay
@@ -105,4 +109,3 @@ set_clock_groups -asynchronous -group [get_clocks {altera_reserved_tck}]
 #**************************************************************
 # Set Input Transition
 #**************************************************************
-

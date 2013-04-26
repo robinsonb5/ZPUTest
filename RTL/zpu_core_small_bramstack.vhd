@@ -49,7 +49,8 @@ entity zpu_core is
     HARDWARE_MULTIPLY : boolean := true; -- Self explanatory
 	 COMPARISON_SUB : boolean := true; -- Include sub (and also lessthan, etc - but not yet implemented)
 	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
-	 MMAP_STACK : boolean := true -- Map the stack to 0x40000000, to allow pushsp, store to work.
+	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
+	 STOREB : boolean := true
   );
   port ( 
     clk                 : in std_logic;
@@ -123,6 +124,7 @@ architecture behave of zpu_core is
     State_Or,
     State_And,
     State_Store,
+    State_WriteIOB,
     State_ReadIO,
     State_WriteIO,
     State_Load,
@@ -157,6 +159,7 @@ architecture behave of zpu_core is
     Decoded_Not,
     Decoded_Flip,
     Decoded_Store,
+    Decoded_StoreB,
     Decoded_PopSP,
     Decoded_Interrupt,
 	 Decoded_Mult,
@@ -218,10 +221,6 @@ begin
       intsp      => (others => 'U')
       );
   end generate;
-
-
-  -- mem_writeMask is not used in this design, tie it to 1
-  mem_writeMask <= (others => '1');
 
 
 
@@ -316,6 +315,11 @@ begin
 				sampledDecodedOpcode <= Decoded_EqBranch;
 			end if;
 		end if;
+		if STOREB=true then
+			if tOpcode(5 downto 0) = OpCode_StoreB then
+				sampledDecodedOpcode <= Decoded_StoreB;
+			end if;
+		end if;
     elsif (tOpcode(7 downto 4) = OpCode_AddSP) then
       sampledDecodedOpcode <= Decoded_AddSP;
     else
@@ -354,6 +358,11 @@ begin
     variable tMultResult    : unsigned(wordSize*2-1 downto 0);
   begin
 
+
+	if STOREB=false then  -- If we're not implementing storeh or storeb then tie mask to 1
+		mem_writeMask <= (others => '1');
+	end if;
+ 
     if reset = '1' then
       state               <= State_Resync;
       break               <= '0';
@@ -584,6 +593,13 @@ begin
                 state <= State_WriteIO;
               end if;
 
+				when Decoded_StoreB =>
+				  if STOREB=true then
+					  memBAddr <= sp + 1;
+					  sp       <= sp + 1;
+					 state <= State_WriteIOB;
+				  end if;
+
             when Decoded_PopSP =>
               sp    <= memARead(maxAddrBitStackBRAM downto minAddrBit);
               state <= State_Resync;
@@ -606,12 +622,37 @@ begin
 			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
         when State_WriteIO =>
+			 mem_writeMask <= (others => '1');
           sp                  <= sp + 1;
           out_mem_writeEnable <= '1';
           out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
           mem_write           <= std_logic_vector(memBRead);
           state               <= State_WriteIODone;
 			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
+
+			when State_WriteIOB =>
+				if STOREB=true then
+					mem_writeMask <= (others => '1');
+					sp                  <= sp + 1;
+					out_mem_writeEnable <= '1';
+					out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
+					mem_write       <= std_logic_vector(memBRead(7 downto 0))&
+												std_logic_vector(memBRead(7 downto 0))&
+												std_logic_vector(memBRead(7 downto 0))&
+												std_logic_vector(memBRead(7 downto 0));
+					state               <= State_WriteIODone;
+					case memARead(1 downto 0) is
+						when "00" =>
+							mem_writeMask <= "0001";
+						when "01" =>
+							mem_writeMask <= "0010";
+						when "10" =>
+							mem_writeMask <= "0100";
+						when "11" =>
+							mem_writeMask <= "1000";
+					end case;
+					fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
+				end if;
 
         when State_WriteIODone =>
           if (in_mem_busy = '0') then
@@ -662,8 +703,8 @@ begin
           memAWrite       <= memBRead;
           state           <= State_Resync;
 
-		  when State_AddSP =>
-          state <= State_Add;
+			when State_AddSP =>
+				state <= State_Add;
 
         when State_Add =>
           memAAddr        <= sp;

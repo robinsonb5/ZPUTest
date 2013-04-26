@@ -12,16 +12,6 @@
 
 extern long StandardPointerSprite[];
 
-void putserial(char *msg)
-{
-	while(*msg)
-	{
-		while(!(HW_PER(PER_UART)&(1<<PER_UART_TXREADY)))
-			;
-		HW_PER(PER_UART)=*msg++;
-	}
-}
-
 
 void CopySprite()
 {
@@ -57,7 +47,7 @@ int main(int argc,char *argv)
 	long p=0;
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;
 	putserial("Hello world!\n");
-//	puts("Hello World!\n");
+	puts("Hello World!\n");
 	HW_VGA(FRAMEBUFFERPTR)=FRAMEBUFFER;
 	CopySprite();
 	HW_VGA(SP0PTR)=SPRITEBUFFER;

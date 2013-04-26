@@ -1255,4 +1255,6 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=00
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=1038" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=7465" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=47425" -section_id auto_signaltap_0
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to DRAM_*
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to DRAM_DQ*
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

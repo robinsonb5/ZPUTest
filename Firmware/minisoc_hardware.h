@@ -115,7 +115,7 @@ extern char *VGACharBuffer;
 #define PER_INT_PS2 4
 
 
-void SetSprite();
+void putserial(char *msg);
 
 #endif
 

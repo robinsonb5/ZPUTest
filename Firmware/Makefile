@@ -12,7 +12,7 @@ CT_SRC = countertest.c # spi.c
 CT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CT_SRC))
 
 FB_PRJ = fbtest
-FB_SRC = fbtest.c textbuffer.c # spi.c
+FB_SRC = fbtest.c textbuffer.c minisoc_hardware.c # spi.c
 FB_ASM = spritedata.s
 FB_C_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
 FB_ASM_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(FB_ASM))
