@@ -12,8 +12,11 @@ CT_SRC = countertest.c # spi.c
 CT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CT_SRC))
 
 FB_PRJ = fbtest
-FB_SRC = fbtest.c # spi.c
-FB_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
+FB_SRC = fbtest.c textbuffer.c # spi.c
+FB_ASM = spritedata.s
+FB_C_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
+FB_ASM_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(FB_ASM))
+FB_OBJ = $(FB_C_OBJ) $(FB_ASM_OBJ)
 
 LINKMAP  = 
 LIBDIR   = 
@@ -73,4 +76,7 @@ $(FB_PRJ).elf: $(FB_OBJ)
 
 $(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS)  -o $@ -c $<
+
+$(BUILD_DIR)/%.o: %.s
+	$(AS) -o $@ $<
 

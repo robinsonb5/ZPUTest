@@ -125,7 +125,8 @@ package zpupkg is
   generic (
     HARDWARE_MULTIPLY : boolean := true;
 	 COMPARISON_SUB : boolean := true;
-	 EQBRANCH : boolean := true
+	 EQBRANCH : boolean := true;
+	 MMAP_STACK : boolean := true
   );
     port ( 
       clk                 : in  std_logic;

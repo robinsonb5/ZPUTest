@@ -46,9 +46,10 @@ use work.zpupkg.all;
 
 entity zpu_core is
   generic (
-    HARDWARE_MULTIPLY : boolean := true;
-	 COMPARISON_SUB : boolean := true;
-	 EQBRANCH : boolean := true
+    HARDWARE_MULTIPLY : boolean := true; -- Self explanatory
+	 COMPARISON_SUB : boolean := true; -- Include sub (and also lessthan, etc - but not yet implemented)
+	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
+	 MMAP_STACK : boolean := true -- Map the stack to 0x40000000, to allow pushsp, store to work.
   );
   port ( 
     clk                 : in std_logic;
@@ -391,7 +392,7 @@ begin
       out_mem_readEnable  <= '0';
       begin_inst          <= '0';
 --      out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
-      mem_write           <= std_logic_vector(memBRead);
+--      mem_write           <= std_logic_vector(memBRead);
 
       decodedOpcode <= sampledDecodedOpcode;
       opcode        <= sampledOpcode;
@@ -507,9 +508,11 @@ begin
               memAAddr                                <= sp - 1;
               sp                                      <= sp - 1;
               memAWrite                               <= (others => DontCareValue);
-				  memAWrite(maxAddrBitIncIO) <='0'; -- Mark address as being in the stack
-				  memAWrite(stackBit) <='1'; -- Mark address as being in the stack
-              memAWrite(maxAddrBitStackBRAM downto minAddrBit) <= sp;
+					if MMAP_STACK=true then
+						memAWrite(maxAddrBitIncIO) <='0'; -- Mark address as being in the stack
+						memAWrite(stackBit) <='1'; -- Mark address as being in the stack
+					end if;
+					memAWrite(maxAddrBitStackBRAM downto minAddrBit) <= sp;
 
             when Decoded_PopPC =>
               pc    <= memARead(maxAddrBit downto 0);
@@ -548,7 +551,7 @@ begin
               state <= State_Mult;
 
             when Decoded_Load =>
-              if memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
+              if MMAP_STACK=true and memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
                 memAAddr <= memARead(maxAddrBitStackBRAM downto minAddrBit);
 				  else
                 out_mem_addr       <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
@@ -575,7 +578,7 @@ begin
             when Decoded_Store =>
               memBAddr <= sp + 1;
               sp       <= sp + 1;
-              if memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
+              if MMAP_STACK=true and memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
                 state <= State_Store;
 				  else
                 state <= State_WriteIO;

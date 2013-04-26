@@ -43,7 +43,7 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 		bit 0	visible.  (not yet implemented)
 */
 
-#define VGACHARBUFFERBASE 0x80000800
+#define VGACHARBUFFERBASE 0xFFFE0800
 extern char *VGACharBuffer;
 
 

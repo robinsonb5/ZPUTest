@@ -3,7 +3,7 @@
 
 void ClearTextBuffer();
 
-int printf(const char *fmt,...);
+//int printf(const char *fmt,...);
 #undef putchar
 int putchar(int c);
 int puts(const char *str);

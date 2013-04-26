@@ -248,7 +248,8 @@ end process;
 	 generic map (
 			HARDWARE_MULTIPLY => false,
 			COMPARISON_SUB => true,
-			EQBRANCH => true
+			EQBRANCH => true,
+			MMAP_STACK => false
 		)
     port map (
         clk                 => clk2,
