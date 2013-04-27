@@ -11,7 +11,7 @@
 #define SPRITEBUFFER 0x1ff00
 
 extern long StandardPointerSprite[];
-
+int counter;
 
 void CopySprite()
 {
@@ -34,8 +34,8 @@ void ClearFramebuffer()
 
 void FillFramebuffer(int s)
 {
-	int *fb=(int *)FRAMEBUFFER;
-	int c=FB_WIDTH*FB_HEIGHT/2;
+	short *fb=(short *)FRAMEBUFFER;
+	int c=FB_WIDTH*FB_HEIGHT;
 	while(--c)
 		*fb++=s++;
 }
@@ -43,7 +43,6 @@ void FillFramebuffer(int s)
 
 int main(int argc,char *argv)
 {
-	int c=0;
 	long p=0;
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;
 	putserial("Hello world!\n");
@@ -52,10 +51,11 @@ int main(int argc,char *argv)
 	CopySprite();
 	HW_VGA(SP0PTR)=SPRITEBUFFER;
 	ClearFramebuffer();
+	counter=0;
 	while(1)
 	{
-		HW_PER(PER_HEX)=c++;
-		FillFramebuffer(c);
+		HW_PER(PER_HEX)=counter++;
+		FillFramebuffer(counter);
 	}
 	return(0);
 }

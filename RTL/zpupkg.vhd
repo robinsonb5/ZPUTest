@@ -127,7 +127,7 @@ package zpupkg is
 	 COMPARISON_SUB : boolean := true;
 	 EQBRANCH : boolean := true;
 	 MMAP_STACK : boolean := true;
-	 STOREB : boolean := true
+	 STOREBH : boolean := true
   );
     port ( 
       clk                 : in  std_logic;
@@ -138,8 +138,10 @@ package zpupkg is
       mem_write           : out std_logic_vector(wordSize-1 downto 0);
       out_mem_addr        : out std_logic_vector(maxAddrBitIncIO downto 0);
       out_mem_writeEnable : out std_logic;
+      out_mem_writeEnableb : out std_logic;
+      out_mem_writeEnableh : out std_logic;
       out_mem_readEnable  : out std_logic;
-      mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
+--      mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
       interrupt           : in  std_logic;
       break               : out std_logic
       );
@@ -202,6 +204,9 @@ package zpupkg is
   constant OpCode_PopSP            : std_logic_vector(3 downto 0) := "1101";
   constant OpCode_NA2              : std_logic_vector(3 downto 0) := "1110";
   constant OpCode_NA               : std_logic_vector(3 downto 0) := "1111";
+  --
+  constant OpCode_Loadh            : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(34, 6));
+  constant OpCode_Storeh           : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(35, 6));
   --
   constant OpCode_Lessthan         : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(36, 6));
   constant OpCode_Lessthanorequal  : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(37, 6));

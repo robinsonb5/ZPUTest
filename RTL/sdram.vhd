@@ -20,6 +20,7 @@
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 
+-- 32 bit CPU write port for the benefit of the ZPU core.
  
 library ieee;
 use ieee.std_logic_1164.all;
@@ -61,13 +62,14 @@ port
 	vga_reserveaddr : in std_logic_vector(31 downto 0);
 
 	-- Port 1
-	datawr1		: in std_logic_vector(15 downto 0);	-- Data in from minimig
-	Addr1		: in std_logic_vector(31 downto 0);	-- Address in from Minimig - FIXME case
+	datawr1		: in std_logic_vector(31 downto 0);	-- Data in from ZPU
+	Addr1		: in std_logic_vector(31 downto 0);	-- Address in from ZPU - FIXME case
 	req1		: in std_logic;
 --	cachesel	: in std_logic :='0'; -- 1 => data cache, 0 => instruction cache
 	wr1			: in std_logic;	-- Read/write from Minimig
 	wrL1		: in std_logic;	-- Minimig write lower byte
 	wrU1		: in std_logic;	-- Minimig write upper byte
+	wrU2		: in std_logic;	-- Minimig write upper word
 	dataout1		: out std_logic_vector(15 downto 0); -- Data destined for Minimig
 	dtack1	: buffer std_logic
 	);
@@ -124,11 +126,9 @@ signal port1_dtack : std_logic;
 type writecache_states is (waitwrite,fill,finish);
 signal writecache_state : writecache_states;
 
-signal writecache_addr : std_logic_vector(31 downto 3);
+signal writecache_addr : std_logic_vector(31 downto 1); -- Burst can start at 16-bit alignment
 signal writecache_word0 : std_logic_vector(15 downto 0);
 signal writecache_word1 : std_logic_vector(15 downto 0);
-signal writecache_word2 : std_logic_vector(15 downto 0);
-signal writecache_word3 : std_logic_vector(15 downto 0);
 signal writecache_dqm : std_logic_vector(7 downto 0);
 signal writecache_req : std_logic;
 signal writecache_dirty : std_logic;
@@ -172,7 +172,7 @@ COMPONENT TwoWayCache
 		cpu_rw		:	 IN STD_LOGIC;
 		cpu_rwl	: in std_logic;
 		cpu_rwu : in std_logic;
-		data_from_cpu		:	 IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+		data_from_cpu		:	 IN STD_LOGIC_VECTOR(31 DOWNTO 0);
 		data_to_cpu		:	 OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
 		sdram_addr		:	 OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
 		data_from_sdram		:	 IN STD_LOGIC_VECTOR(15 DOWNTO 0);
@@ -220,27 +220,26 @@ begin
 	elsif rising_edge(sysclk) then
 
 		writecache_dtack<='1';
+		writecache_dqm(7 downto 4)<="1111"; -- Never write the upper quadword.
+
+		-- 32-bit variant of writecache for ZPU...
 		case writecache_state is
 			when waitwrite =>
 				if req1='1' and wr1='0' then -- write request
-					if writecache_dirty='0' or addr1(31 downto 3)=writecache_addr(31 downto 3) then
+					if writecache_dirty='0' then
 						writecache_addr(31 downto 3)<=addr1(31 downto 3);
-						case addr1(2 downto 1) is
-							when "00" =>
-								writecache_word0<=datawr1;
-								writecache_dqm(1 downto 0)<=wrU1&wrL1;
-							when "01" =>
-								writecache_word1<=datawr1;
-								writecache_dqm(3 downto 2)<=wrU1&wrL1;
-							when "10" =>
-								writecache_word2<=datawr1;
-								writecache_dqm(5 downto 4)<=wrU1&wrL1;
-							when "11" =>
-								writecache_word3<=datawr1;
-								writecache_dqm(7 downto 6)<=wrU1&wrL1;
-						end case;
+						if wrU2='1' then -- is this a halfword write?	
+							-- 00 -> 11, 01 -> 00, 10 -> 01, 11 -> 10
+							writecache_addr(2)<=addr1(2) xor not addr1(1);
+							writecache_addr(1)<=not addr1(1);
+						else
+							writecache_addr(2 downto 1)<=addr1(2 downto 1);
+						end if;
+						writecache_word0<=datawr1(31 downto 16);
+						writecache_dqm(1 downto 0)<=wrU2&wrU2; -- Are we writing the upper word?
+						writecache_word1<=datawr1(15 downto 0);
+						writecache_dqm(3 downto 2)<=wrU1&wrL1; -- Are we writing the lower two bytes?
 						writecache_req<='1';
-
 						writecache_dtack<='0';
 						writecache_dirty<='1';
 					end if;
@@ -679,7 +678,7 @@ mytwc : component TwoWayCache
 							ba <= writecache_addr(4 downto 3);
 							slot1_bank <= writecache_addr(4 downto 3);
 							cas_dqm <= wrU1&wrL1;
-							casaddr <= writecache_addr&"000";
+							casaddr <= writecache_addr&"0";
 --							datain <= writecache_word0;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '0';
@@ -754,19 +753,19 @@ mytwc : component TwoWayCache
 						if sdram_slot1=writecache then
 							datain <= writecache_word1;
 							dqm <= writecache_dqm(3 downto 2);
+							writecache_burst<='0'; -- End write burst after 32 bits.
 						end if;
 
 					when ph7 => -- third word of burst write
 						if sdram_slot1=writecache then
-							datain <= writecache_word2;
+--							datain <= writecache_word2;
 							dqm <= writecache_dqm(5 downto 4);
 						end if;
 				
 					when ph8 =>
 						if sdram_slot1=writecache then
-							datain <= writecache_word3;
+--							datain <= writecache_word3;
 							dqm <= writecache_dqm(7 downto 6);
-							writecache_burst<='0';
 						end if;
 
 					when ph9 =>
@@ -795,7 +794,7 @@ mytwc : component TwoWayCache
 							ba <= writecache_addr(4 downto 3);
 							slot2_bank <= writecache_addr(4 downto 3);
 							cas_dqm <= wrU1&wrL1;
-							casaddr <= writecache_addr&"000";
+							casaddr <= writecache_addr&"0";
 --							datain <= writecache_word0;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '0';
@@ -870,19 +869,19 @@ mytwc : component TwoWayCache
 						if sdram_slot2=writecache then
 							datain <= writecache_word1;
 							dqm <= writecache_dqm(3 downto 2);
+							writecache_burst<='0'; -- End burst after 32 bits for ZPU
 						end if;
 
 					when ph15 => -- Third word of burst write
 						if sdram_slot2=writecache then
-							datain <= writecache_word2;
+--							datain <= writecache_word2;
 							dqm <= writecache_dqm(5 downto 4);
 						end if;
 
 					when ph0 => -- Final word of burst write
 						if sdram_slot2=writecache then
-							datain <= writecache_word3;
+--							datain <= writecache_word3;
 							dqm <= writecache_dqm(7 downto 6);
-							writecache_burst<='0';
 						end if;
 --						if sdram_slot2=port1 then
 --							readcache_fill<='1';

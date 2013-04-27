@@ -50,7 +50,7 @@ entity zpu_core is
 	 COMPARISON_SUB : boolean := true; -- Include sub (and also lessthan, etc - but not yet implemented)
 	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
 	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
-	 STOREB : boolean := true
+	 STOREBH : boolean := true
   );
   port ( 
     clk                 : in std_logic;
@@ -64,10 +64,12 @@ entity zpu_core is
     mem_write           : out std_logic_vector(wordSize-1 downto 0);
     out_mem_addr        : out std_logic_vector(maxAddrBitIncIO downto 0);
     out_mem_writeEnable : out std_logic;
+    out_mem_writeEnableb : out std_logic;  -- Enable byte write
+    out_mem_writeEnableh : out std_logic;  -- Enable halfword write
     out_mem_readEnable  : out std_logic;
     -- this implementation of the ZPU *always* reads and writes entire
     -- 32 bit words, so mem_writeMask is tied to (others => '1').
-    mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
+--    mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
     -- Set to one to jump to interrupt vector
     -- The ZPU will communicate with the hardware that caused the
     -- interrupt via memory mapped IO or the interrupt flag can
@@ -124,9 +126,9 @@ architecture behave of zpu_core is
     State_Or,
     State_And,
     State_Store,
-    State_WriteIOB,
     State_ReadIO,
     State_WriteIO,
+    State_WriteIOBH,
     State_Load,
     State_FetchNext,
     State_AddSP,
@@ -159,7 +161,7 @@ architecture behave of zpu_core is
     Decoded_Not,
     Decoded_Flip,
     Decoded_Store,
-    Decoded_StoreB,
+    Decoded_StoreBH,
     Decoded_PopSP,
     Decoded_Interrupt,
 	 Decoded_Mult,
@@ -315,9 +317,10 @@ begin
 				sampledDecodedOpcode <= Decoded_EqBranch;
 			end if;
 		end if;
-		if STOREB=true then
-			if tOpcode(5 downto 0) = OpCode_StoreB then
-				sampledDecodedOpcode <= Decoded_StoreB;
+		if STOREBH=true then
+			if tOpcode(5 downto 0) = OpCode_StoreB
+				or tOpcode(5 downto 0) = OpCode_StoreH then
+				sampledDecodedOpcode <= Decoded_StoreBH;
 			end if;
 		end if;
     elsif (tOpcode(7 downto 4) = OpCode_AddSP) then
@@ -359,9 +362,9 @@ begin
   begin
 
 
-	if STOREB=false then  -- If we're not implementing storeh or storeb then tie mask to 1
-		mem_writeMask <= (others => '1');
-	end if;
+--	if STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
+--		mem_writeMask <= (others => '1');
+--	end if;
  
     if reset = '1' then
       state               <= State_Resync;
@@ -398,6 +401,8 @@ begin
       memBAddr        <= (others => DontCareValue);
 
       out_mem_writeEnable <= '0';
+      out_mem_writeEnableb <= '0';
+      out_mem_writeEnableh <= '0';
       out_mem_readEnable  <= '0';
       begin_inst          <= '0';
 --      out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
@@ -593,11 +598,11 @@ begin
                 state <= State_WriteIO;
               end if;
 
-				when Decoded_StoreB =>
-				  if STOREB=true then
+				when Decoded_StoreBH =>
+				  if STOREBH=true then
 					  memBAddr <= sp + 1;
 					  sp       <= sp + 1;
-					 state <= State_WriteIOB;
+					 state <= State_WriteIOBH;
 				  end if;
 
             when Decoded_PopSP =>
@@ -622,7 +627,7 @@ begin
 			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
         when State_WriteIO =>
-			 mem_writeMask <= (others => '1');
+--			 mem_writeMask <= (others => '1');
           sp                  <= sp + 1;
           out_mem_writeEnable <= '1';
           out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
@@ -630,27 +635,15 @@ begin
           state               <= State_WriteIODone;
 			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
-			when State_WriteIOB =>
-				if STOREB=true then
-					mem_writeMask <= (others => '1');
+				when State_WriteIOBH =>
+				if STOREBH=true then
+--					mem_writeMask <= (others => '1');
 					sp                  <= sp + 1;
-					out_mem_writeEnable <= '1';
+					out_mem_writeEnableb <= not opcode(0); -- storeb is opcode 52
+					out_mem_writeEnableh <= opcode(1); -- storeh is opcode 35
 					out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
-					mem_write       <= std_logic_vector(memBRead(7 downto 0))&
-												std_logic_vector(memBRead(7 downto 0))&
-												std_logic_vector(memBRead(7 downto 0))&
-												std_logic_vector(memBRead(7 downto 0));
+					mem_write           <= std_logic_vector(memBRead);
 					state               <= State_WriteIODone;
-					case memARead(1 downto 0) is
-						when "00" =>
-							mem_writeMask <= "0001";
-						when "01" =>
-							mem_writeMask <= "0010";
-						when "10" =>
-							mem_writeMask <= "0100";
-						when "11" =>
-							mem_writeMask <= "1000";
-					end case;
 					fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 				end if;
 

@@ -72,8 +72,10 @@ signal mem_read             : std_logic_vector(wordSize-1 downto 0);
 signal mem_write            : std_logic_vector(wordSize-1 downto 0);
 signal mem_addr             : std_logic_vector(maxAddrBitIncIO downto 0);
 signal mem_writeEnable      : std_logic; 
+signal mem_writeEnableh      : std_logic; 
+signal mem_writeEnableb      : std_logic; 
 signal mem_readEnable       : std_logic;
-signal mem_writeMask        : std_logic_vector(wordBytes-1 downto 0);
+--signal mem_writeMask        : std_logic_vector(wordBytes-1 downto 0);
 signal zpu_enable               : std_logic;
 signal zpu_interrupt            : std_logic;
 signal zpu_break                : std_logic;
@@ -112,12 +114,16 @@ signal externram_data : std_logic_vector(wordSize-1 downto 0);
 -- SDRAM signals
 
 signal sdr_ready : std_logic;
-signal sdram_write : std_logic_vector(15 downto 0);
+signal sdram_write : std_logic_vector(31 downto 0); -- 32-bit width for ZPU
 signal sdram_addr : std_logic_vector(31 downto 0);
 signal sdram_req : std_logic;
 signal sdram_wr : std_logic;
 signal sdram_read : std_logic_vector(15 downto 0);
 signal sdram_ack : std_logic;
+
+signal sdram_wrL : std_logic;
+signal sdram_wrU : std_logic;
+signal sdram_wrU2 : std_logic;
 
 type sdram_states is (read1, read2, read3, write1, write2, write3, idle);
 signal sdram_state : sdram_states;
@@ -167,9 +173,10 @@ mysdram : entity work.sdram
 		datawr1 => sdram_write,
 		Addr1 => sdram_addr,
 		req1 => sdram_req,
-		wr1 => sdram_wr,
-		wrL1 => '0',
-		wrU1 => '0',
+		wr1 => sdram_wr, -- active love
+		wrL1 => sdram_wrL, -- lower byte
+		wrU1 => sdram_wrU, -- upper byte
+		wrU2 => sdram_wrU2, -- upper halfword, only written on longword accesses
 		dataout1 => sdram_read,
 		dtack1 => sdram_ack
 	);
@@ -260,8 +267,10 @@ end process;
         mem_write           => mem_write, 
         out_mem_addr        => mem_addr, 
         out_mem_writeEnable => mem_writeEnable,  
+        out_mem_writeEnableh => mem_writeEnableh,  
+        out_mem_writeEnableb => mem_writeEnableb,  
         out_mem_readEnable  => mem_readEnable,
-        mem_writeMask       => mem_writeMask, 
+--        mem_writeMask       => mem_writeMask, 
         interrupt           => zpu_interrupt,
         break               => zpu_break
     );
@@ -283,7 +292,9 @@ begin
 	zpu_enable<='1';
 	zpu_interrupt<='0';
 
-	if rising_edge(clk2) then
+	if reset='0' then
+		currentstate<=WAITING;
+	elsif rising_edge(clk2) then
 		mem_busy<='1';
 
 		ser_txgo<='0';
@@ -298,7 +309,7 @@ begin
 			when WAITING =>
 			
 				-- Write from CPU
-				if mem_writeEnable='1' then
+				if mem_writeEnable='1' or mem_WriteEnableh='1' or mem_WriteEnableb='1' then
 					case mem_addr(31 downto 16) is
 						when X"0000" =>	-- Boot BlockRAM
 							currentstate<=WRITE1;
@@ -322,6 +333,9 @@ begin
 							end case;
 							mem_busy<='0';
 						when others => -- SDRAM access
+							sdram_wrL<='0';
+							sdram_wrU<='0';
+							sdram_wrU2<=mem_writeEnableh; -- Halfword access
 							sdram_state<=write1;
 					end case;
 
@@ -395,20 +409,21 @@ begin
 					sdram_state<=idle;
 					mem_busy<='0';
 				end if;
-			when write1 => -- read first word from RAM
+			when write1 => -- write 32-bit word to SDRAM
 				sdram_addr<=mem_Addr;
 				sdram_wr<='0';
 				sdram_req<='1';
-				sdram_write<=mem_write(31 downto 16);
-				if sdram_ack='0' then -- is first word ready?
+				sdram_write<=mem_write; -- 32-bits now
+				if sdram_ack='0' then -- done?
 					sdram_req<='0';
-					sdram_state<=write2;
+					sdram_state<=idle;
+					mem_busy<='0';
 				end if;
 			when write2 =>	-- Prepare for second word...
-				sdram_addr(1)<='1';
-				sdram_req<='1';
-				sdram_write<=mem_write(15 downto 0);
-				sdram_state<=write3;
+--				sdram_addr(1)<='1';
+--				sdram_req<='1';
+--				sdram_write<=mem_write(15 downto 0);
+--				sdram_state<=write3;
 			when write3 =>  -- Wait for second word...
 				if sdram_ack='0' then -- is first word ready?
 					sdram_req<='0';

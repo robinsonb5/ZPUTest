@@ -30,7 +30,7 @@ module TwoWayCache
 	input cpu_rw, // 1 for read cycles, 0 for write cycles
 	input cpu_rwl,
 	input cpu_rwu,
-	input [15:0] data_from_cpu,
+	input [31:0] data_from_cpu, // CPU writes are 32-bit for ZPU
 	output reg [15:0] data_to_cpu,
 	output reg [31:0] sdram_addr,
 	input [15:0] data_from_sdram,
@@ -208,6 +208,8 @@ begin
 			begin
 				// If the current address is in cache,
 				// we must update the appropriate cacheline
+				
+				// FIXME - need to figure out 32-bit writes!
 
 				// FIXME - this won't work for byte accesses!
 				
@@ -215,7 +217,7 @@ begin
 				// If this is a byte write, the byte not being written
 				// will be marked as invalid, triggering a re-read if
 				// the other byte or whole word is read.
-				data_ports_w<={~cpu_rwu,~cpu_rwl,data_from_cpu};
+				data_ports_w<={~cpu_rwu,~cpu_rwl,data_from_cpu[15:0]};
 
  				if(tag_hit1)
 				begin
