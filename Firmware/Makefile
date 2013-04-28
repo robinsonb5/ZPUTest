@@ -28,9 +28,9 @@ ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
 
 ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
 
-CFLAGS  = -I. -c -O3
+CFLAGS  = -I. -c -Os
 AFLAGS  = 
-LFLAGS  =  
+LFLAGS  = -Os
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 

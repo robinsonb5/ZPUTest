@@ -11,7 +11,6 @@
 #define SPRITEBUFFER 0x1ff00
 
 extern long StandardPointerSprite[];
-int counter;
 
 void CopySprite()
 {
@@ -37,13 +36,19 @@ void FillFramebuffer(int s)
 	short *fb=(short *)FRAMEBUFFER;
 	int c=FB_WIDTH*FB_HEIGHT;
 	while(--c)
-		*fb++=s++;
+	{
+		if((s & 255)<128)
+			*fb++=s++;
+		else
+			*fb++=0xffff-s++;
+	}
 }
 
 
 int main(int argc,char *argv)
 {
 	long p=0;
+	int counter;
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;
 	putserial("Hello world!\n");
 	puts("Hello World!\n");

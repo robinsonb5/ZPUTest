@@ -32,8 +32,6 @@
 -- are those of the authors and should not be interpreted as representing
 -- official policies, either expressed or implied, of the ZPU Project.
 
--- Targetting EP3C25, LE count: 663 / 247
-
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -137,6 +135,7 @@ architecture behave of zpu_core is
     State_Resync,
     State_Interrupt,
 	 State_Mult,
+	 State_Comparison,
 	 State_Eq,
 	 State_Neq,
 	 State_Sub,
@@ -166,6 +165,7 @@ architecture behave of zpu_core is
     Decoded_Interrupt,
 	 Decoded_Mult,
 	 Decoded_Sub,
+	 Decoded_Comparison,
 	 Decoded_Eq,
 	 Decoded_Neq,
 	 Decoded_EqBranch
@@ -197,6 +197,7 @@ architecture behave of zpu_core is
   signal  inInterrupt        : std_logic;
 
   signal comparison_sub_result : unsigned(wordSize downto 0); -- Extra bit needed for signed comparisons
+  signal comparison_eq : std_logic;
 
   signal eqbranch_zero : std_logic;
   
@@ -309,6 +310,10 @@ begin
 				sampledDecodedOpcode <= Decoded_Eq;
 			elsif tOpcode(5 downto 0)= OpCode_Sub then
 				sampledDecodedOpcode <= Decoded_Sub;
+			elsif tOpcode(5 downto 0)= OpCode_Lessthanorequal
+				or tOpcode(5 downto 0)= OpCode_Lessthan
+					then
+				sampledDecodedOpcode <= Decoded_Comparison;
 			end if;
 		end if;
 		if EQBRANCH=true then
@@ -362,6 +367,12 @@ begin
   begin
 
 
+		if COMPARISON_SUB=true and comparison_sub_result='0'&X"00000000" then
+			comparison_eq<='1';
+		else
+			comparison_eq<='0';
+		end if;
+  
 --	if STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
 --		mem_writeMask <= (others => '1');
 --	end if;
@@ -419,7 +430,7 @@ begin
 		end if;
 
 		if COMPARISON_SUB=true then
-			comparison_sub_result<=unsigned(memBRead(wordsize-1)&memBRead)-unsigned(memARead(wordsize-1)&memARead);
+			comparison_sub_result<=unsigned("0"&memBRead)-unsigned("0"&memARead);
 		end if;
 
 		eqbranch_zero<='0';
@@ -543,6 +554,10 @@ begin
 						end if;
 						state <= State_IncSP;
 					end if;
+					
+				when Decoded_Comparison =>
+					sp    <= sp + 1;
+					state <= State_Comparison;
 
             when Decoded_Add =>
               sp    <= sp + 1;
@@ -741,11 +756,19 @@ begin
 				memAAddr <= sp;
 				memAWriteEnable <= '1';
 				memAWrite       <= (others =>'0');
-				if comparison_sub_result='0'&X"00000000" then
-					memAWrite(0) <= '1';
-				end if;
+				memAWrite(0) <= comparison_eq;
 				state <= State_Fetch;
-			 
+				
+			when State_Comparison =>
+				-- FIXME - what about unsigned comparison - simpler or not?
+				memAAddr <= sp;
+				memAWriteEnable <= '1';
+				memAWrite <= (others => '0');
+				memAWrite(0) <= not (memARead(wordSize-1) xor memBRead(wordSize-1)
+										xor comparison_sub_result(wordSize)
+											xor (not opCode(0) and comparison_eq));
+				state <= State_Fetch;
+
         when others =>
           null;
 
