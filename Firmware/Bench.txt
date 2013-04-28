@@ -6,3 +6,11 @@ Hardware compare / neqbranch disabled:
 38 frames in 20 seconds -> 1.9 fps
 621 LEs
 
+
+Halfword / comp - hardware disabled: 579 LEs
+35 frames in 60 seconds -> 0.58fps
+
+Halfword / comp - hardware enabled:  745 LEs  (131% area increase)
+93 frames in 60 seconds -> 1.55fps   (267% speedup)
+
+

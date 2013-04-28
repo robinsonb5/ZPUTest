@@ -2,6 +2,11 @@
 --
 -- Copyright 2004-2008 oharboe - �yvind Harboe - oyvind.harboe@zylin.com
 -- 
+-- Changes by Alastair M. Robinson, 2013
+-- to allow the core to run from external RAM, and to balance performance and area.
+-- The goal is to make the ZPU a useful support CPU for such tasks as loading
+-- ROMs from SD Card, while keeping the area under 1,000 logic cells.
+--
 -- The FreeBSD license
 -- 
 -- Redistribution and use in source and binary forms, with or without
@@ -136,8 +141,7 @@ architecture behave of zpu_core is
     State_Interrupt,
 	 State_Mult,
 	 State_Comparison,
-	 State_Eq,
-	 State_Neq,
+	 State_EqNeq,
 	 State_Sub,
 	 State_IncSP
     );
@@ -166,8 +170,7 @@ architecture behave of zpu_core is
 	 Decoded_Mult,
 	 Decoded_Sub,
 	 Decoded_Comparison,
-	 Decoded_Eq,
-	 Decoded_Neq,
+	 Decoded_EqNeq,
 	 Decoded_EqBranch
     );
 
@@ -306,8 +309,9 @@ begin
 			sampledDecodedOpcode <= Decoded_Mult;
 		end if;
 		if COMPARISON_SUB=true then
-			if tOpcode(5 downto 0) = OpCode_Eq then
-				sampledDecodedOpcode <= Decoded_Eq;
+			if tOpcode(5 downto 0) = OpCode_Eq
+				or tOpcode(5 downto 0) = OpCode_Neq then
+					sampledDecodedOpcode <= Decoded_EqNeq;
 			elsif tOpcode(5 downto 0)= OpCode_Sub then
 				sampledDecodedOpcode <= Decoded_Sub;
 			elsif tOpcode(5 downto 0)= OpCode_Lessthanorequal
@@ -588,9 +592,9 @@ begin
                 state              <= State_ReadIO;
              end if;
 
-				when Decoded_Eq =>
+				when Decoded_EqNeq =>
 					sp <= sp + 1;
-					state <= State_Eq;
+					state <= State_EqNeq;
 
             when Decoded_Not =>
               memAAddr        <= sp(maxAddrBitStackBRAM downto minAddrBit);
@@ -752,11 +756,11 @@ begin
           memAWrite       <= memARead and memBRead;
           state           <= State_Fetch;
 
-		  when State_Eq =>
+		  when State_EqNeq =>
 				memAAddr <= sp;
 				memAWriteEnable <= '1';
 				memAWrite       <= (others =>'0');
-				memAWrite(0) <= comparison_eq;
+				memAWrite(0) <= comparison_eq xor opcode(4); -- eq is 46, neq is 48.
 				state <= State_Fetch;
 				
 			when State_Comparison =>
