@@ -256,7 +256,8 @@ end process;
 			HARDWARE_MULTIPLY => false,
 			COMPARISON_SUB => true,
 			EQBRANCH => true,
-			MMAP_STACK => false
+			MMAP_STACK => false,
+			STOREBH => true
 		)
     port map (
         clk                 => clk2,

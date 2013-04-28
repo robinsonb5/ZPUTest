@@ -434,7 +434,7 @@ begin
 		end if;
 
 		if COMPARISON_SUB=true then
-			comparison_sub_result<=unsigned("0"&memBRead)-unsigned("0"&memARead);
+			comparison_sub_result<=unsigned(memBRead(wordSize-1)&memBRead)-unsigned(memARead(wordSize-1)&memARead);
 		end if;
 
 		eqbranch_zero<='0';
@@ -724,13 +724,13 @@ begin
           memAWrite       <= memARead + memBRead;
           state           <= State_Fetch;
 
-        when State_Sub =>
-          memAAddr        <= sp;
-          memAWriteEnable <= '1';
-          memAWrite       <= comparison_sub_result(wordSize-1 downto 0);
-          state           <= State_Fetch;
+			when State_Sub =>
+				memAAddr        <= sp;
+				memAWriteEnable <= '1';
+				memAWrite       <= comparison_sub_result(wordSize-1 downto 0);
+				state           <= State_Fetch;
 
-			 when State_Mult =>
+			when State_Mult =>
           memAAddr        <= sp;
           memAWriteEnable <= '1';
           memAWrite       <= tMultResult(wordSize-1 downto 0);
@@ -768,8 +768,7 @@ begin
 				memAAddr <= sp;
 				memAWriteEnable <= '1';
 				memAWrite <= (others => '0');
-				memAWrite(0) <= not (memARead(wordSize-1) xor memBRead(wordSize-1)
-										xor comparison_sub_result(wordSize)
+				memAWrite(0) <= not (comparison_sub_result(wordSize)
 											xor (not opCode(0) and comparison_eq));
 				state <= State_Fetch;
 
