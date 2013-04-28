@@ -52,7 +52,7 @@ signal reset : std_logic := '0';
 signal reset_counter : unsigned(15 downto 0) := X"FFFF";
 
 -- State machine
-type SOCStates is (WAITING,READ1,WRITE1,PAUSE);
+type SOCStates is (WAITING,READ1,WRITE1,PAUSE,VGAREAD,VGAWRITE);
 signal currentstate : SOCStates;
 
 -- UART signals
@@ -64,6 +64,10 @@ signal ser_rxrecv : std_logic;
 signal ser_txgo : std_logic;
 signal ser_rxint : std_logic;
 signal ser_clock_divisor : unsigned(15 downto 0);
+
+-- Millisecond counter
+signal millisecond_counter : unsigned(31 downto 0) := X"00000000";
+signal millisecond_tick : unsigned(19 downto 0);
 
 -- ZPU signals
 
@@ -133,6 +137,19 @@ signal sdram_state : sdram_states;
 begin
 
 sdr_clkena <='1';
+
+-- Timer
+process(clk)
+begin
+	if rising_edge(clk) then
+		millisecond_tick<=millisecond_tick+1;
+		if millisecond_tick=sysclk_frequency*100 then
+			millisecond_counter<=millisecond_counter+1;
+			millisecond_tick<=X"00000";
+		end if;
+	end if;
+end process;
+
 
 -- SDRAM
 mysdram : entity work.sdram 
@@ -317,7 +334,8 @@ begin
 						when X"FFFE" =>	-- VGA controller
 							vga_reg_rw<='0';
 							vga_reg_req<='1';
-							mem_busy<='0';
+							currentstate<=VGAWRITE;
+
 						when X"FFFF" =>	-- Peripherals
 							case mem_addr(15 downto 0) is
 								when X"FF84" => -- UART
@@ -348,7 +366,7 @@ begin
 						when X"FFFE" =>	-- VGA controller
 							vga_reg_req<='1';
 							mem_read<=X"0000"&vga_reg_dataout;
-							mem_busy<='0';
+							currentstate<=VGAREAD;
 
 						when X"FFFF" =>	-- Peripherals
 							case mem_addr is
@@ -359,6 +377,9 @@ begin
 									
 								when X"FFFFFF8C" => -- Flags (switches) register
 									mem_read<=X"0000"&src;
+								
+								when X"FFFFFFC0" => -- Millisecond counter
+									mem_read<=std_logic_vector(millisecond_counter);
 									
 								when others =>
 									null;
@@ -378,7 +399,17 @@ begin
 			when WRITE1 =>
 				mem_busy<='0';
 				currentstate<=PAUSE;
-				
+
+			when VGAREAD =>
+				if vga_reg_dtack='0' then
+					mem_busy<='0';
+				end if;
+
+			when VGAWRITE =>
+				if vga_reg_dtack='0' then
+					mem_busy<='0';
+				end if;
+
 			when PAUSE =>
 				currentstate<=WAITING;
 

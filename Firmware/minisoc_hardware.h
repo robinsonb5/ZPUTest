@@ -94,11 +94,14 @@ extern char *VGACharBuffer;
 #define PER_TIMER_DIV6 0x34
 #define PER_TIMER_DIV7 0x38	/* SPI speed */
 
+/* Millisecond counter */
+#define PER_MILLISECONDS 0x3c
+
 /* SPI register */
-#define PER_SPI 0x3c
-#define PER_SPI_CS 0x40	/* CS bits are write-only, but bit 15 reads as the SPI busy signal */
-#define PER_SPI_BLOCKING 0x44
-#define PER_SPI_PUMP 0x48 /* Push 32-bits through SPI in one instruction */
+#define PER_SPI 0x40
+#define PER_SPI_CS 0x44	/* CS bits are write-only, but bit 15 reads as the SPI busy signal */
+#define PER_SPI_BLOCKING 0x48
+#define PER_SPI_PUMP 0x4c /* Push 32-bits through SPI in one instruction */
 
 #define PER_SPI_BUSY 15
 

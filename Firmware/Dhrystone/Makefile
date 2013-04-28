@@ -7,16 +7,9 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
-CT_PRJ = countertest
-CT_SRC = countertest.c # spi.c
-CT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CT_SRC))
-
-FB_PRJ = fbtest
-FB_SRC = fbtest.c textbuffer.c minisoc_hardware.c # spi.c
-FB_ASM = spritedata.s
-FB_C_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
-FB_ASM_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(FB_ASM))
-FB_OBJ = $(FB_C_OBJ) $(FB_ASM_OBJ)
+DH_PRJ = dhrystone
+DH_SRC = dhry_1.c dhry_2.c
+DH_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DH_SRC))
 
 LINKMAP  = 
 LIBDIR   = 
@@ -28,7 +21,7 @@ ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
 
 ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
 
-CFLAGS  = -I. -c -Os
+CFLAGS  = -I../ -I. -c -Os -DTINY
 AFLAGS  = 
 LFLAGS  = -Os
 CP_HEXFLAGS = -Oihex
@@ -40,7 +33,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(CT_PRJ).mif $(FB_PRJ).mif
+all: $(BUILD_DIR) $(DH_PRJ).mif
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -65,10 +58,7 @@ $(PRJ).hex: $(PRJ).elf
 	srec_cat $< -o $@ -mif 32
 
 # Link - this produces an ELF binary.
-$(CT_PRJ).elf: $(CT_OBJ)
-	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
-
-$(FB_PRJ).elf: $(FB_OBJ)
+$(DH_PRJ).elf: $(DH_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
 %.rom: %.bin $(ROMGEN)
@@ -83,19 +73,3 @@ $(BUILD_DIR)/%.o: %.s
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
 
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)

@@ -266,13 +266,12 @@ begin
 			charramstate<=writeupperbyte; -- Reset state machine.
 			if reg_addr_in(11)='1' then	-- Character RAM access
 				-- Need to deal with both word and byte reads/writes.
-				-- We do one read and one write to both bytes on a 4-step cycle.
 				case charramstate is
 					when writeupperbyte =>
 						if reg_req='1' then
-							chargen_addr<=reg_addr_in(10 downto 1) & '0';	-- Upper byte
-							chargen_datain<=reg_data_in(15 downto 8);
-							if reg_rw='0' and reg_uds='0' then
+							chargen_addr<=reg_addr_in(10 downto 0);	-- Upper byte
+							chargen_datain<=reg_data_in(7 downto 0);
+							if reg_rw='0' then
 								chargen_rw<='0';
 							end if;
 							charramstate<=writeupperbyte1;
@@ -281,23 +280,26 @@ begin
 						charramstate<=readupperbyte1;
 					when readupperbyte1 =>
 						charramstate<=readupperbyte2;	-- delay for data
-					when readupperbyte2 =>			
-						reg_data_out(15 downto 8)<=chargen_dataout;
-						charramstate<=writelowerbyte;
-					when writelowerbyte =>
-						chargen_addr<=reg_addr_in(10 downto 1) & '1';	-- lower byte
-						chargen_datain<=reg_data_in(7 downto 0);
-						if reg_rw='0' and reg_lds='0' then
-							chargen_rw<='0';
-						end if;
-						charramstate<=writelowerbyte1;
-					when writelowerbyte1 =>
-						charramstate<=readlowerbyte1;
-					when readlowerbyte1 =>
-						charramstate<=readlowerbyte2;	-- delay for data
-					when readlowerbyte2 =>
+					when readupperbyte2 =>
 						reg_data_out(7 downto 0)<=chargen_dataout;
 						reg_dtack<='0';
+--						charramstate<=writelowerbyte;
+--					when writelowerbyte =>
+--						chargen_addr<=reg_addr_in(10 downto 1) & '1';	-- lower byte
+--						chargen_datain<=reg_data_in(7 downto 0);
+--						if reg_rw='0' and reg_lds='0' then
+--							chargen_rw<='0';
+--						end if;
+--						charramstate<=writelowerbyte1;
+--					when writelowerbyte1 =>
+--						charramstate<=readlowerbyte1;
+--					when readlowerbyte1 =>
+--						charramstate<=readlowerbyte2;	-- delay for data
+--					when readlowerbyte2 =>
+--						reg_data_out(7 downto 0)<=chargen_dataout;
+--						reg_dtack<='0';
+					when others =>
+						null;
 				end case;
 			elsif reg_req='1' then
 				case reg_addr_in is

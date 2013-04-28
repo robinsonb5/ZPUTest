@@ -654,7 +654,7 @@ begin
           state               <= State_WriteIODone;
 			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
-				when State_WriteIOBH =>
+			when State_WriteIOBH =>
 				if STOREBH=true then
 --					mem_writeMask <= (others => '1');
 					sp                  <= sp + 1;
