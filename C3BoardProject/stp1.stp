@@ -1,0 +1,1044 @@
+<session jtag_chain="USB-Blaster [1-1]" jtag_device="@1: EP3C25/EP4CE22 (0x020F30DD)" sof_file="C3BoardToplevel.sof">
+  <display_tree gui_logging_enabled="0">
+    <display_branch instance="auto_signaltap_0" log="USE_GLOBAL_TEMP" signal_set="USE_GLOBAL_TEMP" trigger="USE_GLOBAL_TEMP"/>
+  </display_tree>
+  <instance entity_name="sld_signaltap" is_auto_node="yes" is_expanded="true" name="auto_signaltap_0" source_file="sld_signaltap.vhd">
+    <node_ip_info instance_id="0" mfg_id="110" node_id="0" version="6"/>
+    <position_info>
+      <single attribute="active tab" value="0"/>
+      <single attribute="data horizontal scroll position" value="0"/>
+      <single attribute="data vertical scroll position" value="0"/>
+      <single attribute="zoom level denominator" value="1"/>
+      <single attribute="zoom level numerator" value="4"/>
+      <single attribute="zoom offset denominator" value="1"/>
+      <single attribute="zoom offset numerator" value="32736"/>
+    </position_info>
+    <signal_set global_temp="1" name="signal_set: 2013/04/28 23:32:26  #0">
+      <clock name="ZPUTest:mytg68test|clk" polarity="posedge" tap_mode="classic"/>
+      <config ram_type="M4K" reserved_data_nodes="0" reserved_storage_qualifier_nodes="0" reserved_trigger_nodes="0" sample_depth="128" trigger_in_enable="no" trigger_out_enable="no"/>
+      <top_entity/>
+      <signal_vec>
+        <trigger_input_vec>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[8]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[8]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[0]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[1]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_readEnable" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnable" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableb" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableh" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[9]" tap_mode="classic" type="combinatorial"/>
+        </trigger_input_vec>
+        <data_input_vec>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[8]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[8]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[0]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[1]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_readEnable" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnable" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableb" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableh" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[9]" tap_mode="classic" type="combinatorial"/>
+        </data_input_vec>
+        <storage_qualifier_input_vec>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[8]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[8]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[0]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[1]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[2]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[3]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[4]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[5]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[6]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|opcode[7]" tap_mode="classic" type="register"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_readEnable" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnable" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableb" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableh" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[9]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[0]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[10]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[11]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[12]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[13]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[14]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[15]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[16]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[17]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[18]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[19]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[1]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[20]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[21]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[22]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[23]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[24]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[25]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[26]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[27]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[28]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[29]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[2]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[30]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[31]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[3]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[4]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[5]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[6]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[7]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[8]" tap_mode="classic" type="combinatorial"/>
+          <wire name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[9]" tap_mode="classic" type="combinatorial"/>
+        </storage_qualifier_input_vec>
+      </signal_vec>
+      <presentation>
+        <data_view>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|opcode" order="msb_to_lsb" radix="hex" state="collapse" type="register">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[0]"/>
+          </bus>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnable"/>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_readEnable"/>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableb"/>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableh"/>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr" order="msb_to_lsb" radix="hex" state="collapse" type="register">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[2]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr" order="msb_to_lsb" radix="hex" state="collapse" type="register">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[2]"/>
+          </bus>
+        </data_view>
+        <setup_view>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_read[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|mem_write[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_addr[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|opcode" order="msb_to_lsb" radix="hex" state="collapse" type="register">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|opcode[0]"/>
+          </bus>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnable"/>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_readEnable"/>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableb"/>
+          <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|out_mem_writeEnableh"/>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memARead[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead" order="msb_to_lsb" radix="hex" state="collapse" type="combinatorial">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[31]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[30]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[29]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[28]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[27]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[26]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[25]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[24]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[23]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[22]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[21]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[20]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[19]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[18]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[17]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[16]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[15]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[14]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[13]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[12]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[11]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[10]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[9]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[2]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[1]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|stackram:memory|memBRead[0]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr" order="msb_to_lsb" radix="hex" state="collapse" type="register">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memAAddr[2]"/>
+          </bus>
+          <bus is_signal_inverted="no" link="all" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr" order="msb_to_lsb" radix="hex" state="collapse" type="register">
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[8]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[7]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[6]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[5]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[4]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[3]"/>
+            <net is_signal_inverted="no" name="ZPUTest:mytg68test|zpu_core:zpu|memBAddr[2]"/>
+          </bus>
+        </setup_view>
+      </presentation>
+      <trigger CRC="7729AAE4" attribute_mem_mode="false" gap_record="true" global_temp="1" name="trigger: 2013/04/28 23:37:54  #0" position="pre" power_up_trigger_mode="false" record_data_gap="true" segment_size="1" storage_mode="off" storage_qualifier_disabled="no" storage_qualifier_port_is_pin="false" storage_qualifier_port_name="auto_stp_external_storage_qualifier" storage_qualifier_port_tap_mode="classic" trigger_in="dont_care" trigger_out="active high" trigger_type="circular">
+        <power_up_trigger position="pre" storage_qualifier_disabled="no" trigger_in="dont_care" trigger_out="active high"/>
+        <events use_custom_flow_control="no">
+          <level enabled="yes" name="condition1" type="basic">
+            <power_up enabled="yes">
+            </power_up>
+            <op_node/>
+          </level>
+        </events>
+        <storage_qualifier_events>
+          <transitional>000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            <pwr_up_transitional>000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</pwr_up_transitional>
+          </transitional>
+          <storage_qualifier_level type="basic">
+            <power_up>
+            </power_up>
+            <op_node/>
+          </storage_qualifier_level>
+          <storage_qualifier_level type="basic">
+            <power_up>
+            </power_up>
+            <op_node/>
+          </storage_qualifier_level>
+          <storage_qualifier_level type="basic">
+            <power_up>
+            </power_up>
+            <op_node/>
+          </storage_qualifier_level>
+        </storage_qualifier_events>
+        <log>
+          <data global_temp="1" name="log: 2013/04/28 23:54:15  #0" power_up_mode="false" sample_depth="128" trigger_position="16">111110100000110001010110001010010100100000001001100000000000000000001000101111100010100000000000010000000000100000101000000000000000000000000000000011100100000000000000000000000001100000000001110000110001010110001010010100100000001001100000000000000000001000101111001000000000000000010000000000100000101000000000000000000000000000000011100100000000000000000000000000111001000001110000110001010110001010010100100000001001100000000000000000001000101111001000001000000000010000000000100000101000000000000000000000000000000011100110000000000100000000001000000000000001110000110001010110001010010100100000001001100000000000000000001000101111001000001000000000010000000000100000101000000000000000000000000000000011100110000000000100000000001000000000000001110000110001010110001010010100100000001001100000000000000000001000101111001000001000000000010000000000100000101000000000000000000000000000000011100110000000000100000000001000000000000001100101110001010110001010010100100000001001100000000000000000001000101111001000001000000000010000000000100000101000000000000000000000000000000011100110000000000100000000001000000000100001101000110001010110001010010100100000001001100000000000000000001000101111010100001000000000010000000000100000101000000000000000000000000000000011100110000000000100000000001000000000100001101000110001010110001010010100100000001001100000000000000000001000101111010100000000000000000000000000000011100110001000000000010000000000100000000000100000000100000000001001111100100001101000110001010110001010010100100000001001100000000000000000001000101111010100000000000000000000000000000011100110001000000000010000000000100000000000100000000100000000001001111100100001101000110100000111111111100000001010100101100000000000000000001000101111010100000000000000000000000000000011100110001000000000010000000000100000000000100000000100000000001001111100100001101000110100000111111111100000001010100101100000000000000000001000101111100000000000000000000000000000000011100110001000000000010000000000100000000000100000000100000000001001111100100001101000110100000111111111100000001010100101100000000000000000001000101111100000000000000000000000000000000011100100001000000000010000000000100000000000100000000100000000001001111100100001101000110100000111111111100000001010100101100000000000000000001000101111100000000000000000000000000000000011100100001000000000010000000000100000000000100000000100000000001001111100000001101001110100000111111111100000001010100101100000000000000000001000101111100000000000000000000000000000000011100100001000000000010000000000100000000000100000000100000000001001111100000001110000110100000111111111100000001010100101100000000000000000001000101111111111101000000000000000000000000011100100001000000000000000000000000000000010000000000000000000000000000000000001110000110100000111111111100000001010100101100000000000000000001000101111111111101000000000000000000000000011100100001000000000000000000000000000000010000000000100000000001000000000000001110000110100000111111111100000001010100101100000000000000000001000101111111111101000000000000000000000000011100100001000000000000000000000000000000010000000000100000000001000000000000001111110110100000111111111100000001010100101100000000000000000001000101111111111101000000000000000000000000011100100001000000000000000000000000000000010000000000100000000001000000000000001110000110100000111111111100000001010100101100000000000000000001000101111011000000000000000010000000000000011100100001000000000010000000000100111110000000000000000000000001000000000000001110000110100000111111111100000001010100101100000000000000000001000101111011000000000000000010000000000000011100100001000000000010000000000100111110010000000000100000000001000000000000001110000110100000111111111100000001010100101100000000000000000001000101111011000000000000000010000000000000011100100001000000000010000000000100111110010000000000100000000001000000000000001101101110100000111111111100000001010100101100000000000000000001000101111011000000000000000010000000000000011100100001000000000010000000000100111110010000000000100000000001000000000100001101000110100000111111111100000001010100101100000000000000000001000101111010010100000000000010000000000000011100100001000000000010000000000100111110001100000000000000000000000111011100001101000110100000111111111100000001010100101100000000000000000001000101111010010101000000000010000000000000011100100001000000000010000000000100000000000100000000100000000001001111100100001101000110100000111111111100000001010100101100000000000000000001000101111010010101000000000010000000000000011100100001000000000010000000000100000000000100000000100000000001001111100100001101000110100000111111111100000001010100101100000000000000000001000101111010010101000000000010000000000000011100100001000000000010000000000100000000000100000000100000000001001111100100001111000110100000111111111100000001010100101100000000000000000001000101111010010101000000000010000000000000011100100001000000000010000000000100000000000100000000100000000001001111100010001111000110100000111111111100000001010100101100000000000000000001000101111100000001000000000010000000000000011100100001000000000010000000000100000000010000000000100000000001000000000010001111000110100000111111111100000001010100101100000000000000000001000101111100000000000000000000000000000100011100110000010000000010000000000100111110010000000000100000000001000000000010001111000110100000111111111100000001010100101100000000000000000001000101111100000000000000000000000000000100011100110000010000000010000000000100111110010000000000100000000001000000000010001111000110000000000000000001000000000000001100000000000000000001000101111100000000000000000000000000000100011100110000010000000010000000000100111110010000000000100000000001000000000010001111000110000000000000000001000000000000001100000000000000000001000101111001000000000000000000000000000100011100110000010000000010000000000100111110010000000000100000000001000000000010001111000110000000000000000001000000000000001100000000000000000001000101111001000000000000000000000000000100011100100000010000000010000000000100111110010000000000100000000001000000000010001111000110000000000000000001000000000000001100000000000000000001000101111001000000000000000000000000000100011100100000010000000010000000000100111110010000000000100000000001000000000010001101101110000000000000000001000000000000001100000000000000000001000101111001000000000000000000000000000100011100100000010000000010000000000100111110010000000000100000000001000000000110001100100110000000000000000001000000000000001100000000000000000001000101111000000000000000000000000000000100011100100000010000000010000000000100111110001100000000000000000000000111011110001100100110000000000000000001000000000000001100000000000000000001000101111000000000010000000010000000000100111110010001000000000010000000000100000000010000000000100000000001000000000110001100100110000000000000000001000000000000001100000000000000000001000101111000000000010000000010000000000100111110010001000000000010000000000100000000010000000000100000000001000000000110001100100110001010110001100001111001011101001100000000000000000001000101111000000000010000000010000000000100111110010001000000000010000000000100000000010000000000100000000001000000000110001100100110001010110001100001111001011101001100000000000000000001000101111100010100010000000010000000000100111110010001000000000010000000000100000000010000000000100000000001000000000110001100100110001010110001100001111001011101001100000000000000000001000101111100010100010000000010000000000100111110000001000000000010000000000100000000010000000000100000000001000000000110001100100110001010110001100001111001011101001100000000000000000001000101111100010100010000000010000000000100111110000001000000000010000000000100000000010000000000100000000001000000000110001100100110001010110001100001111001011101001100000000000000000001000101111100010100010000000010000000000100111110000001000000000010000000000100000000010000000000100000000001000000000001001110100110001010110001100001111001011101001100000000000000000001000101111000011100010000000010000000000100111110000001000000000010000000000100000000010000000000100000000001000000000001001110100110001010110001100001111001011101001100000000000000000001000101111000011101010000000010000000000100111110000001000000000010000000000100000000010100001101100001101000000100111001001110100110001010110001100001111001011101001100000000000000000001000101111000011101010000000010000000000100111110000001000000000010000000000100000000010100001101100001101000000100111001001110100110001010110001100001111001011101001100000000000000000001000101111000011101010000000010000000000100111110000001000000000010000000000100000000010100001101100001101000000100111001001100100110001010110001100001111001011101001100000000000000000001000101111000011101010000000010000000000100111110000001000000000010000000000100000000010100001101100001101000000100111001001100100110001010110001100001111001011101001100000000000000000001000101111001111000010000000000000000000000000001010001000000000010000000000100000000010000000000100000000001000000000001001100100110001010110001100001111001011101001100000000000000000001000101111001111000010000000000000000000000000001010001000000000010000000000100000000010000000000100000000001000000000001001100100111110100100000011000000001100000101100000000000000000001000101111001111000010000000000000000000000000001010001000000000010000000000100000000010000000000100000000001000000000001001100100111110100100000011000000001100000101100000000000000000001000101111000000000010000000000000000000000000001010001000000000010000000000100000000010000000000100000000001000000000110001100100111110100100000011000000001100000101100000000000000000001000101111000000000010000000000000000000000000001000001000000000010000000000100000000010000000000100000000001000000000110001100100111110100100000011000000001100000101100000000000000000001000101111000000000010000000000000000000000000001000001000000000010000000000100000000010000000000100000000001000000000010001111001111110100100000011000000001100000101100000000000000000001000101111000000000010000000000000000000000000001000001000000000010000000000100000000010000000000100000000001000000000010001111000111110100100000011000000001100000101100000000000000000001000101111100000101010000000000000000000000000001000000000000000000000000000000000000010000000000000000000000000000000010001111000111110100100000011000000001100000101100000000000000000001000101111100000101010000000000000000000000000001000000000000000000000000000000000000010000000000100000000001000000000010001111000111110100100000011000000001100000101100000000000000000001000101111100000101010000000000000000000000000001000000000000000000000000000000000000010000000000100000000001000000000010001111001111110100100000011000000001100000101100000000000000000001000101111100000101010000000000000000000000000001000000000000000000000000000000000000010000000000100000000001000000000010001111000111110100100000011000000001100000101100000000000000000001000101111011101000010000000010000000000000000001000001000000000000000000000000000100010000000000000000000000000000000010001111000111110100100000011000000001100000101100000000000000000001000101111011101000010000000010000000000000000001000001000000000000000000000000000100010000000000100000000001000000000010001111000111110100100000011000000001100000101100000000000000000001000101111011101000010000000010000000000000000001000001000000000000000000000000000100010000000000100000000001000000000100001100000001110100100000011000000001100000101100000000000000000001000101111011101000010000000010000000000000000001000001000000000000000000000000000100010000000000100000000001000000000100001101000111110100100000011000000001100000101100000000000000000001000101111000000000000000000000000000000000000111010001010000000010000000000000000001000000000000000000000000000000000100001101000111110100100000011000000001100000101100000000000000000001000101111000000000000000000000000000000000000111010001010000000010000000000000000001010000000000000000000000000001000100001101000111000001100100000010011110000001001100000000000000000001000101111000000000000000000000000000000000000111010001010000000010000000000000000001010000000000000000000000000001000100001101000111000001100100000010011110000001001100000000000000000001000101111010011100000000000000000000000000000111010001010000000010000000000000000001010000000000000000000000000001000100001101000111000001100100000010011110000001001100000000000000000001000101111010011100000000000000000000000000000111000001010000000010000000000000000001010000000000000000000000000001000100001101000111000001100100000010011110000001001100000000000000000001000101111010011100000000000000000000000000000111000001010000000010000000000000000001010000000000000000000000000001000110001111000111000001100100000010011110000001001100000000000000000001000101111010011100000000000000000000000000000111000001010000000010000000000000000001010000000000000000000000000001000110001110000111000001100100000010011110000001001100000000000000000001000101111100100001000000000000000000000000000111000001000000000010000000000100000000010000000000100000000001000000000000001110000111000001100100000010011110000001001100000000000000000001000101111100100001000000000000000000000000000111000001000000000010000000000100000000010100000000100000000000000000010000001110000111000001100100000010011110000001001100000000000000000001000101111100100001000000000000000000000000000111000001000000000010000000000100000000010100000000100000000000000000010000001110011111000001100100000010011110000001001100000000000000000001000101111100100001000000000000000000000000000111000001000000000010000000000100000000010100000000100000000000000000010000001110000111000001100100000010011110000001001100000000000000000001000101111100000000000000000010000000000000000111000000111111111101111111111011111111100001000000000000000001000010010000001110000111000001100100000010011110000001001100000000000000000001000101111100000000000000000010000000000000000111000000111111111101111111111011111111110100000000100000000000000000010000001110000111000001100100000010011110000001001100000000000000000001000101111100000000000000000010000000000000000111000000111111111101111111111011111111110100000000100000000000000000010111110110001111000001100100000010011110000001001100000000000000000001000101111100000000000000000010000000000000000111000000111111111101111111111011111111110100000000100000000000000000010111110100000111000001100100000010011110000001001100000000000000000001000101111101000001000000000010000000000000000111000001000000000000000000000000000000010000000000000000000001000000000111110100000111000001100100000010011110000001001100000000000000000001000101111101000001000000000010000000000000000111000001000000000000000000000000000000001111111111011111111110111111111111110100000111000001100100000010011110000001001100000000000000000001000101111101000001000000000010000000000000000111000001000000000000000000000000000000001111111111011111111110111111111111110100101111000001100100000010011110000001001100000000000000000001000101111101000001000000000010000000000000000111000001000000000000000000000000000000001111111111011111111110111111111000001110000111000001100100000010011110000001001100000000000000000001000101111010011101000000000010000000000000000111000001000000000000000000000000000000010000000000100000000001000000000000001110000111000001100100000010011110000001001100000000000000000001000101111010011100000000000000000000000100000111010001111111111101111111111011111111110100000000100000000000000000010000001110000111000001100100000010011110000001001100000000000000000001000101111010011100000000000000000000000100000111010001111111111101111111111011111111110100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000100000111010001111111111101111111111011111111110100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000100000111010001111111111101111111111011111111110100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000100000111000001111111111101111111111011111111110100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000100000111000001111111111101111111111011111111110100000000100000000000000000010010001101000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000100000111000001111111111101111111111011111111110100000000100000000000000000010010001100000110010000101000000010011010011101001100000000000000000001000101111101000001000000000000000000000100000111000001000000000000000000000000000100010000000000000000000000000001000111110100000110010000101000000010011010011101001100000000000000000001000101111101000001000000000000000000000100000111000001000000000000000000000000000100011111111111011111111110111111111111110100000110010000101000000010011010011101001100000000000000000001000101111101000001000000000000000000000100000111000001000000000000000000000000000100011111111111011111111110111111111111110100101110010000101000000010011010011101001100000000000000000001000101111101000001000000000000000000000100000111000001000000000000000000000000000100011111111111011111111110111111111000001110000110010000101000000010011010011101001100000000000000000001000101111100100001000000000000000000000100000111000001000000000000000000000000000100010000000000100000000001000000000000001110000110010000101000000010011010011101001100000000000000000001000101111100100000000000000010000000000100000111000000000000000010000000000000111000010100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111100100000000000000010000000000100000111000000000000000010000000000000111000010100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111100100000000000000010000000000100000111000000000000000010000000000000111000010100000000100000000000000000010000001110011110010000101000000010011010011101001100000000000000000001000101111100100000000000000010000000000100000111000000000000000010000000000000111000010100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111000011101000000000010000000000100000111000001111111111101111111111111000111100001000000000000000001000010010000001110000110010000101000000010011010011101001100000000000000000001000101111000011101000000000010000000000100000111000001111111111101111111111111000111110100000000100000000000000000010000001110000110010000101000000010011010011101001100000000000000000001000101111000011101000000000010000000000100000111000001111111111101111111111111000111110100000000100000000000000000010000001100000110010000101000000010011010011101001100000000000000000001000101111000011101000000000010000000000100000111000001111111111101111111111111000111110100000000100000000000000000010000001100000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000000100111010001111111111101111111111111000111111111111111011111111111110001111000001100000110010000101000000010011010011101001100000000000000000001000101111010011100000000000000000000000000100111010001111111111101111111111111000111111111111111011111111111110001111000001100000110010000101010000100000101000001001100000000000000000001000101111010011100000000000000000000000000100111010001111111111101111111111111000111111111111111011111111111110001111000001100000110010000101010000100000101000001001100000000000000000001000101111100000000000000000000000000000000100111010001111111111101111111111111000111111111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111100000000000000000000000000000000100111000001111111111101111111111111000111111111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111100000000000000000000000000000000100111000001111111111101111111111111000111111111111111011111111111110001111011110100001110010000101010000100000101000001001100000000000000000001000101111100000000000000000000000000000000100111000001111111111101111111111111000111111111111111011111111111110001111011110111111010010000101010000100000101000001001100000000000000000001000101111101000001000000000000000000000000100111000001000000000000000000000000000000000000000000000000000001000000000011110111111010010000101010000100000101000001001100000000000000000001000101111101000001000000000000000000000000100111000001000000000000000000000000000000011111111111011111111111110001111011110111111010010000101010000100000101000001001100000000000000000001000101111101000001000000000000000000000000100111000001000000000000000000000000000000011111111111011111111111110001111011110111001110010000101010000100000101000001001100000000000000000001000101111101000001000000000000000000000000100111000001000000000000000000000000000000011111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111100100001000000000000000000000000100111000001000000000000000000000000000000010000000000000000000000000000000111110100000110010000101010000100000101000001001100000000000000000001000101111100100000000000000010000000000000100111000000111111111111111111111111000111111111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111100100000000000000010000000000000100111000000111111111111111111111111000111111111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111100100000000000000010000000000000100111000000111111111111111111111111000111111111111111011111111111110001111111110100011110010000101010000100000101000001001100000000000000000001000101111100100000000000000010000000000000100111000000111111111111111111111111000111111111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111011000001000000000010000000000000100111000001000000000000000000000000111000001100000000000000000000000111011111110100000110010000101010000100000101000001001100000000000000000001000101111011000001000000000010000000000000100111000001000000000000000000000000111000011111111111011111111111110001111111110100000110010000101010000100000101000001001100000000000000000001000101111011000001000000000010000000000000100111000001000000000000000000000000111000011111111111011111111111110001111111110110101110010000101010000100000101000001001100000000000000000001000101111011000001000000000010000000000000100111000001000000000000000000000000111000011111111111011111111111110001111000001110000110010000101010000100000101000001001100000000000000000001000101111100000001000000000010000000000000100111000001000000000000000000000000111000001111111111011111111110110100111000001110000110010000101010000100000101000001001100000000000000000001000101111100000000000000000000000000000100100111010001000000000000000000000000000000010100000000100000000000000000010000001110000110010000101010000100000101000001001100000000000000000001000101111100000000000000000000000000000100100111010001000000000000000000000000000000010100000000100000000000000000010000001110000111100000100010001010100000010100101100000000000000000001000101111100000000000000000000000000000100100111010001000000000000000000000000000000010100000000100000000000000000010000001110000111100000100010001010100000010100101100000000000000000001000101111010100000000000000000000000000100100111010001000000000000000000000000000000010100000000100000000000000000010</data>
+          <extradata>1111111111111111T111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</extradata>
+        </log>
+      </trigger>
+    </signal_set>
+  </instance>
+  <static_plugin_mnemonics/>
+  <mnemonics/>
+  <global_info>
+    <single attribute="active instance" value="0"/>
+    <single attribute="config widget visible" value="1"/>
+    <single attribute="data log widget visible" value="0"/>
+    <single attribute="hierarchy widget visible" value="0"/>
+    <single attribute="instance widget visible" value="1"/>
+    <single attribute="jtag widget visible" value="1"/>
+    <multi attribute="frame size" size="2" value="1155,785"/>
+    <multi attribute="jtag widget size" size="2" value="384,133"/>
+  </global_info>
+</session>

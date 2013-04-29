@@ -49,7 +49,7 @@ int main(int argc,char *argv)
 {
 	long p=0;
 	int counter;
-	HW_PER(PER_UART_CLKDIV)=1250000/1152;
+	HW_PER(PER_UART_CLKDIV)=1330000/1152;
 	putserial("Hello world!\n");
 	puts("Hello World!\n");
 	HW_VGA(FRAMEBUFFERPTR)=FRAMEBUFFER;

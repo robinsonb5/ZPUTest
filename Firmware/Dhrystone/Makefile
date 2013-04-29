@@ -8,7 +8,7 @@ DUMP    = $(BASE)-objdump
 BUILD_DIR=zpu_obj
 
 DH_PRJ = dhrystone
-DH_SRC = dhry_1.c dhry_2.c
+DH_SRC = dhry_1.c dhry_2.c ../minisoc_hardware.c
 DH_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DH_SRC))
 
 LINKMAP  = 
@@ -21,7 +21,7 @@ ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
 
 ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
 
-CFLAGS  = -I../ -I. -c -Os -DTINY
+CFLAGS  = -I../ -I. -c -Os
 AFLAGS  = 
 LFLAGS  = -Os
 CP_HEXFLAGS = -Oihex

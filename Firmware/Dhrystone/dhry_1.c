@@ -48,17 +48,27 @@ _cvt(int val, char *buf, int radix, char *digits)
 
 
 #ifndef TINY
+vpfbuf[sizeof(long long)*8];
+
 static int
 _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_list ap)
 {
-    char buf[sizeof(long long)*8];
-    char c, sign, *cp=buf;
+//    char buf[sizeof(long long)*8];
+    char c, sign, *cp=vpfbuf;
     int left_prec, right_prec, zero_fill, pad, pad_on_right, 
         i, islong, islonglong;
     long long val = 0;
     int res = 0, length = 0;
 
+	putserial("in _vprintf\n");
+	putserial(fmt);
+
     while ((c = *fmt++) != '\0') {
+		char tmp[2];
+		tmp[0]=c;
+		tmp[1]=0;
+		putserial("Got char ");
+		putserial(&tmp);
         if (c == '%') {
             c = *fmt++;
             left_prec = right_prec = pad_on_right = islong = islonglong = 0;
@@ -89,10 +99,10 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
             case 'd':
                 switch (c) {
                 case 'd':
-                    length = _cvt(val, buf, 10, "0123456789");
+                    length = _cvt(val, vpfbuf, 10, "0123456789");
                     break;
                 }
-                cp = buf;
+                cp = vpfbuf;
                 break;
             case 's':
                 cp = va_arg(ap, char *);
@@ -124,18 +134,15 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
 }
 #endif
 
-#define outbyte(x) HW_PER(PER_UART)=x;
-
 // Default wrapper function used by diag_printf
 static void
 _diag_write_char(char c, void **param)
 {
-	if (c=='\n')
-	{
-		outbyte('\r');
-	}
-	outbyte(c);
+	while(!(HW_PER(PER_UART)&(1<<PER_UART_TXREADY)))
+		;
+	HW_PER(PER_UART)=c;
 }
+
 
 int
 small_printf(const char *fmt, ...)
@@ -144,6 +151,7 @@ small_printf(const char *fmt, ...)
     va_list ap;
     int ret;
 
+	putserial(fmt);
     va_start(ap, fmt);
     ret = _vprintf(_diag_write_char, (void **)0, fmt, ap);
     va_end(ap);
@@ -224,9 +232,13 @@ int main ()
   REG   int             Run_Index;
 
   /* Initializations */
+  HW_PER(PER_UART_CLKDIV)=1330000/1152;
+  putserial("UART Initialized\n");
 
   Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
   Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
+
+  putserial("Allocated buffers\n");
 
   Ptr_Glob->Ptr_Comp                    = Next_Ptr_Glob;
   Ptr_Glob->Discr                       = Ident_1;
@@ -236,14 +248,17 @@ int main ()
           "DHRYSTONE PROGRAM, SOME STRING");
   strcpy (Str_1_Loc, "DHRYSTONE PROGRAM, 1'ST STRING");
 
+  putserial("Done strcpy\n");
+
   Arr_2_Glob [8][7] = 10;
         /* Was missing in published program. Without this statement,    */
         /* Arr_2_Glob [8][7] would have an undefined value.             */
         /* Warning: With 16-Bit processors and Number_Of_Runs > 32000,  */
         /* overflow may occur for this array element.                   */
-  small_printf ("\n");
-  small_printf ("Dhrystone Benchmark, Version 2.1 (Language: C)\n");
-  small_printf ("\n");
+//  small_printf ("\n");
+  putserial("\nDhrystone Benchmark, Version 2.1 (Language: C)\n");
+//  small_printf ("\n");
+
   if (Reg)
   {
     small_printf ("Program compiled with 'register' attribute\n");
@@ -251,10 +266,9 @@ int main ()
   }
   else
   {
-    small_printf ("Program compiled without 'register' attribute\n");
-    small_printf ("\n");
+    putserial ("Program compiled without 'register' attribute\n");
+//    small_printf ("\n");
   }
-  Number_Of_Runs;
 
   small_printf ("Execution starts, %d runs through Dhrystone\n", Number_Of_Runs);
 

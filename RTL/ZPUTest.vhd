@@ -38,11 +38,11 @@ entity ZPUTest is
 		sdr_cs		: out std_logic;
 		sdr_ba		: out std_logic_vector(1 downto 0);
 --		sdr_clk		: out std_logic;
-		sdr_clkena	: out std_logic;
+		sdr_cke		: out std_logic;
 		
 		-- UART
-		rs232_rxd	: in std_logic;
-		rs232_txd	: out std_logic
+		rxd	: in std_logic;
+		txd	: out std_logic
 	);
 end entity;
 
@@ -136,7 +136,7 @@ signal sdram_state : sdram_states;
 
 begin
 
-sdr_clkena <='1';
+sdr_cke <='1';
 
 -- Timer
 process(clk)
@@ -261,8 +261,8 @@ end process;
 			rxint => ser_rxint,
 			txint => open,
 			clock_divisor => ser_clock_divisor,
-			rxd => rs232_rxd,
-			txd => rs232_txd
+			rxd => rxd,
+			txd => txd
 		);
 
 
@@ -271,10 +271,10 @@ end process;
 	 zpu: zpu_core 
 	 generic map (
 			HARDWARE_MULTIPLY => false,
-			COMPARISON_SUB => true,
-			EQBRANCH => true,
+			COMPARISON_SUB => false,
+			EQBRANCH => false,
 			MMAP_STACK => false,
-			STOREBH => true
+			STOREBH => false
 		)
     port map (
         clk                 => clk2,
@@ -298,7 +298,7 @@ end process;
 
 	ram : entity work.ExternalRAM
 	port map (
-		address => mem_addr(12 downto 2),
+		address => mem_addr(13 downto 2),
 		clock	=> clk2,
 		data => mem_write,
 		wren => externram_wren,
@@ -403,11 +403,13 @@ begin
 			when VGAREAD =>
 				if vga_reg_dtack='0' then
 					mem_busy<='0';
+					currentstate<=WAITING;
 				end if;
 
 			when VGAWRITE =>
 				if vga_reg_dtack='0' then
 					mem_busy<='0';
+					currentstate<=WAITING;
 				end if;
 
 			when PAUSE =>

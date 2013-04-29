@@ -18,6 +18,10 @@ FB_C_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
 FB_ASM_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(FB_ASM))
 FB_OBJ = $(FB_C_OBJ) $(FB_ASM_OBJ)
 
+VA_PRJ = vatest
+VA_SRC = vatest.c # spi.c
+VA_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(VA_SRC))
+
 LINKMAP  = 
 LIBDIR   = 
 
@@ -40,7 +44,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(CT_PRJ).mif $(FB_PRJ).mif
+all: $(BUILD_DIR) $(CT_PRJ).mif $(FB_PRJ).mif $(VA_PRJ).mif
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -71,6 +75,9 @@ $(CT_PRJ).elf: $(CT_OBJ)
 $(FB_PRJ).elf: $(FB_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
+$(VA_PRJ).elf: $(VA_OBJ)
+	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
+
 %.rom: %.bin $(ROMGEN)
 	./$(ROMGEN) $< >$@
 
@@ -83,19 +90,3 @@ $(BUILD_DIR)/%.o: %.s
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
 
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
-$(BUILD_DIR):
-	mkdir $(BUILD_DIR)
