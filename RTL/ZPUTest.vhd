@@ -271,10 +271,10 @@ end process;
 	 zpu: zpu_core 
 	 generic map (
 			HARDWARE_MULTIPLY => false,
-			COMPARISON_SUB => false,
-			EQBRANCH => false,
-			MMAP_STACK => false,
-			STOREBH => false
+			COMPARISON_SUB => true,
+			EQBRANCH => true,
+			MMAP_STACK => true,
+			STOREBH => true
 		)
     port map (
         clk                 => clk2,
