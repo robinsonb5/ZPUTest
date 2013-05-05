@@ -1,0 +1,15 @@
+Another ZPU simulator?  Really?  Yes.
+
+The one in the offical ZPU git repo is written in Java and requires gdb to work -
+yet there's no pre-built gdb binary for the ZPU - so getting this up and running
+and learning how to use it is going to be more work (and less educational!) than
+writing a new simulator from scratch.
+
+The ZPUino simulator has some x86 assembly language in it, so can't be built on
+a 64-bit Linux install, and is also tightly coupled to the ZPUino way of doing
+things.
+
+The simulator isn't complete yet, but implements enough of the zpu-small-bram-stack
+variant of the CPU that I've been experimenting with on retroramblings.net that it's
+useful.
+
