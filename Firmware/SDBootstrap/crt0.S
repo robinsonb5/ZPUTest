@@ -673,14 +673,14 @@ _storeb:
 # offset 0x0000 02a0
 	.balign 32,0
 _div:
-//	cimpl __divsi3
+;	cimpl __divsi3
 	breakpoint
 
 # opcode 54
 # offset 0x0000 02c0
 	.balign 32,0
 _mod:
-//	cimpl __modsi3
+;	cimpl __modsi3
 	breakpoint;
 
 # opcode 55
