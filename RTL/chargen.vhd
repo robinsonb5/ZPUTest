@@ -39,25 +39,6 @@ signal upd : std_logic;
 
 begin
 
-	mycharrom : entity work.CharRom
-		port map (
-			clock => clk,
-			address => std_logic_vector(romaddr),
-			q => chardata
-	  );
-
-  	mymessagerom : entity work.CharRAM
-	port map (
-		clock => clk,
-		address_a => std_logic_vector(rowaddr),
-		address_b => addrin,	-- Port b is used to write new data to the char ram.
-		data_a => X"00",
-		data_b => datain,
-		q_a => messagechar,
-		q_b => dataout,
-		wren_b => not rw
-  );
-
 	process(clk, reset)
 	begin
 	

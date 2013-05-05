@@ -23,7 +23,8 @@
 static int
 _cvt(int val, char *buf, int radix, char *digits)
 {
-    char temp[80];
+	char *temp=(char*)0x18000; // FIXME - allocate this properly
+//    char temp[80];
     char *cp = temp;
     int length = 0;
 
@@ -32,8 +33,8 @@ _cvt(int val, char *buf, int radix, char *digits)
         *cp++ = '0';
     } else {
         while (val) {
-            *cp++ = digits[val % radix];
-            val /= radix;
+            *cp++ = digits[val &15]; // % radix];
+            val >>=4; // /= radix;
         }
     }
     while (cp != temp) {
@@ -47,28 +48,21 @@ _cvt(int val, char *buf, int radix, char *digits)
 #define is_digit(c) ((c >= '0') && (c <= '9'))
 
 
-#ifndef TINY
-vpfbuf[sizeof(long long)*8];
+// char vpfbuf[sizeof(long long)*8];
 
 static int
 _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_list ap)
 {
+	char *vpfbuf=(char *)0x18100; // FIXME - allocate this properly.
 //    char buf[sizeof(long long)*8];
     char c, sign, *cp=vpfbuf;
     int left_prec, right_prec, zero_fill, pad, pad_on_right, 
         i, islong, islonglong;
-    long long val = 0;
+    long val = 0;
     int res = 0, length = 0;
-
-	putserial("in _vprintf\n");
-	putserial(fmt);
 
     while ((c = *fmt++) != '\0') {
 		char tmp[2];
-		tmp[0]=c;
-		tmp[1]=0;
-		putserial("Got char ");
-		putserial(&tmp);
         if (c == '%') {
             c = *fmt++;
             left_prec = right_prec = pad_on_right = islong = islonglong = 0;
@@ -76,20 +70,20 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
             // Fetch value [numeric descriptors only]
             switch (c) {
             case 'd':
-                    val = (long long)va_arg(ap, int);
-                if ((c == 'd') || (c == 'D')) {
+                    val = (long)va_arg(ap, int);
+//                if ((c == 'd') || (c == 'D')) {
                     if (val < 0) {
                         sign = '-';
                         val = -val;
                     }
-                } else {
-                    // Mask to unsigned, sized quantity
-                    if (islong) {
-                        val &= ((long long)1 << (sizeof(long) * 8)) - 1;
-                    } else{
-                        val &= ((long long)1 << (sizeof(int) * 8)) - 1;
-                    }
-                }
+ //               } else {
+ //                   // Mask to unsigned, sized quantity
+ //                   if (islong) {
+ //                       val &= ((long)1 << (sizeof(long) * 8)) - 1;
+ //                  } else{
+ //                       val &= ((long)1 << (sizeof(int) * 8)) - 1;
+ //                   }
+//                }
                 break;
             default:
                 break;
@@ -99,7 +93,7 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
             case 'd':
                 switch (c) {
                 case 'd':
-                    length = _cvt(val, vpfbuf, 10, "0123456789");
+                    length = _cvt(val, vpfbuf, 10, "0123456789ABCDEF");
                     break;
                 }
                 cp = vpfbuf;
@@ -132,7 +126,7 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
     }
     return (res);
 }
-#endif
+
 
 // Default wrapper function used by diag_printf
 static void
@@ -151,7 +145,6 @@ small_printf(const char *fmt, ...)
     va_list ap;
     int ret;
 
-	putserial(fmt);
     va_start(ap, fmt);
     ret = _vprintf(_diag_write_char, (void **)0, fmt, ap);
     va_end(ap);
@@ -170,7 +163,7 @@ Rec_Pointer     Ptr_Glob,
                 Next_Ptr_Glob;
 int             Int_Glob;
 Boolean         Bool_Glob;
-char            Ch_1_Glob,
+int            Ch_1_Glob,
                 Ch_2_Glob;
 int             Arr_1_Glob [50];
 int             Arr_2_Glob [50] [50];
@@ -211,7 +204,7 @@ long            Microseconds,
                 
 /* end of variables for time measurement */
 
-int             Number_Of_Runs = 50000;
+int             Number_Of_Runs = 5000;
 
 #define _readMilliseconds() HW_PER(PER_MILLISECONDS);
 
@@ -227,18 +220,24 @@ int main ()
         One_Fifty       Int_3_Loc;
   REG   char            Ch_Index;
         Enumeration     Enum_Loc;
-        Str_30          Str_1_Loc;
-        Str_30          Str_2_Loc;
+
+char *Str_1_Loc=0x50000;
+char *Str_2_Loc=0x50100;
+//        Str_30          Str_1_Loc;
+//        Str_30          Str_2_Loc;
   REG   int             Run_Index;
 
   /* Initializations */
   HW_PER(PER_UART_CLKDIV)=1330000/1152;
-  putserial("UART Initialized\n");
+  small_printf("UART Initialized\n");
 
-  Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
-  Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
+//  Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
+//  Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
 
-  putserial("Allocated buffers\n");
+Next_Ptr_Glob = (Rec_Pointer) 0x20000;
+Ptr_Glob = (Rec_Pointer) 0x30000;
+
+  small_printf("Allocated buffers: %d, %d\n",Next_Ptr_Glob, Ptr_Glob);
 
   Ptr_Glob->Ptr_Comp                    = Next_Ptr_Glob;
   Ptr_Glob->Discr                       = Ident_1;
@@ -276,6 +275,8 @@ int main ()
   /* Start timer */
   /***************/
 
+#define STR_BASE 0x40000
+
 #if 0
 #ifdef TIMES
   times (&time_info);
@@ -289,28 +290,33 @@ int main ()
 #endif
   for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
   {
-
+//	putserial(".");
     Proc_5();
     Proc_4();
       /* Ch_1_Glob == 'A', Ch_2_Glob == 'B', Bool_Glob == true */
     Int_1_Loc = 2;
     Int_2_Loc = 3;
-    strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
+    strcpy (STR_BASE+Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
+//	putserial("o");
     Enum_Loc = Ident_2;
     Bool_Glob = ! Func_2 (Str_1_Loc, Str_2_Loc);
       /* Bool_Glob == 1 */
+//	putserial("a");
     while (Int_1_Loc < Int_2_Loc)  /* loop body executed once */
     {
-      Int_3_Loc = 5 * Int_1_Loc - Int_2_Loc;
+      Int_3_Loc = (5 * Int_1_Loc - Int_2_Loc);
         /* Int_3_Loc == 7 */
       Proc_7 (Int_1_Loc, Int_2_Loc, &Int_3_Loc);
         /* Int_3_Loc == 7 */
       Int_1_Loc += 1;
     } /* while */
+//	putserial("b");
       /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
-    Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
+//    Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
+    Proc_8 (0x33000, 0x34000, Int_1_Loc, Int_3_Loc);
       /* Int_Glob == 5 */
     Proc_1 (Ptr_Glob);
+//	putserial("c");
     for (Ch_Index = 'A'; Ch_Index <= Ch_2_Glob; ++Ch_Index)
                              /* loop body executed twice */
     {
@@ -350,9 +356,9 @@ int main ()
 #endif
   
   small_printf ("Execution ends\n");
-  small_printf ("\n");
+//  small_printf ("\n");
   small_printf ("Final values of the variables used in the benchmark:\n");
-  small_printf ("\n");
+//  small_printf ("\n");
   small_printf ("Int_Glob:            %d\n", Int_Glob);
   small_printf ("        should be:   %d\n", 5);
   small_printf ("Bool_Glob:           %d\n", Bool_Glob);
@@ -403,6 +409,8 @@ int main ()
   small_printf ("\n");
 
   User_Time = End_Time - Begin_Time;
+  small_printf ("Begin time: %d\n", (int)Begin_Time);
+  small_printf ("End time: %d\n", (int)End_Time);
   small_printf ("User time: %d\n", (int)User_Time);
   
   if (User_Time < Too_Small_Time)
@@ -429,7 +437,8 @@ int main ()
 #else
     Microseconds = User_Time  / Number_Of_Runs;
     Dhrystones_Per_Second =  (Number_Of_Runs*1000) / User_Time;
-    Vax_Mips = ((Number_Of_Runs)*1000000) / (1757*User_Time);
+	long scaled_time=(1757*User_Time)>>6;
+    Vax_Mips = ((Number_Of_Runs)*(1000000/64)) / scaled_time;
 #endif 
     small_printf ("Microseconds for one run through Dhrystone: ");
     small_printf ("%d \n", (int)Microseconds);

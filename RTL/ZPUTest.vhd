@@ -114,6 +114,7 @@ signal vblank_int : std_logic;
 
 signal externram_wren : std_logic;
 signal externram_data : std_logic_vector(wordSize-1 downto 0);
+-- signal externram_writedata : std_logic_vector(wordSize-1 downto 0);
 
 -- SDRAM signals
 
@@ -129,7 +130,7 @@ signal sdram_wrL : std_logic;
 signal sdram_wrU : std_logic;
 signal sdram_wrU2 : std_logic;
 
-type sdram_states is (read1, read2, read3, write1, write2, write3, idle);
+type sdram_states is (read1, read2, read3, write1, writeb, write2, write3, idle);
 signal sdram_state : sdram_states;
 
 --
@@ -293,7 +294,7 @@ end process;
         break               => zpu_break
     );
 
-	 
+
 	externram_wren <= mem_writeEnable when mem_addr(31 downto 16)=X"0000" else '0';
 
 	ram : entity work.ExternalRAM
@@ -337,25 +338,29 @@ begin
 							currentstate<=VGAWRITE;
 
 						when X"FFFF" =>	-- Peripherals
-							case mem_addr(15 downto 0) is
-								when X"FF84" => -- UART
+							case mem_addr(7 downto 0) is
+								when X"84" => -- UART
 									ser_txdata<=mem_write(7 downto 0);
 									ser_txgo<='1';
 									
-								when X"FF88" => -- UART Clock divisor
+								when X"88" => -- UART Clock divisor
 									ser_clock_divisor<=unsigned(mem_write(15 downto 0));
 									
-								when X"FF90" => -- HEX display
+								when X"90" => -- HEX display
 									counter<=unsigned(mem_write(15 downto 0));
 								when others =>
 									null;
 							end case;
 							mem_busy<='0';
 						when others => -- SDRAM access
-							sdram_wrL<='0';
-							sdram_wrU<='0';
-							sdram_wrU2<=mem_writeEnableh; -- Halfword access
-							sdram_state<=write1;
+							sdram_wrL<=mem_writeEnableb and not mem_addr(0);
+							sdram_wrU<=mem_writeEnableb and mem_addr(0);
+							sdram_wrU2<=mem_writeEnableh or mem_writeEnableb; -- Halfword access
+							if mem_writeEnableb='1' then
+								sdram_state<=writeb;
+							else
+								sdram_state<=write1;
+							end if;
 					end case;
 
 				elsif mem_readEnable='1' then
@@ -365,20 +370,20 @@ begin
 
 						when X"FFFE" =>	-- VGA controller
 							vga_reg_req<='1';
-							mem_read<=X"0000"&vga_reg_dataout;
+							mem_read<="XXXXXXXXXXXXXXXX"&vga_reg_dataout;
 							currentstate<=VGAREAD;
 
 						when X"FFFF" =>	-- Peripherals
-							case mem_addr is
-								when X"FFFFFF84" => -- UART
-									mem_read<=(others=>'0');
+							case mem_addr(7 downto 0) is
+								when X"84" => -- UART
+									mem_read<=(others=>'X');
 									mem_read(9 downto 0)<=ser_rxrecv&ser_txready&ser_rxdata;
 									ser_rxrecv<='0';	-- Clear rx flag.
 									
-								when X"FFFFFF8C" => -- Flags (switches) register
-									mem_read<=X"0000"&src;
+								when X"8C" => -- Flags (switches) register
+									mem_read<="XXXXXXXXXXXXXXXX"&src;
 								
-								when X"FFFFFFC0" => -- Millisecond counter
+								when X"C0" => -- Millisecond counter
 									mem_read<=std_logic_vector(millisecond_counter);
 									
 								when others =>
@@ -448,6 +453,17 @@ begin
 				sdram_wr<='0';
 				sdram_req<='1';
 				sdram_write<=mem_write; -- 32-bits now
+				if sdram_ack='0' then -- done?
+					sdram_req<='0';
+					sdram_state<=idle;
+					mem_busy<='0';
+				end if;
+			when writeb => -- write 8-bit value to SDRAM
+				sdram_addr<=mem_Addr;
+				sdram_wr<='0';
+				sdram_req<='1';
+				sdram_write<=mem_write; -- 32-bits now
+				sdram_write(15 downto 8)<=mem_write(7 downto 0); -- 32-bits now
 				if sdram_ack='0' then -- done?
 					sdram_req<='0';
 					sdram_state<=idle;

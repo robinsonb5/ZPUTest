@@ -323,8 +323,6 @@ set_global_assignment -name QIP_FILE ../CIII_Generated/PLL2.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/PLL.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/ExternalRAM.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/DMACacheRAM.qip
-set_global_assignment -name QIP_FILE ../CIII_Generated/CharRom.qip
-set_global_assignment -name QIP_FILE ../CIII_Generated/CharRAM.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/CacheBlockRAM.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/BootRom.qip
 set_global_assignment -name SDC_FILE constraints.sdc

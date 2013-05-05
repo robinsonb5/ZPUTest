@@ -132,19 +132,6 @@ architecture rtl of vga_controller is
 	signal vga_newframe : std_logic;
 	signal vgadata : std_logic_vector(15 downto 0);
 
-
-	signal chargen_addr : std_logic_vector(10 downto 0);
-	signal chargen_datain : std_logic_vector(7 downto 0);
-	signal chargen_dataout : std_logic_vector(7 downto 0);
-	signal chargen_window : std_logic := '0';
-	signal chargen_pixel : std_logic := '0';
-	signal chargen_rw : std_logic :='1';
-	signal chargen_overlay : std_logic :='1';
-	
-	type charramstates is (writeupperbyte,writeupperbyte1,readupperbyte1,readupperbyte2,
-									writelowerbyte,writelowerbyte1,readlowerbyte1,readlowerbyte2);
-	signal charramstate : charramstates;			
-
 begin
 
 	myVgaMaster : entity work.video_vga_master
@@ -218,29 +205,6 @@ begin
 			sdram_data => sdr_datain
 		);
 
-	mychargen : entity work.charactergenerator
-		generic map (
-			xstart => 16,
-			xstop => 624,
-			ystart => 256,
-			ystop => 464,
-			border => 7
-		)
-		port map (
-			clk => clk,
-			reset => reset,
-			xpos => currentX(9 downto 0),
-			ypos => currentY(9 downto 0),
-			pixel_clock => end_of_pixel,
-			pixel => chargen_pixel,
-			window => chargen_window,
-			-- Char RAM access.
-			addrin => chargen_addr,
-			datain => chargen_datain,
-			dataout => chargen_dataout,
-			rw => chargen_rw
-		);
-
 	-- Handle CPU access to hardware registers
 	
 	process(clk,reset)
@@ -255,63 +219,14 @@ begin
 			reg_data_out<=X"0000";
 			sprite0_xpos<=X"000";
 			sprite0_ypos<=X"000";
-			chargen_addr<="00000000000";
-			chargen_overlay<='1';
 		elsif rising_edge(clk) then
 			reg_dtack<='1';
-			chargen_rw<='1';
-
-			-- FIXME deal with char RAM and 32-bit accesses.
-			
-			charramstate<=writeupperbyte; -- Reset state machine.
-			if reg_addr_in(11)='1' then	-- Character RAM access
-				-- Need to deal with both word and byte reads/writes.
-				case charramstate is
-					when writeupperbyte =>
-						if reg_req='1' then
-							chargen_addr<=reg_addr_in(10 downto 0);	-- Upper byte
-							chargen_datain<=reg_data_in(7 downto 0);
-							if reg_rw='0' then
-								chargen_rw<='0';
-							end if;
-							charramstate<=writeupperbyte1;
-						end if;
-					when writeupperbyte1 =>
-						charramstate<=readupperbyte1;
-					when readupperbyte1 =>
-						charramstate<=readupperbyte2;	-- delay for data
-					when readupperbyte2 =>
-						reg_data_out(7 downto 0)<=chargen_dataout;
-						reg_dtack<='0';
---						charramstate<=writelowerbyte;
---					when writelowerbyte =>
---						chargen_addr<=reg_addr_in(10 downto 1) & '1';	-- lower byte
---						chargen_datain<=reg_data_in(7 downto 0);
---						if reg_rw='0' and reg_lds='0' then
---							chargen_rw<='0';
---						end if;
---						charramstate<=writelowerbyte1;
---					when writelowerbyte1 =>
---						charramstate<=readlowerbyte1;
---					when readlowerbyte1 =>
---						charramstate<=readlowerbyte2;	-- delay for data
---					when readlowerbyte2 =>
---						reg_data_out(7 downto 0)<=chargen_dataout;
---						reg_dtack<='0';
-					when others =>
-						null;
-				end case;
-			elsif reg_req='1' then
+			if reg_req='1' then
 				case reg_addr_in is
 					when X"000" =>
 	--					reg_data_out<=X"00"&framebuffer_pointer(23 downto 16);
 						if reg_rw='0' then
 							framebuffer_pointer(31 downto 0) <= reg_data_in;
-						end if;
-					when X"030" => -- Control register
-	--					reg_data_out<=framebuffer_pointer(15 downto 0);
-						if reg_rw='0' then
-							chargen_overlay<=reg_data_in(7);
 						end if;
 					when X"100" =>
 	--					reg_data_out<=X"00"&sprite0_pointer(23 downto 16);
@@ -437,30 +352,18 @@ begin
 
 					if sprite_col(3)='1' then
 						red <= (others => sprite_col(2));
-					elsif chargen_pixel='1' then
-						red <= "11111111";
-					elsif chargen_window='1' then
-						red <= unsigned('0'&vgadata(15 downto 11)&"00");
 					else
 						red <= unsigned(vgadata(15 downto 11)&"000");
 					end if;
 
 					if sprite_col(3)='1' then
 						green <= (others=>sprite_col(1));
-					elsif chargen_pixel='1' then
-						green <= "11111111";
-					elsif chargen_window='1' then
-						green <= unsigned('0'&vgadata(10 downto 6)&"00");
 					else
 						green <= unsigned(vgadata(10 downto 5)&"00");
 					end if;
 
 					if sprite_col(3)='1' then
 						blue <= (others=>sprite_col(0));
-					elsif chargen_pixel='1' then
-						blue <= "11111111";
-					elsif chargen_window='1' then
-						blue <= unsigned('0'&vgadata(4 downto 0)&"00");
 					else
 						blue <= unsigned(vgadata(4 downto 0)&"000");
 					end if;
