@@ -7,8 +7,8 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
-STARTUP_SRC = crt0.S
-STARTUP_OBJ = $(patsubst %.S,$(BUILD_DIR)/%.o,$(STARTUP_SRC))
+STARTUP_SRC = crt0.s
+STARTUP_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(STARTUP_SRC))
 
 BOOT_PRJ = boot
 BOOT_SRC = boot.c spi.c sdboot.c spi.h minisoc_hardware.c minisoc_hardware.h # spi.c
@@ -36,7 +36,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(BOOT_PRJ).mif
+all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -45,11 +45,11 @@ $(ROMGEN): $(ROMGEN).c
 	gcc  -o $@ $<
 
 # Convert ELF binary to bin file.
-$(PRJ).bin: $(PRJ).elf
+%.bin: %.elf
 	$(CP) -O binary $< $@
 
 # Convert ELF binary to Intel HEX file.
-$(PRJ).hex: $(PRJ).elf
+%.hex: %.elf
 	$(CP) $(CPFLAGS) $< $@
 
 # Convert ELF binary to SREC file
