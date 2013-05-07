@@ -295,9 +295,9 @@ begin
 	myreset : entity work.poweronreset
 		port map(
 			clk => clk,
-			reset_button => reset_n,
+			reset_button => power_button, -- reset_n,
 			reset_out => reset,
-			power_button => power_button,
+			power_button => reset_n, -- power_button,
 			power_hold => power_hold		
 		);
 
@@ -362,7 +362,7 @@ begin
 
 			-- UART
 			rxd => rs232_rxd,
-			txd => rs232_txd
+			txd => rs232_txd,
 			
 			-- Misc
 --			pausecpu => '1',
@@ -379,12 +379,12 @@ begin
 --			ps2m_clk_out => ps2m_clk_out,
 --			ps2m_dat_out => ps2m_dat_out,
 --			
---			-- SD Card interface
---			sd_cs => sd_cs,
---			sd_miso => sd_miso,
---			sd_mosi => sd_mosi,
---			sd_clk => sd_clk,
-			
+			-- SD Card interface
+			spi_cs => sd_cs,
+			spi_miso => sd_miso,
+			spi_mosi => sd_mosi,
+			spi_clk => sd_clk
+
 			-- Audio - FIXME abstract this out, too.
 --			aud_l => aud_l,
 --			aud_r => aud_r,

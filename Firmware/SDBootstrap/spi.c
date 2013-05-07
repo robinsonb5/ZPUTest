@@ -1,4 +1,5 @@
 #include "minisoc_hardware.h"
+#include "small_printf.h"
 
 short SDHCtype=1;
 
@@ -6,11 +7,10 @@ short SDHCtype=1;
 // #define SPI(x) {while((HW_PER(PER_SPI_CS)&(1<<PER_SPI_BUSY))); HW_PER(PER_SPI)=(x);}
 // #define SPI_READ(x) (HW_PER(PER_SPI)&255)
 
-#define SPI_WAIT(x) ;
-#define SPI(x) HW_PER(PER_SPI_BLOCKING)=(x)
+#define SPI(x) HW_PER(PER_SPI)=(x)
 #define SPI_PUMP(x) HW_PER(PER_SPI_PUMP)
-#define SPI_PUMP_L(x) HW_PER_L(PER_SPI_PUMP)
-#define SPI_READ(x) (HW_PER(PER_SPI_BLOCKING)&255)
+// #define SPI_PUMP_L(x) HW_PER_L(PER_SPI_PUMP)
+#define SPI_READ(x) (HW_PER(PER_SPI)&255)
 
 #define SPI_CS(x) {while((HW_PER(PER_SPI_CS)&(1<<PER_SPI_BUSY))); HW_PER(PER_SPI_CS)=(x);}
 
@@ -24,40 +24,47 @@ short SDHCtype=1;
 #define cmd_CMD55(x) cmd_write(0xff0077,0)
 #define cmd_CMD58(x) cmd_write(0xff007A,0)
 
-#define puts(x) 
-#define printf(x,...) 
-
 unsigned char SPI_R1[6];
 
 
-short cmd_write(unsigned long cmd, unsigned long lba)
+int cmd_write(unsigned long cmd, unsigned long lba)
 {
 	int ctr;
-	short result=0xff;
+	int result=0xff;
+
+//	puts("In cmd_write\n");
 
 	SPI(cmd & 255);
 
+//	puts("Command sent\n");
+
 	if(!SDHCtype)	// If normal SD then we have to use byte offset rather than LBA offset.
 		lba<<=9;
+
+//	puts("Sending LBA\n");
 
 	SPI((lba>>24)&255);
 	SPI((lba>>16)&255);
 	SPI((lba>>8)&255);
 	SPI(lba&255);
 
+//	puts("Sending CRC - if any\n");
+
 	SPI((cmd>>16)&255); // CRC, if any
 
 	ctr=40000;
-	SPI_WAIT();
+
 	result=SPI_READ();
 	while(--ctr && (result==0xff))
 	{
 		SPI(0xff);
-		SPI_WAIT();
 		result=SPI_READ();
 	}
+//	printf("Got result %d \n",result);
+
 	return(result);
 }
+
 
 void spi_spin()
 {
@@ -65,10 +72,9 @@ void spi_spin()
 	int i;
 	for(i=0;i<200;++i)
 		SPI(0xff);
-	puts("Done - waiting\n");
-	SPI_WAIT();
-	puts("Done\n");
+//	puts("Done\n");
 }
+
 
 short wait_initV2()
 {
@@ -79,20 +85,20 @@ short wait_initV2()
 	{
 		if((r=cmd_CMD55())==1)
 		{
-			printf("CMD55 %x\n",r);
+			printf("CMD55 %d\n",r);
 			SPI(0xff);
 			if((r=cmd_CMD41())==0)
 			{
-				printf("CMD41 %x\n",r);
+				printf("CMD41 %d\n",r);
 				SPI(0xff);
 				return(1);
 			}
 			else
-				printf("CMD41 %x\n",r);
+				printf("CMD41 %d\n",r);
 			spi_spin();
 		}
 		else
-			printf("CMD55 %x\n",r);
+			printf("CMD55 %d\n",r);
 	}
 	return(0);
 }
@@ -108,12 +114,12 @@ short wait_init()
 	{
 		if((r=cmd_init())==0)
 		{
-			printf("init %x\n  ",r);
+			printf("init %d\n  ",r);
 			SPI(0xff);
 			return(1);
 		}
 		else
-			printf("init %x\n  ",r);
+			printf("init %d\n  ",r);
 		spi_spin();
 	}
 	return(0);
@@ -127,7 +133,7 @@ short is_sdhc()
 	spi_spin();
 
 	r=cmd_CMD8();		// test for SDHC capability
-	printf("cmd_CMD8 response: %x\n",r);
+	printf("cmd_CMD8 response: %d\n",r);
 	if(r!=1)
 	{
 		wait_init();
@@ -135,28 +141,32 @@ short is_sdhc()
 	}
 
 	SPI(0xff);
-	SPI_WAIT(); r=SPI_READ();
-	printf("CMD8_1 response: %x\n",r);
+//	SPI_WAIT();
+	r=SPI_READ();
+	printf("CMD8_1 response: %d\n",r);
 	SPI(0xff);
-	SPI_WAIT(); r=SPI_READ();
-	printf("CMD8_2 response: %x\n",r);
+//	SPI_WAIT();
+	r=SPI_READ();
+	printf("CMD8_2 response: %d\n",r);
 	SPI(0xff);
-	SPI_WAIT(); r=SPI_READ();
+//	SPI_WAIT();
+	r=SPI_READ();
 	if(r!=1)
 	{
 		wait_init();
 		return(0);
 	}
 
-	printf("CMD8_3 response: %x\n",r);
+	printf("CMD8_3 response: %d\n",r);
 	SPI(0xff);
-	SPI_WAIT(); r=SPI_READ();
+//	SPI_WAIT();
+	r=SPI_READ();
 	if(r!=0xaa)
 	{
 		wait_init();
 		return(0);
 	}
-	printf("CMD8_4 response: %x\n",r);
+	printf("CMD8_4 response: %d\n",r);
 
 	SPI(0xff);
 
@@ -169,11 +179,11 @@ short is_sdhc()
 		{
 			if((r=cmd_CMD58())==0)
 			{
-				printf("CMD58 %x\n  ",r);
+				printf("CMD58 %d\n  ",r);
 				SPI(0xff);
-				SPI_WAIT();
+//				SPI_WAIT();
 				r=SPI_READ();
-				printf("CMD58_2 %x\n  ",r);
+				printf("CMD58_2 %d\n  ",r);
 				SPI(0xff);
 				SPI(0xff);
 				SPI(0xff);
@@ -184,7 +194,7 @@ short is_sdhc()
 					return(0);
 			}
 			else
-				printf("CMD58 %x\n  ",r);
+				printf("CMD58 %d\n  ",r);
 		}
 		if(i==2)
 		{
@@ -192,7 +202,7 @@ short is_sdhc()
 			return(0);
 		}
 	}
-
+	puts("Determined SDHC status\n");
 	return(0);
 }
 
@@ -202,30 +212,35 @@ short spi_init()
 	int i;
 	int r;
 	SDHCtype=1;
-	HW_PER(PER_TIMER_DIV7)=150;	// About 350KHz
+//	HW_PER(PER_TIMER_DIV7)=150;	// About 350KHz
 	SPI_CS(0);	// Disable CS
 	spi_spin();
+//	puts("Activating CS\n");
 	SPI_CS(1);
 	i=8;
 	while(--i)
 	{
 		if(cmd_reset()==1) // Enable SPI mode
 			i=1;
+		puts("Sent reset command\n");
 		if(i==2)
 		{
-			printf("SD card initialization error!\n");
+			puts("SD card initialization error!\n");
 			return(0);
 		}
 	}
+	puts("Card responded to reset\n");
 	SDHCtype=is_sdhc();
 	if(SDHCtype)
-		printf("SDHC card detected\n");
+		puts("SDHC card detected\n");
 
+	puts("Sending cmd16\n");
 	cmd_CMD16(1);
 	SPI(0xFF);
 	SPI_CS(0);
+	puts("Init done\n");
 
-	HW_PER(PER_TIMER_DIV7)=HW_PER(PER_CAP_SPISPEED);
+//	HW_PER(PER_TIMER_DIV7)=HW_PER(PER_CAP_SPISPEED);
 	return(1);
 }
 
@@ -244,13 +259,14 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 	short result=0;
 	int i;
 	int r;
+	puts("sd_read_sector\n");
 	SPI_CS(1);
 	SPI(0xff);
 
 	r=cmd_read(lba);
 	if(r!=0)
 	{
-		printf("Read command failed at %ld (0x%x)\n",lba,r);
+		printf("Read command failed at %d (%d)\n",lba,r);
 		return(result);
 	}
 
@@ -259,17 +275,18 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 	{
 		short v;
 		SPI(0xff);
-		SPI_WAIT();
+//		SPI_WAIT();
 		v=SPI_READ();
 		if(v==0xfe)
 		{
+			puts("Reading sector data\n");
 //			spi_readsector((long *)buf);
 			int j;
 			SPI_PUMP();
 			for(j=0;j<256;++j)
 			{
-				*(long *)buf=SPI_PUMP_L();
-				buf+=4;				
+				*(short *)buf=SPI_PUMP();
+				buf+=2;
 			}
 #if 0
 			for(j=0;j<256;++j)
@@ -296,8 +313,9 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 		}
 	}
 	SPI(0xff);
-	SPI_WAIT();
+//	SPI_WAIT();
 	SPI_CS(0);
+	puts("Sector read\n");
 	return(result);
 }
 

@@ -11,7 +11,7 @@ STARTUP_SRC = crt0.s
 STARTUP_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(STARTUP_SRC))
 
 BOOT_PRJ = boot
-BOOT_SRC = boot.c spi.c sdboot.c spi.h minisoc_hardware.c minisoc_hardware.h # spi.c
+BOOT_SRC = boot.c spi.c sdboot.c spi.h fat.c fat.h minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h swap.c # spi.c
 BOOT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
 
 LINKMAP  = 

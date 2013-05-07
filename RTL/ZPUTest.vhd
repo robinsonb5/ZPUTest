@@ -39,6 +39,12 @@ entity ZPUTest is
 		sdr_ba		: out std_logic_vector(1 downto 0);
 --		sdr_clk		: out std_logic;
 		sdr_cke		: out std_logic;
+
+		-- SPI signals
+		spi_miso		: in std_logic;
+		spi_mosi		: out std_logic;
+		spi_clk		: out std_logic;
+		spi_cs 		: out std_logic;
 		
 		-- UART
 		rxd	: in std_logic;
@@ -52,7 +58,7 @@ signal reset : std_logic := '0';
 signal reset_counter : unsigned(15 downto 0) := X"FFFF";
 
 -- State machine
-type SOCStates is (WAITING,READ1,WRITE1,PAUSE,VGAREAD,VGAWRITE);
+type SOCStates is (WAITING,READ1,WRITE1,PAUSE,WAITSPI,WAITSPI2,VGAREAD,VGAWRITE);
 signal currentstate : SOCStates;
 
 -- UART signals
@@ -68,6 +74,17 @@ signal ser_clock_divisor : unsigned(15 downto 0);
 -- Millisecond counter
 signal millisecond_counter : unsigned(31 downto 0) := X"00000000";
 signal millisecond_tick : unsigned(19 downto 0);
+
+-- SPI Clock counter
+signal spi_tick : unsigned(11 downto 0) := X"000";
+signal spiclk_in : std_logic;
+
+-- SPI signals
+signal host_to_spi : std_logic_vector(15 downto 0);
+signal spi_to_host : std_logic_vector(15 downto 0);
+signal spi_wide : std_logic;
+signal spi_trigger : std_logic;
+signal spi_busy : std_logic;
 
 -- ZPU signals
 
@@ -147,6 +164,20 @@ begin
 		if millisecond_tick=sysclk_frequency*100 then
 			millisecond_counter<=millisecond_counter+1;
 			millisecond_tick<=X"00000";
+		end if;
+	end if;
+end process;
+
+
+-- SPI Timer
+process(clk)
+begin
+	if rising_edge(clk) then
+		spiclk_in<='0';
+		spi_tick<=spi_tick+1;
+		if spi_tick=sysclk_frequency/4 then -- Number of ticks in 400KHz
+			spiclk_in<='1'; -- Momentary pulse for SPI host.
+			spi_tick<=X"000";
 		end if;
 	end if;
 end process;
@@ -266,6 +297,26 @@ end process;
 			txd => txd
 		);
 
+-- SPI host
+spi : entity work.spi_interface
+	port map(
+		sysclk => clk,
+		reset => reset,
+
+		-- Host interface
+		spiclk_in => spiclk_in,
+		host_to_spi => host_to_spi,
+		spi_to_host => spi_to_host,
+		wide => spi_wide,
+		trigger => spi_trigger,
+		busy => spi_busy,
+
+		-- Hardware interface
+		miso => spi_miso,
+		mosi => spi_mosi,
+		spiclk_out => spi_clk
+	);
+
 
 -- Main CPU
 
@@ -313,6 +364,7 @@ begin
 
 	if reset='0' then
 		currentstate<=WAITING;
+		spi_cs<='1';
 	elsif rising_edge(clk2) then
 		mem_busy<='1';
 
@@ -323,6 +375,8 @@ begin
 
 		vga_reg_rw<='1';
 		vga_reg_req<='0';
+		
+		spi_trigger<='0';
 		
 		case currentstate is
 			when WAITING =>
@@ -342,16 +396,35 @@ begin
 								when X"84" => -- UART
 									ser_txdata<=mem_write(7 downto 0);
 									ser_txgo<='1';
-									
+									mem_busy<='0';
+
 								when X"88" => -- UART Clock divisor
 									ser_clock_divisor<=unsigned(mem_write(15 downto 0));
+									mem_busy<='0';
 									
 								when X"90" => -- HEX display
 									counter<=unsigned(mem_write(15 downto 0));
+									mem_busy<='0';
+
+								when X"C4" => -- SPI CS
+									spi_cs<=not mem_write(0);
+									mem_busy<='0';
+
+								when X"C8" => -- SPI write (blocking)
+									spi_wide<='0';
+									spi_trigger<='1';
+									host_to_spi<=mem_write(15 downto 0);
+									currentstate<=WAITSPI;
+									
+								when X"CC" => -- SPI write wide (blocking)
+									spi_wide<='1';
+									spi_trigger<='1';
+									host_to_spi<=mem_write(15 downto 0);
+									currentstate<=WAITSPI;
+									
 								when others =>
 									null;
 							end case;
-							mem_busy<='0';
 						when others => -- SDRAM access
 							sdram_wrL<=mem_writeEnableb and not mem_addr(0);
 							sdram_wrU<=mem_writeEnableb and mem_addr(0);
@@ -379,17 +452,34 @@ begin
 									mem_read<=(others=>'X');
 									mem_read(9 downto 0)<=ser_rxrecv&ser_txready&ser_rxdata;
 									ser_rxrecv<='0';	-- Clear rx flag.
+									mem_busy<='0';
 									
 								when X"8C" => -- Flags (switches) register
 									mem_read<="XXXXXXXXXXXXXXXX"&src;
-								
+									mem_busy<='0';
+
 								when X"C0" => -- Millisecond counter
 									mem_read<=std_logic_vector(millisecond_counter);
+									mem_busy<='0';
+
+								when X"C4" => -- SPI_CS
+									mem_read<=(others=>'X');
+									mem_read(15)<=spi_busy;
+									mem_busy<='0';
 									
+								when X"C8" => -- SPI read (blocking)
+									spi_wide<='0';
+									currentstate<=WAITSPI;
+
+								when X"CC" => -- SPI read (blocking)
+									spi_wide<='1';
+									spi_trigger<='1';
+									host_to_spi<=X"FFFF";
+									currentstate<=WAITSPI;
+
 								when others =>
 									null;
 							end case;
-							mem_busy<='0';
 
 						when others => -- SDRAM
 							sdram_state<=read1;
@@ -413,6 +503,17 @@ begin
 
 			when VGAWRITE =>
 				if vga_reg_dtack='0' then
+					mem_busy<='0';
+					currentstate<=WAITING;
+				end if;
+
+			when WAITSPI =>
+				currentstate<=WAITSPI2;
+
+			when WAITSPI2 =>
+				mem_read(31 downto 16)<=(others => 'X');
+				mem_read(15 downto 0)<=spi_to_host;
+				if spi_busy='0' then
 					mem_busy<='0';
 					currentstate<=WAITING;
 				end if;

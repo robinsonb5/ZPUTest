@@ -8,7 +8,6 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.STD_LOGIC_UNSIGNED.all;
 
--- FIXME - modify for 32-bit transfers
 
 entity spi_interface is
 	port (

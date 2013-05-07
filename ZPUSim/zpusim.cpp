@@ -60,6 +60,15 @@ class ZPUMemory
 	{
 		switch(addr)
 		{
+			case 0xffffffc4:
+				Debug[TRACE] << std::endl << "Reading from SPI_CS" << std::endl << std::endl;
+				break;
+			case 0xffffffc8:
+				Debug[TRACE] << std::endl << "Reading from SPI" << std::endl << std::endl;
+				break;
+			case 0xffffffcc:
+				Debug[TRACE] << std::endl << "Reading from SPI_PUMP" << std::endl << std::endl;
+				break;
 			case 0xffffff84:
 				Debug[TRACE] << std::endl << "Reading from UART" << std::endl << std::endl;
 				if(uartbusyctr)
@@ -90,6 +99,18 @@ class ZPUMemory
 
 			case 0xffffff90:
 				Debug[TRACE] << std::endl << "Writing " << v << " to HEX display" << std::endl << std::endl;
+				break;
+
+			case 0xffffffc4:
+				Debug[TRACE] << std::endl << "Setting spi_cs line " << (v&1 ? "low" : "high" ) << std::endl << std::endl;
+				break;
+
+			case 0xffffffc8:
+				Debug[TRACE] << std::endl << "Writing " << v << " to SPI" << std::endl << std::endl;
+				break;
+
+			case 0xffffffcc:
+				Debug[TRACE] << std::endl << "Writing " << v << " to SPI_pump" << std::endl << std::endl;
 				break;
 		}
 	}
