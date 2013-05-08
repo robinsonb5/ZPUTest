@@ -28,14 +28,14 @@ struct PartitionEntry
 	unsigned char geometry[8];		// ignored
 	unsigned long startlba;
 	unsigned long sectors;
-};
+} __attribute__ ((packed));
 
 struct MasterBootRecord
 {
 	unsigned char bootcode[446];	// ignored
 	struct PartitionEntry Partition[4];	// We copy these (and byteswap if need be)
 	unsigned short Signature;		// This lets us detect an MBR (and the need for byteswapping).
-};
+} __attribute__ ((packed));
 
 extern struct PartitionEntry *partitions; //[4];	// FirstBlock and LastBlock will be byteswapped as necessary
 extern int partitioncount;
@@ -82,9 +82,9 @@ typedef union {
 // BEWARE, this buffer is also used and thus trashed by all other functions
 //extern unsigned char sector_buffer[1024]; // sector buffer - room for 2 sectors, to ease reading data not sector-aligned...
 extern unsigned char *sector_buffer;
-extern unsigned char cluster_size;
+extern unsigned int cluster_size;
 extern unsigned long cluster_mask;
-extern unsigned char fat32;
+extern unsigned int fat32;
 
 // constants
 #define DIRECTORY_ROOT 0

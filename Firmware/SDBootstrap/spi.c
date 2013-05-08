@@ -238,6 +238,7 @@ short spi_init()
 	cmd_CMD16(1);
 	SPI(0xFF);
 	SPI_CS(0);
+	SPI(0xFF);
 	puts("Init done\n");
 
 //	HW_PER(PER_TIMER_DIV7)=HW_PER(PER_CAP_SPISPEED);
@@ -259,7 +260,7 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 	short result=0;
 	int i;
 	int r;
-	puts("sd_read_sector\n");
+//	printf("sd_read_sector %d, %d\n",lba,buf);
 	SPI_CS(1);
 	SPI(0xff);
 
@@ -279,15 +280,39 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 		v=SPI_READ();
 		if(v==0xfe)
 		{
-			puts("Reading sector data\n");
+//			puts("Reading sector data\n");
 //			spi_readsector((long *)buf);
 			int j;
-			SPI_PUMP();
-			for(j=0;j<256;++j)
+//			SPI(0xff);
+			for(j=0;j<128;++j)
 			{
-				*(short *)buf=SPI_PUMP();
-				buf+=2;
+				int t,v;
+				SPI(0xff);
+				v=SPI_READ();
+				t=v<<24;
+
+				SPI(0xff);
+				v=SPI_READ();
+				t|=v<<16;
+
+				SPI(0xff);
+				v=SPI_READ();
+				t|=v<<8;
+
+				SPI(0xff);
+				v=SPI_READ();
+				t|=v;
+
+				*(int *)buf=t;
+//				printf("%d: %d\n",buf,t);
+				buf+=4;
 			}
+//			SPI_PUMP();
+//			for(j=0;j<256;++j)
+//			{
+//				*(short *)buf=SPI_PUMP();
+//				buf+=2;
+//			}
 #if 0
 			for(j=0;j<256;++j)
 			{
@@ -315,7 +340,7 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 	SPI(0xff);
 //	SPI_WAIT();
 	SPI_CS(0);
-	puts("Sector read\n");
+//	puts("Sector read\n");
 	return(result);
 }
 

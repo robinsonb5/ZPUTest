@@ -3,9 +3,9 @@
 #include <stdarg.h>
 
 static int
-_cvt(int val, char *buf, int radix, char *digits)
+_cvt(unsigned int val, char *buf, int radix, char *digits)
 {
-	char *temp=(char*)0x18000; // FIXME - allocate this properly
+	char *temp=(char*)0x11000; // FIXME - allocate this properly
 //    char temp[80];
     char *cp = temp;
     int length = 0;
@@ -35,12 +35,12 @@ _cvt(int val, char *buf, int radix, char *digits)
 static int
 _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_list ap)
 {
-	char *vpfbuf=(char *)0x18100; // FIXME - allocate this properly.
+	char *vpfbuf=(char *)0x11100; // FIXME - allocate this properly.
 //    char buf[sizeof(long long)*8];
     char c, sign, *cp=vpfbuf;
     int left_prec, right_prec, zero_fill, pad, pad_on_right, 
         i, islong, islonglong;
-    long val = 0;
+    unsigned int val = 0;
     int res = 0, length = 0;
 
     while ((c = *fmt++) != '\0') {
@@ -52,12 +52,12 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
             // Fetch value [numeric descriptors only]
             switch (c) {
             case 'd':
-                    val = (long)va_arg(ap, int);
+                    val = (long)va_arg(ap, unsigned int);
 //                if ((c == 'd') || (c == 'D')) {
-                    if (val < 0) {
-                        sign = '-';
-                        val = -val;
-                    }
+//                    if (val < 0) {
+//		                (*putc)('-', param);
+//                       val = -val;
+//                    }
  //               } else {
  //                   // Mask to unsigned, sized quantity
  //                   if (islong) {
@@ -75,7 +75,7 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
             case 'd':
                 switch (c) {
                 case 'd':
-                    length = _cvt(val, vpfbuf, 10, "0123456789");
+                    length = _cvt(val, vpfbuf, 10, "0123456789ABCDEF");
                     break;
                 }
                 cp = vpfbuf;

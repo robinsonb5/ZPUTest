@@ -222,7 +222,7 @@ mysdram : entity work.sdram
 		datawr1 => sdram_write,
 		Addr1 => sdram_addr,
 		req1 => sdram_req,
-		wr1 => sdram_wr, -- active love
+		wr1 => sdram_wr, -- active low
 		wrL1 => sdram_wrL, -- lower byte
 		wrU1 => sdram_wrU, -- upper byte
 		wrU2 => sdram_wrU2, -- upper halfword, only written on longword accesses
@@ -539,6 +539,7 @@ begin
 					sdram_state<=read2;
 				end if;
 			when read2 =>	-- Prepare for second word...
+--				sdram_addr<=std_logic_vector(unsigned(mem_Addr)+1);
 				sdram_addr(1)<='1';
 				sdram_req<='1';
 				sdram_state<=read3;

@@ -43,7 +43,7 @@ module TwoWayCache
 // States for state machine
 parameter WAITING=0, WAITRD=1, WAITFILL=2,
 				FILL2=3, FILL3=4, FILL4=5, FILL5=6, PAUSE1=7,
-				WRITE1=8, WRITE2=9, INIT1=10, INIT2=11;
+				WRITE1=8, WRITE2=9, WRITE3=10, INIT1=11, INIT2=12;
 reg [4:0] state = INIT1;
 reg init;
 reg [7:0] initctr;
@@ -207,17 +207,11 @@ begin
 		WRITE1:
 			begin
 				// If the current address is in cache,
-				// we must update the appropriate cacheline
+				// we must invalidate the appropriate cacheline
 				
-				// FIXME - need to figure out 32-bit writes!
-
-				// FIXME - this won't work for byte accesses!
-				
-				// We mark the two halves of the word separately.
-				// If this is a byte write, the byte not being written
-				// will be marked as invalid, triggering a re-read if
-				// the other byte or whole word is read.
-				data_ports_w<={~cpu_rwu,~cpu_rwl,data_from_cpu[15:0]};
+				readword_burst<=1'b1;
+				readword<=cpu_addr[2:1];
+				data_ports_w<={2'b00,16'h0000};
 
  				if(tag_hit1)
 				begin
@@ -227,9 +221,6 @@ begin
 					tag_mru1<=1'b1;
 					tag_wren1<=1'b1;
 				end
-				// Note: it's possible that both ways of the cache will end up caching
-				// the same address; if so, we must write to both ways, or at least
-				// invalidate them both, otherwise we'll have problems with stale data.
 				if(tag_hit2)
 				begin
 					// Write the data to the second cache way
@@ -238,17 +229,33 @@ begin
 					tag_mru1<=1'b0;
 					tag_wren1<=1'b1;
 				end
-				
-				// FIXME - ultimately we should clear a cacheline here and cache
-				// the data for future use.
-
-				// FIXME - we also need to check at this point whether the write cache
-				// can merge this data into the current write, and if so send an ack.
-
 				state<=WRITE2;
 			end
 
 		WRITE2:
+			begin
+				readword_burst<=1'b1;
+				readword<=readword+1;
+ 				if(tag_hit1)
+				begin
+					// Write the data to the first cache way
+					data_wren1<=1'b1;
+					// Mark tag1 as most recently used.
+					tag_mru1<=1'b1;
+					tag_wren1<=1'b1;
+				end
+				if(tag_hit2)
+				begin
+					// Write the data to the second cache way
+					data_wren2<=1'b1;
+					// Mark tag2 as most recently used.
+					tag_mru1<=1'b0;
+					tag_wren1<=1'b1;
+				end
+				state<=WRITE3;
+			end
+
+		WRITE3:
 			begin
 				if(cpu_req==1'b0)	// Wait for the write cycle to finish
 					state<=WAITING;

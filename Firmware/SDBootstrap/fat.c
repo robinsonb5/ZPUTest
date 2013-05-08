@@ -50,22 +50,22 @@ JB:
 
 #define tolower(x) (x|32)
 
-unsigned short directory_cluster;       // first cluster of directory (0 if root)
-unsigned short entries_per_cluster;     // number of directory entries per cluster
+unsigned int directory_cluster;       // first cluster of directory (0 if root)
+unsigned int entries_per_cluster;     // number of directory entries per cluster
 
 // internal global variables
-unsigned char fattype;              	// volume format 
-unsigned char fat32 = 0;                // volume format is FAT32
+unsigned int fattype=0;              	// volume format 
+unsigned int fat32 = 0;                // volume format is FAT32
 unsigned long boot_sector;              // partition boot sector
 unsigned long fat_start;                // start LBA of first FAT table
 unsigned long data_start;               // start LBA of data field
 unsigned long root_directory_cluster;   // root directory cluster (used in FAT32)
 unsigned long root_directory_start;     // start LBA of directory table
 unsigned long root_directory_size;      // size of directory region in sectors
-unsigned char fat_number;               // number of FAT tables
-unsigned char cluster_size;             // size of a cluster in sectors
+unsigned int fat_number;               // number of FAT tables
+unsigned int cluster_size;             // size of a cluster in sectors
 unsigned long cluster_mask;             // binary mask of cluster number
-unsigned short dir_entries;             // number of entry's in directory table
+unsigned int dir_entries;             // number of entry's in directory table
 unsigned long fat_size;                 // size of fat
 
 //unsigned char sector_buffer[1024];       // sector buffer - room for two consecutive sectors...
@@ -96,31 +96,29 @@ extern unsigned long GetTimer(unsigned long);
 #define ErrorMessage(x,y) puts(x)
 
 
-unsigned long SwapEndianL(unsigned long l)
-{
-	unsigned char c[4];
-	c[0] = (unsigned char)(l & 0xff);
-	c[1] = (unsigned char)((l >> 8) & 0xff);
-	c[2] = (unsigned char)((l >> 16) & 0xff);
-	c[3] = (unsigned char)((l >> 24) & 0xff);
-	return((c[0]<<24)+(c[1]<<16)+(c[2]<<8)+c[3]);
-}
-
 void SwapPartitionBytes(int i)
 {
 	// We don't bother to byteswap the CHS geometry fields since we don't use them.
-	partitions[i].startlba=SwapEndianL(partitions[i].startlba);
-	partitions[i].sectors=SwapEndianL(partitions[i].sectors);
+	partitions[i].startlba=SwapBBBB(partitions[i].startlba);
+	partitions[i].sectors=SwapBBBB(partitions[i].sectors);
 }
 
 #define BootPrint(x) puts(x);
 
 int cmpsig(const char *s1, const char *s2)
 {
-	long *p1=(long *)s1;
-	long *p2=(long *)s2;
+	short *p1=(short *)s1;
+	short *p2=(short *)s2;
+	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
 	if(*p1++!=*p2++)
 		return(1);
+	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
+	if(*p1++!=*p2++)
+		return(1);
+	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
+	if(*p1++!=*p2++)
+		return(1);
+	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
 	if(*p1++!=*p2++)
 		return(1);
 	return(0);
@@ -154,12 +152,12 @@ void *copy(void *s2, const void *s1,int s)
 {
 	const long *p1=(const long *)s1;
 	long *p2=(long *)s2;
-	while(s>3)
+	while(s-->3)
 		*p2++=*p1++;
 
 	const char *c1=(const char *)p1;
 	char *c2=(char *)p2;
-	while(s)
+	while(s--)
 		*c2++=*c1++;
 	return(s2);
 }
@@ -188,10 +186,13 @@ unsigned char FindDrive(void)
 	{
 		// We have at least one partition, parse the MBR.
 		struct MasterBootRecord *mbr=(struct MasterBootRecord *)sector_buffer;
+		puts("Copying partition data\n");
 		copy(&partitions[0],&mbr->Partition[0],sizeof(struct PartitionEntry));
 		copy(&partitions[1],&mbr->Partition[1],sizeof(struct PartitionEntry));
 		copy(&partitions[2],&mbr->Partition[2],sizeof(struct PartitionEntry));
 		copy(&partitions[3],&mbr->Partition[3],sizeof(struct PartitionEntry));
+
+		printf("Done - signature: %d\n",mbr->Signature);
 
 		switch(mbr->Signature)
 		{
@@ -226,13 +227,21 @@ unsigned char FindDrive(void)
 		}
 	}
 
-    if (cmpsig((const char*)&sector_buffer[0x36], "FAT16   ")==0) // check for FAT16
+	int ti;
+	int *tp=(int *)sector_buffer;
+	for(ti=0;ti<128;++ti)
+	{
+		printf("%d: %d\n",tp,*tp);
+		++tp;
+	}
+
+    if (cmpsig(sector_buffer+0x36, "FAT16   ")==0) // check for FAT16
 		fattype = 16;
 
-    if (cmpsig((const char*)&sector_buffer[0x52], "FAT32   ")==0) // check for FAT32
+    if (cmpsig(sector_buffer+0x52, "FAT32   ")==0) // check for FAT32
 		fattype = 32;
 	
-    printf("partition type: 0x%02X (", sector_buffer[450]);
+    printf("partition type: %d (", sector_buffer[450]);
     switch (fattype)
     {
 		case 0:
