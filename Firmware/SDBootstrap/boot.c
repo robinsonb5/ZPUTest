@@ -1,3 +1,18 @@
+/* Firmware for loading files from SD card.
+   Part of the ZPUTest project by Alastair M. Robinson.
+   SPI and FAT code borrowed from the Minimig project.
+
+   The low 64k of RAM currently goes to BlockRAM
+   (smaller ROMs are aliased to fill the 64k)
+   and halfword and byte writes to BlockRAM aren't
+   currently supported.  This means any globals should be
+   defined as int, not short or char.
+   Any global structures that contains short or char members
+   should be declared as a pointer and initialised to a block of
+   SDRAM (anywhere higher than 0x10000 in RAM.)
+*/
+
+
 #include "minisoc_hardware.h"
 #include "stdarg.h"
 
@@ -20,7 +35,7 @@ int SDCardInit()
 
 int LoadImage(const char *fn, unsigned char *buf)
 {
-	fileTYPE *file=(fileTYPE *)0x1f000;
+	fileTYPE *file=(fileTYPE *)0x1f000; // FIXME - allocate properly.
 	if(FileOpen(file,fn))
 	{
 		putserial("Opened file, loading...\n");
@@ -48,7 +63,13 @@ int LoadImage(const char *fn, unsigned char *buf)
 int main(int argc,char **argv)
 {
 	int i;
+	int *sprite=(int *)0x1ff80;
 	HW_PER(PER_UART_CLKDIV)=1330000/1152;
+
+	HW_VGA(SP0PTR)=sprite;
+	for(i=0;i<32;++i)
+		*sprite++=0;
+
 	HW_VGA(FRAMEBUFFERPTR)=0x20000;
 //	putserial("Initialising SD card\n");
 
@@ -57,8 +78,10 @@ int main(int argc,char **argv)
 	{
 		while(1)
 		{
-			LoadImage("TEST    IMG",0x20000);
-			LoadImage("TEST2   IMG",0x20000);
+			LoadImage("PIC1    RAW",(unsigned char *)0x20000);
+			LoadImage("PIC2    RAW",(unsigned char *)0x20000);
+			LoadImage("PIC3    RAW",(unsigned char *)0x20000);
+			LoadImage("PIC4    RAW",(unsigned char *)0x20000);
 		}
 	}
 
