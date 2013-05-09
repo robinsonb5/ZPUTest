@@ -68,7 +68,7 @@ int cmd_write(unsigned long cmd, unsigned long lba)
 
 void spi_spin()
 {
-	puts("SPIspin\n");
+//	puts("SPIspin\n");
 	int i;
 	for(i=0;i<200;++i)
 		SPI(0xff);
@@ -85,20 +85,20 @@ short wait_initV2()
 	{
 		if((r=cmd_CMD55())==1)
 		{
-			printf("CMD55 %d\n",r);
+//			printf("CMD55 %d\n",r);
 			SPI(0xff);
 			if((r=cmd_CMD41())==0)
 			{
-				printf("CMD41 %d\n",r);
+//				printf("CMD41 %d\n",r);
 				SPI(0xff);
 				return(1);
 			}
-			else
-				printf("CMD41 %d\n",r);
+//			else
+//				printf("CMD41 %d\n",r);
 			spi_spin();
 		}
-		else
-			printf("CMD55 %d\n",r);
+//		else
+//			printf("CMD55 %d\n",r);
 	}
 	return(0);
 }
@@ -109,17 +109,17 @@ short wait_init()
 	int i=20;
 	short r;
 	SPI(0xff);
-	puts("Cmd_init\n");
+//	puts("Cmd_init\n");
 	while(--i)
 	{
 		if((r=cmd_init())==0)
 		{
-			printf("init %d\n  ",r);
+//			printf("init %d\n  ",r);
 			SPI(0xff);
 			return(1);
 		}
-		else
-			printf("init %d\n  ",r);
+//		else
+//			printf("init %d\n  ",r);
 		spi_spin();
 	}
 	return(0);
@@ -133,7 +133,7 @@ short is_sdhc()
 	spi_spin();
 
 	r=cmd_CMD8();		// test for SDHC capability
-	printf("cmd_CMD8 response: %d\n",r);
+//	printf("cmd_CMD8 response: %d\n",r);
 	if(r!=1)
 	{
 		wait_init();
@@ -143,11 +143,11 @@ short is_sdhc()
 	SPI(0xff);
 //	SPI_WAIT();
 	r=SPI_READ();
-	printf("CMD8_1 response: %d\n",r);
+//	printf("CMD8_1 response: %d\n",r);
 	SPI(0xff);
 //	SPI_WAIT();
 	r=SPI_READ();
-	printf("CMD8_2 response: %d\n",r);
+//	printf("CMD8_2 response: %d\n",r);
 	SPI(0xff);
 //	SPI_WAIT();
 	r=SPI_READ();
@@ -157,7 +157,7 @@ short is_sdhc()
 		return(0);
 	}
 
-	printf("CMD8_3 response: %d\n",r);
+//	printf("CMD8_3 response: %d\n",r);
 	SPI(0xff);
 //	SPI_WAIT();
 	r=SPI_READ();
@@ -166,7 +166,7 @@ short is_sdhc()
 		wait_init();
 		return(0);
 	}
-	printf("CMD8_4 response: %d\n",r);
+//	printf("CMD8_4 response: %d\n",r);
 
 	SPI(0xff);
 

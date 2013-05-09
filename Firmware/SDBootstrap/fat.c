@@ -56,7 +56,6 @@ unsigned int entries_per_cluster;     // number of directory entries per cluster
 // internal global variables
 unsigned int fattype=0;              	// volume format 
 unsigned int fat32 = 0;                // volume format is FAT32
-unsigned long boot_sector;              // partition boot sector
 unsigned long fat_start;                // start LBA of first FAT table
 unsigned long data_start;               // start LBA of data field
 unsigned long root_directory_cluster;   // root directory cluster (used in FAT32)
@@ -166,6 +165,7 @@ void *copy(void *s2, const void *s1,int s)
 // FindDrive() checks if a card is present and contains FAT formatted primary partition
 unsigned char FindDrive(void)
 {
+	unsigned long boot_sector;              // partition boot sector
     buffered_fat_index = -1;
 
     if (!sd_read_sector(0, sector_buffer)) // read MBR
@@ -186,7 +186,6 @@ unsigned char FindDrive(void)
 	{
 		// We have at least one partition, parse the MBR.
 		struct MasterBootRecord *mbr=(struct MasterBootRecord *)sector_buffer;
-		puts("Copying partition data\n");
 		copy(&partitions[0],&mbr->Partition[0],sizeof(struct PartitionEntry));
 		copy(&partitions[1],&mbr->Partition[1],sizeof(struct PartitionEntry));
 		copy(&partitions[2],&mbr->Partition[2],sizeof(struct PartitionEntry));
@@ -197,7 +196,7 @@ unsigned char FindDrive(void)
 		switch(mbr->Signature)
 		{
 			case 0x55aa:	// Little-endian MBR on a big-endian system
-				BootPrint("Swapping byte order of partition entries\n");
+//				BootPrint("Swapping byte order of partition entries\n");
 				SwapPartitionBytes(0);
 				SwapPartitionBytes(1);
 				SwapPartitionBytes(2);
@@ -206,10 +205,10 @@ unsigned char FindDrive(void)
 			case 0xaa55:
 				// get start of first partition
 				boot_sector = partitions[0].startlba;
-				printf("Start: %d\n",partitions[0].startlba);
+//				printf("Start: %d\n",partitions[0].startlba);
 				for(partitioncount=4;(partitions[partitioncount-1].sectors==0) && (partitioncount>1); --partitioncount)
 					;
-				printf("PartitionCount: %d\n",partitioncount);
+//				printf("PartitionCount: %d\n",partitioncount);
 				int i;
 				for(i=0;i<partitioncount;++i)
 				{
@@ -330,6 +329,7 @@ unsigned char FindDrive(void)
 
 
     // some debug output
+#if 0
     printf("fat_size: %lu\r", fat_size);
     printf("fat_number: %u\r", fat_number);
     printf("fat_start: %lu\r", fat_start);
@@ -338,7 +338,7 @@ unsigned char FindDrive(void)
     printf("data_start: %lu\r", data_start);
     printf("cluster_size: %u\r", cluster_size);
     printf("cluster_mask: %08lX\r", cluster_mask);
-
+#endif
     return(1);
 }
 
@@ -419,7 +419,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
 #endif
     }
 
-    printf("file \"%s\" not found\r", name);
+//    printf("file \"%s\" not found\r", name);
     memset(file, 0, sizeof(fileTYPE));
     return(0);
 }

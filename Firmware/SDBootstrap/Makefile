@@ -36,7 +36,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec
+all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec $(BOOT_PRJ).rpt
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -59,6 +59,9 @@ $(ROMGEN): $(ROMGEN).c
 # Convert SREC to .mif file
 %.mif: %.srec
 	srec_cat $< -o $@ -mif 32
+
+%.rpt: %.elf
+	$(DUMP) -x $< | grep __bss_end   #  ROM size
 
 # Link - this produces an ELF binary.
 
