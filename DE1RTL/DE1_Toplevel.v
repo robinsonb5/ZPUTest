@@ -228,7 +228,7 @@ mydither (
 
 defparam myZPUTest.sdram_rows = 12;
 defparam myZPUTest.sdram_cols = 8;
-defparam myZPUTest.sysclk_frequency = 1250;
+defparam myZPUTest.sysclk_frequency = 1330;
 defparam myZPUTest.spi_maxspeed = 4;
 
 ZPUTest myZPUTest
@@ -258,11 +258,16 @@ ZPUTest myZPUTest
 	.sdr_cs(DRAM_CS_N),
 	.sdr_ba({DRAM_BA_1,DRAM_BA_0}),
 //	.sdr_clk(DRAM_CLK),
-	.sdr_clkena(DRAM_CKE),
+	.sdr_cke(DRAM_CKE),
 	
 	// RS232
-	.rs232_rxd(UART_RXD),
-	.rs232_txd(UART_TXD)
+	.rxd(UART_RXD),
+	.txd(UART_TXD),
+	// SD Card
+	.spi_cs(SD_DAT3),
+	.spi_miso(SD_DAT),
+	.spi_mosi(SD_CMD),
+	.spi_clk(SD_CLK)
 );
 
 endmodule
