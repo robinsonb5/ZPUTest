@@ -109,16 +109,16 @@ int cmpsig(const char *s1, const char *s2)
 {
 	short *p1=(short *)s1;
 	short *p2=(short *)s2;
-	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
+//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
 	if(*p1++!=*p2++)
 		return(1);
-	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
+//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
 	if(*p1++!=*p2++)
 		return(1);
-	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
+//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
 	if(*p1++!=*p2++)
 		return(1);
-	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
+//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
 	if(*p1++!=*p2++)
 		return(1);
 	return(0);

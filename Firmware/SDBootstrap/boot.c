@@ -49,6 +49,21 @@ int main(int argc,char **argv)
 				}	
 			}
 		}
+		if(FileOpen(file,"TEST2   IMG"))
+		{
+			char *fbptr=(char *)0x20000;
+			short imgsize=file->size/512;
+			int c=0;
+			while(c<imgsize)
+			{
+				if(FileRead(file, fbptr))
+				{
+					FileNextSector(file);
+					fbptr+=512;
+					++c;
+				}	
+			}
+		}
 	}
 
 	return(0);

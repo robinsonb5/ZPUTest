@@ -99,6 +99,7 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 #define PER_SPI 0x44 /* Blocks on both reads and writes, making BUSY signal redundant. */
 #define PER_SPI_PUMP 0x48 /* Push 16-bits through SPI in one instruction */
 
+#define PER_SPI_FAST 8
 #define PER_SPI_BUSY 15
 
 /* Capability registers */

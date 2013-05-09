@@ -76,12 +76,13 @@ signal millisecond_counter : unsigned(31 downto 0) := X"00000000";
 signal millisecond_tick : unsigned(19 downto 0);
 
 -- SPI Clock counter
-signal spi_tick : unsigned(11 downto 0) := X"000";
+signal spi_tick : unsigned(8 downto 0);
 signal spiclk_in : std_logic;
+signal spi_fast : std_logic;
 
 -- SPI signals
-signal host_to_spi : std_logic_vector(15 downto 0);
-signal spi_to_host : std_logic_vector(15 downto 0);
+signal host_to_spi : std_logic_vector(7 downto 0);
+signal spi_to_host : std_logic_vector(31 downto 0);
 signal spi_wide : std_logic;
 signal spi_trigger : std_logic;
 signal spi_busy : std_logic;
@@ -175,9 +176,9 @@ begin
 	if rising_edge(clk) then
 		spiclk_in<='0';
 		spi_tick<=spi_tick+1;
-		if spi_tick=sysclk_frequency/4 then -- Number of ticks in 400KHz
+		if (spi_fast='1' and spi_tick(3)='1') or spi_tick(8)='1' then
 			spiclk_in<='1'; -- Momentary pulse for SPI host.
-			spi_tick<=X"000";
+			spi_tick<='0'&X"00";
 		end if;
 	end if;
 end process;
@@ -408,18 +409,19 @@ begin
 
 								when X"C4" => -- SPI CS
 									spi_cs<=not mem_write(0);
+									spi_fast<=mem_write(8);
 									mem_busy<='0';
 
 								when X"C8" => -- SPI write (blocking)
 									spi_wide<='0';
 									spi_trigger<='1';
-									host_to_spi<=mem_write(15 downto 0);
+									host_to_spi<=mem_write(7 downto 0);
 									currentstate<=WAITSPI;
 									
 								when X"CC" => -- SPI write wide (blocking)
 									spi_wide<='1';
 									spi_trigger<='1';
-									host_to_spi<=mem_write(15 downto 0);
+									host_to_spi<=mem_write(7 downto 0);
 									currentstate<=WAITSPI;
 									
 								when others =>
@@ -474,7 +476,7 @@ begin
 								when X"CC" => -- SPI read (blocking)
 									spi_wide<='1';
 									spi_trigger<='1';
-									host_to_spi<=X"FFFF";
+									host_to_spi<=X"FF";
 									currentstate<=WAITSPI;
 
 								when others =>
@@ -511,8 +513,8 @@ begin
 				currentstate<=WAITSPI2;
 
 			when WAITSPI2 =>
-				mem_read(31 downto 16)<=(others => 'X');
-				mem_read(15 downto 0)<=spi_to_host;
+--				mem_read(31 downto 16)<=(others => 'X');
+				mem_read<=spi_to_host;
 				if spi_busy='0' then
 					mem_busy<='0';
 					currentstate<=WAITING;
@@ -539,8 +541,8 @@ begin
 					sdram_state<=read2;
 				end if;
 			when read2 =>	-- Prepare for second word...
---				sdram_addr<=std_logic_vector(unsigned(mem_Addr)+1);
-				sdram_addr(1)<='1';
+				sdram_addr<=std_logic_vector(unsigned(mem_Addr)+2);
+--				sdram_addr(1)<='1';
 				sdram_req<='1';
 				sdram_state<=read3;
 			when read3 =>  -- Wait for second word...

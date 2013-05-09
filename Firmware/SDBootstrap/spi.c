@@ -1,7 +1,7 @@
 #include "minisoc_hardware.h"
 #include "small_printf.h"
 
-short SDHCtype=1;
+int SDHCtype=1;
 
 // #define SPI_WAIT(x) while(HW_PER(PER_SPI_CS)&(1<<PER_SPI_BUSY));
 // #define SPI(x) {while((HW_PER(PER_SPI_CS)&(1<<PER_SPI_BUSY))); HW_PER(PER_SPI)=(x);}
@@ -261,7 +261,7 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 	int i;
 	int r;
 //	printf("sd_read_sector %d, %d\n",lba,buf);
-	SPI_CS(1);
+	SPI_CS(1|(1<<PER_SPI_FAST));
 	SPI(0xff);
 
 	r=cmd_read(lba);
@@ -284,17 +284,18 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 //			spi_readsector((long *)buf);
 			int j;
 //			SPI(0xff);
+
 			for(j=0;j<128;++j)
 			{
 				int t,v;
-				SPI(0xff);
-				v=SPI_READ();
-				t=v<<24;
+//				SPI(0xff);
+				t=SPI_PUMP();
+//				t=v<<16;
 
-				SPI(0xff);
-				v=SPI_READ();
-				t|=v<<16;
+//				v=SPI_PUMP();
+//				t|=v;
 
+#if 0
 				SPI(0xff);
 				v=SPI_READ();
 				t|=v<<8;
@@ -302,17 +303,23 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 				SPI(0xff);
 				v=SPI_READ();
 				t|=v;
-
+#endif
 				*(int *)buf=t;
 //				printf("%d: %d\n",buf,t);
 				buf+=4;
 			}
+
 //			SPI_PUMP();
-//			for(j=0;j<256;++j)
-//			{
-//				*(short *)buf=SPI_PUMP();
-//				buf+=2;
-//			}
+
+#if 0
+
+			for(j=0;j<256;++j)
+			{
+				*(short *)buf=SPI_PUMP();
+				buf+=2;
+			}
+#endif
+
 #if 0
 			for(j=0;j<256;++j)
 			{
