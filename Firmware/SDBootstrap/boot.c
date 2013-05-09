@@ -12,12 +12,34 @@ int SDCardInit()
 	puts("Initialising SD card\n");
 	if(spi_init())
 	{
-		puts("Calling FindDrive\n");
 		FindDrive();
-		puts("FindDrive() returned\n");
+	}
+	return(1);
+}
 
-//		ChangeDirectory(DIRECTORY_ROOT);
-//		puts("Changed directory\n");
+
+int LoadImage(const char *fn, unsigned char *buf)
+{
+	fileTYPE *file=(fileTYPE *)0x1f000;
+	if(FileOpen(file,fn))
+	{
+		putserial("Opened file, loading...\n");
+		short imgsize=file->size/512;
+		int c=0;
+		while(c<imgsize)
+		{
+			if(FileRead(file, buf))
+			{
+				FileNextSector(file);
+				buf+=512;
+				++c;
+			}
+			else
+			{
+				putserial("File load failed\n");
+				return(0);
+			}
+		}
 	}
 	return(1);
 }
@@ -33,36 +55,10 @@ int main(int argc,char **argv)
 //	SD_Boot("ZPUFirmware.bin",0);
 	if(SDCardInit())
 	{
-		fileTYPE *file=(fileTYPE *)0x1f000;
-		if(FileOpen(file,"TEST    IMG"))
+		while(1)
 		{
-			char *fbptr=(char *)0x20000;
-			short imgsize=file->size/512;
-			int c=0;
-			while(c<imgsize)
-			{
-				if(FileRead(file, fbptr))
-				{
-					FileNextSector(file);
-					fbptr+=512;
-					++c;
-				}	
-			}
-		}
-		if(FileOpen(file,"TEST2   IMG"))
-		{
-			char *fbptr=(char *)0x20000;
-			short imgsize=file->size/512;
-			int c=0;
-			while(c<imgsize)
-			{
-				if(FileRead(file, fbptr))
-				{
-					FileNextSector(file);
-					fbptr+=512;
-					++c;
-				}	
-			}
+			LoadImage("TEST    IMG",0x20000);
+			LoadImage("TEST2   IMG",0x20000);
 		}
 	}
 
