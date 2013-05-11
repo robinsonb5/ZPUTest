@@ -351,7 +351,7 @@ spi : entity work.spi_interface
 
 	ram : entity work.ExternalRAM
 	port map (
-		address => mem_addr(12 downto 2),
+		address => mem_addr(13 downto 2),
 		clock	=> clk2,
 		data => mem_write,
 		wren => externram_wren,

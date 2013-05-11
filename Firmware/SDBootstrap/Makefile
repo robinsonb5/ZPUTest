@@ -14,7 +14,7 @@ BOOT_PRJ = boot
 BOOT_SRC = boot.c spi.c sdboot.c spi.h fat.c fat.h minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h swap.c # spi.c
 BOOT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
 
-LINKMAP  = 
+LINKMAP  = boot.ld
 LIBDIR   = 
 
 # Commandline options for each tool.
@@ -26,7 +26,7 @@ ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
 
 CFLAGS  = -I. -c -Os
 AFLAGS  = 
-LFLAGS  = -nostdlib -Os
+LFLAGS  = -nostdlib -Os -T $(LINKMAP)
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 
