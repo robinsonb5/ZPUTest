@@ -324,10 +324,10 @@ spi : entity work.spi_interface
 	 zpu: zpu_core 
 	 generic map (
 			HARDWARE_MULTIPLY => false,
-			COMPARISON_SUB => false,
-			EQBRANCH => false,
+			COMPARISON_SUB => true,
+			EQBRANCH => true,
 			MMAP_STACK => true,
-			STOREBH => false
+			STOREBH => true
 		)
     port map (
         clk                 => clk2,

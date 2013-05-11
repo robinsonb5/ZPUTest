@@ -18,13 +18,13 @@ LINKMAP  = boot.ld
 LIBDIR   = 
 
 # Commandline options for each tool.
-ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
-  -mno-call -mno-neqbranch -mno-pushspadd \
-  -mno-neg -mno-mod -mno-div
+#ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
+#  -mno-call -mno-neqbranch -mno-pushspadd \
+#  -mno-neg -mno-mod -mno-div
 
-ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
+ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel # -mno-neg
 
-CFLAGS  = -I. -c -Os # -DDISABLE_PRINTF
+CFLAGS  = -I. -c -Os $(ZPUOPTS) -DDISABLE_PRINTF
 AFLAGS  = 
 LFLAGS  = -nostdlib -Os -T $(LINKMAP)
 CP_HEXFLAGS = -Oihex

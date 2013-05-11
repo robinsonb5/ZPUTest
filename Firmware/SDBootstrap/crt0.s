@@ -317,7 +317,10 @@ _ulessthan:
 	and
 	im 1
 	and
-	neg
+/*	neg */
+	not
+	im 1
+	add
 	
 	
 	/* high: upper 31-bit diff is only wrong when diff is 0 and low=-1
@@ -472,21 +475,21 @@ _ashiftright:
 # opcode 45
 # offset 0x0000 01a0
 	.balign 32,0
-_call:
+_call:	; stack: return_addr call_addr ...
 	; fn
-	loadsp 4
+	loadsp 4	;	call_addr return_addr call_addr ...
 	
 	; return address
-	loadsp 4
+	loadsp 4	;   return_addr call_addr return_addr call_addr ...
 
 	; store return address
-	storesp 12
+	storesp 12	;   call_addr return_addr return_addr
 	
 	; fn to call
-	storesp 4
+	storesp 4	;   call_addr return_addr
 	
-	pushsp	; flush internal stack
-	popsp
+;	pushsp	; flush internal stack
+;	popsp
 		
 	poppc
 

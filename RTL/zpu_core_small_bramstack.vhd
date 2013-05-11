@@ -53,7 +53,8 @@ entity zpu_core is
 	 COMPARISON_SUB : boolean := true; -- Include sub (and also lessthan, etc - but not yet implemented)
 	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
 	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
-	 STOREBH : boolean := true
+	 STOREBH : boolean := true; -- Include halfword and byte writes
+	 CALL : boolean := true -- Include call
   );
   port ( 
     clk                 : in std_logic;
@@ -171,7 +172,8 @@ architecture behave of zpu_core is
 	 Decoded_Sub,
 	 Decoded_Comparison,
 	 Decoded_EqNeq,
-	 Decoded_EqBranch
+	 Decoded_EqBranch,
+	 Decoded_Call
     );
 
 
@@ -275,7 +277,7 @@ begin
 
 
 
-  -- move out calculation of the opcode to a seperate process
+  -- move out calculation of the opcode to a separate process
   -- to make things a bit easier to read
   decodeControl : process(mem_read, pc, tOpcode_sel)
     variable tOpcode : std_logic_vector(OpCode_Size-1 downto 0);
@@ -305,6 +307,9 @@ begin
       sampledDecodedOpcode <= Decoded_LoadSP;
     elsif (tOpcode(7 downto 5) = OpCode_Emulate) then
 		sampledDecodedOpcode <= Decoded_Emulate;
+		if CALL=true and tOpcode(5 downto 0) = OpCode_Call then
+			sampledDecodedOpcode <= Decoded_Call;
+		end if;
 		if HARDWARE_MULTIPLY=true and tOpcode(5 downto 0) = OpCode_Mult then
 			sampledDecodedOpcode <= Decoded_Mult;
 		end if;
@@ -628,7 +633,18 @@ begin
               sp    <= memARead(maxAddrBitStackBRAM downto minAddrBit);
               state <= State_Resync;
 
-            when Decoded_Nop =>
+				when Decoded_Call =>
+					if CALL=true then
+						pc <= memARead(maxAddrBit downto 0); -- Set PC to value on top of stack
+						fetchneeded<='1'; -- Need to set this any time PC changes.
+
+						memAWriteEnable                <= '1';
+						memAAddr                       <= sp; -- Replace stack top with PC+1
+						memAWrite                      <= (others => DontCareValue);
+						memAWrite(maxAddrBit downto 0) <= pc + 1;
+					end if;
+
+				when Decoded_Nop =>
               memAAddr <= sp;
 
             when others =>
