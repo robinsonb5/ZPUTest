@@ -67,11 +67,11 @@ unsigned long cluster_mask;             // binary mask of cluster number
 unsigned int dir_entries;             // number of entry's in directory table
 unsigned long fat_size;                 // size of fat
 
-//unsigned char sector_buffer[1024];       // sector buffer - room for two consecutive sectors...
+unsigned char sector_buffer[512];       // sector buffer
 
-unsigned char *sector_buffer=0x18000;
+//unsigned char *sector_buffer=0x18000;
 
-struct PartitionEntry *partitions=0x18200; // [4];	// lbastart and sectors will be byteswapped as necessary
+struct PartitionEntry partitions[4]; 	// [4];	// lbastart and sectors will be byteswapped as necessary
 int partitioncount;
 
 FATBUFFER fat_buffer;                   // buffer for caching fat entries

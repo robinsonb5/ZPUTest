@@ -4,7 +4,7 @@
 MEMORY
 {
   BOOT (rx) : ORIGIN = 0x00000000, LENGTH = 0x00002000 /* 8192 bytes */
-  SDRAM (rw)  : ORIGIN = 0x00010000, LENGTH = 0x08000000 /* 8 meg (minimum) */
+  SDRAM (rw)  : ORIGIN = 0x07ff000, LENGTH = 0x00010000 /* 128k at top end of DE1's SDRAM */
   STACK (rw) : ORIGIN = 0x40000000, LENGTH = 0x00000400 /* 1024 bytes */
 }
 

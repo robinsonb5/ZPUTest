@@ -2,11 +2,11 @@
 
 #include <stdarg.h>
 
+static char temp[80];
+
 static int
 _cvt(unsigned int val, char *buf, int radix, char *digits)
 {
-	char *temp=(char*)0x11000; // FIXME - allocate this properly
-//    char temp[80];
     char *cp = temp;
     int length = 0;
 
@@ -30,13 +30,11 @@ _cvt(unsigned int val, char *buf, int radix, char *digits)
 #define is_digit(c) ((c >= '0') && (c <= '9'))
 
 
-// char vpfbuf[sizeof(long long)*8];
+char vpfbuf[sizeof(long long)*8];
 
 static int
 _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_list ap)
 {
-	char *vpfbuf=(char *)0x11100; // FIXME - allocate this properly.
-//    char buf[sizeof(long long)*8];
     char c, sign, *cp=vpfbuf;
     int left_prec, right_prec, zero_fill, pad, pad_on_right, 
         i, islong, islonglong;
@@ -53,19 +51,6 @@ _vprintf(void (*putc)(char c, void **param), void **param, const char *fmt, va_l
             switch (c) {
             case 'd':
                     val = (long)va_arg(ap, unsigned int);
-//                if ((c == 'd') || (c == 'D')) {
-//                    if (val < 0) {
-//		                (*putc)('-', param);
-//                       val = -val;
-//                    }
- //               } else {
- //                   // Mask to unsigned, sized quantity
- //                   if (islong) {
- //                       val &= ((long)1 << (sizeof(long) * 8)) - 1;
- //                  } else{
- //                       val &= ((long)1 << (sizeof(int) * 8)) - 1;
- //                   }
-//                }
                 break;
             default:
                 break;

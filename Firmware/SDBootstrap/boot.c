@@ -5,11 +5,12 @@
    The low 64k of RAM currently goes to BlockRAM
    (smaller ROMs are aliased to fill the 64k)
    and halfword and byte writes to BlockRAM aren't
-   currently supported.  This means any globals should be
-   defined as int, not short or char.
-   Any global structures that contains short or char members
-   should be declared as a pointer and initialised to a block of
-   SDRAM (anywhere higher than 0x10000 in RAM.)
+   currently supported.
+   For this reason, initialised global variables should be
+   declared as int, not short or char.
+   Uninitialised globals will automatically end up
+   in SDRAM thanks to the linker script, which in most
+   cases solves the problem.
 */
 
 
@@ -33,19 +34,20 @@ int SDCardInit()
 }
 
 
+fileTYPE file;
+
 int LoadImage(const char *fn, unsigned char *buf)
 {
-	fileTYPE *file=(fileTYPE *)0x1f000; // FIXME - allocate properly.
-	if(FileOpen(file,fn))
+	if(FileOpen(&file,fn))
 	{
 		putserial("Opened file, loading...\n");
-		short imgsize=file->size/512;
+		short imgsize=file.size/512;
 		int c=0;
 		while(c<imgsize)
 		{
-			if(FileRead(file, buf))
+			if(FileRead(&file, buf))
 			{
-				FileNextSector(file);
+				FileNextSector(&file);
 				buf+=512;
 				++c;
 			}

@@ -37,7 +37,7 @@ struct MasterBootRecord
 	unsigned short Signature;		// This lets us detect an MBR (and the need for byteswapping).
 } __attribute__ ((packed));
 
-extern struct PartitionEntry *partitions; //[4];	// FirstBlock and LastBlock will be byteswapped as necessary
+extern struct PartitionEntry partitions[4];	// FirstBlock and LastBlock will be byteswapped as necessary
 extern int partitioncount;
 
 typedef struct
@@ -80,8 +80,8 @@ typedef union {
 
 // global sector buffer, data for read/write actions is stored here.
 // BEWARE, this buffer is also used and thus trashed by all other functions
-//extern unsigned char sector_buffer[1024]; // sector buffer - room for 2 sectors, to ease reading data not sector-aligned...
-extern unsigned char *sector_buffer;
+extern unsigned char sector_buffer[512];
+//extern unsigned char *sector_buffer;
 extern unsigned int cluster_size;
 extern unsigned long cluster_mask;
 extern unsigned int fat32;
