@@ -114,8 +114,11 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 #define PER_INT_TIMER 3
 #define PER_INT_PS2 4
 
-
+#ifndef DISABLE_UART
 void putserial(char *msg);
+#else
+#define putserial(x)
+#endif
 
 #endif
 

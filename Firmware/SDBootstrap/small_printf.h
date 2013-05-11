@@ -1,6 +1,8 @@
 #ifndef SMALL_PRINTF_H
 #define SMALL_PRINTF_H
 
+#include "minisoc_hardware.h"
+
 #ifdef DISABLE_PRINTF
 #define small_printf(x,...)
 #define printf(x,...)
