@@ -74,7 +74,8 @@ unsigned char sector_buffer[512];       // sector buffer
 struct PartitionEntry partitions[4]; 	// [4];	// lbastart and sectors will be byteswapped as necessary
 int partitioncount;
 
-FATBUFFER fat_buffer;                   // buffer for caching fat entries
+//FATBUFFER fat_buffer;                   // buffer for caching fat entries
+#define fat_buffer (*(FATBUFFER*)&sector_buffer) // Don't need a separate buffer for this.
 unsigned long buffered_fat_index;       // index of buffered FAT sector
 
 //char DirEntryLFN[MAXDIRENTRIES][261];
@@ -350,6 +351,8 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
     unsigned long  iDirectoryCluster;    // start cluster of subdirectory or FAT32 root directory
     unsigned long  iEntry;               // entry index in directory cluster or FAT16 root directory
     unsigned long  nEntries;             // number of entries per cluster or FAT16 root directory size
+
+	buffered_fat_index=-1;
 
     if (iDirectory) // subdirectory
     {

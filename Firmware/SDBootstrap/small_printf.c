@@ -2,6 +2,8 @@
 
 #include <stdarg.h>
 
+#ifndef DISABLE_PRINTF
+
 static char temp[80];
 
 static int
@@ -116,4 +118,5 @@ small_printf(const char *fmt, ...)
     va_end(ap);
     return (ret);
 }
+#endif
 

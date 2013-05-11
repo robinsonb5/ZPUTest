@@ -24,7 +24,7 @@ ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
 
 ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
 
-CFLAGS  = -I. -c -Os
+CFLAGS  = -I. -c -Os # -DDISABLE_PRINTF
 AFLAGS  = 
 LFLAGS  = -nostdlib -Os -T $(LINKMAP)
 CP_HEXFLAGS = -Oihex
