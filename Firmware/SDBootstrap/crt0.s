@@ -153,10 +153,9 @@ Boston, MA 02111-1307, USA.  */
 # offset 0x0000 0000
 		.globl _start
 _start:
-		; intSp must be 0 when we jump to _premain
-		
 		jmp main
 
+        .balign 4,0
 		.globl _memreg
 _memreg:
 		.long 0
