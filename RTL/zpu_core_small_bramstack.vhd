@@ -389,18 +389,19 @@ begin
     if reset = '1' then
       state               <= State_Resync;
       break               <= '0';
-      sp                  <= unsigned(spStart(maxAddrBitStackBRAM downto minAddrBit));
+-- sp doesn't matter, since the stack wraps around, and now only contains the stack
+--      sp                  <= unsigned(spStart(maxAddrBitStackBRAM downto minAddrBit));
       pc                  <= (others => '0');
       idim_flag           <= '0';
       begin_inst          <= '0';
-      memAAddr            <= (others => '0');
-      memBAddr            <= (others => '0');
+--      memAAddr            <= (others => '0');
+--      memBAddr            <= (others => '0');
       memAWriteEnable     <= '0';
       memBWriteEnable     <= '0';
       out_mem_writeEnable <= '0';
       out_mem_readEnable  <= '0';
-      memAWrite           <= (others => '0');
-      memBWrite           <= (others => '0');
+--      memAWrite           <= (others => '0');
+--      memBWrite           <= (others => '0');
       inInterrupt         <= '0';
 		fetchneeded			  <= '1';
 

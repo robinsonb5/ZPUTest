@@ -141,7 +141,7 @@ signal sdram_write : std_logic_vector(31 downto 0); -- 32-bit width for ZPU
 signal sdram_addr : std_logic_vector(31 downto 0);
 signal sdram_req : std_logic;
 signal sdram_wr : std_logic;
-signal sdram_read : std_logic_vector(15 downto 0);
+signal sdram_read : std_logic_vector(31 downto 0);
 signal sdram_ack : std_logic;
 
 signal sdram_wrL : std_logic;
@@ -205,7 +205,7 @@ mysdram : entity work.sdram
 
 	-- Housekeeping
 		sysclk => clk,
-		reset => reset_in,  -- Contributes to reset, so have to use reset_in here.
+		reset => reset,  -- Contributes to reset, so have to use reset_in here.
 		reset_out => sdr_ready,
 		reinit => '0',
 
@@ -236,7 +236,7 @@ mysdram : entity work.sdram
 	myvga : entity work.vga_controller
 		port map (
 		clk => clk,
-		reset => reset,
+		reset => reset and sdr_ready,
 
 		reg_addr_in => mem_addr(11 downto 0),
 		reg_data_in => mem_write,
@@ -275,7 +275,7 @@ begin
 	elsif rising_edge(clk) then
 		reset_counter<=reset_counter-1;
 		if reset_counter=X"0000" then
-			reset<='1' and sdr_ready;
+			reset<='1';
 		end if;
 	end if;
 end process;
@@ -331,7 +331,7 @@ spi : entity work.spi_interface
 		)
     port map (
         clk                 => clk2,
-        reset               => not reset,
+        reset               => not (reset and sdr_ready),
         enable              => zpu_enable,
         in_mem_busy         => mem_busy, 
         mem_read            => mem_read,
@@ -360,7 +360,6 @@ spi : entity work.spi_interface
 
 process(clk)
 begin
-	zpu_enable<='1';
 	zpu_interrupt<='0';
 
 	if reset='0' then
@@ -536,18 +535,7 @@ begin
 				sdram_wr<='1';
 				sdram_req<='1';
 				if sdram_ack='0' then -- is first word ready?
-					mem_read(31 downto 16)<=sdram_read;
-					sdram_req<='0';
-					sdram_state<=read2;
-				end if;
-			when read2 =>	-- Prepare for second word...
-				sdram_addr<=std_logic_vector(unsigned(mem_Addr)+2);
---				sdram_addr(1)<='1';
-				sdram_req<='1';
-				sdram_state<=read3;
-			when read3 =>  -- Wait for second word...
-				if sdram_ack='0' then -- is first word ready?
-					mem_read(15 downto 0)<=sdram_read;
+					mem_read<=sdram_read;
 					sdram_req<='0';
 					sdram_state<=idle;
 					mem_busy<='0';

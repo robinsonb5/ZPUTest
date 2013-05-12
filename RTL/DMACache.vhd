@@ -139,7 +139,7 @@ begin
 		-- Request and receive data from SDRAM:
 		case inputstate is
 			-- First state: Read.  Check the channels in priority order.
-			-- VGA has absolutel priority, and the others won't do anything until the VGA buffer is
+			-- VGA has absolute priority, and the others won't do anything until the VGA buffer is
 			-- full.
 			when rd1 =>
 				if vga_rdptr(5 downto 2)/=vga_wrptr_next(5 downto 2) and vga_count/=X"000" then

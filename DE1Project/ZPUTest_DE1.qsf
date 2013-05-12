@@ -539,7 +539,6 @@ set_global_assignment -name SIGNALTAP_FILE stp1.stp
 set_global_assignment -name SDC_FILE ZPUTest.sdc
 set_global_assignment -name VHDL_FILE ../RTL/simple_uart.vhd
 set_global_assignment -name VHDL_FILE ../RTL/DMACache.vhd
-set_global_assignment -name VHDL_FILE ../RTL/chargen.vhd
 set_global_assignment -name VHDL_FILE ../RTL/vga_controller.vhd
 set_global_assignment -name VHDL_FILE ../RTL/video_vga_dither.vhd
 set_global_assignment -name VHDL_FILE ../RTL/video_vga_master.vhd
@@ -548,9 +547,6 @@ set_global_assignment -name QIP_FILE ../Generated/CharRom.qip
 set_global_assignment -name QIP_FILE ../Generated/DMACacheRAM.qip
 set_global_assignment -name VHDL_FILE ../RTL/spi.vhd
 set_global_assignment -name VHDL_FILE ../RTL/sdram.vhd
-set_global_assignment -name VERILOG_FILE ../RTL/TwoWayCache.v
-set_global_assignment -name QIP_FILE ../Generated/CacheBlockRAM.qip
-set_global_assignment -name QIP_FILE ../Generated/Cache_DataRAM.qip
 set_location_assignment PIN_V20 -to SD_CLK
 set_location_assignment PIN_Y20 -to SD_CMD
 set_location_assignment PIN_W20 -to SD_DAT
