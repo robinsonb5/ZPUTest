@@ -24,7 +24,7 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel # -mno-neg
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -c -Os $(ZPUOPTS) -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
 LFLAGS  = -nostdlib -Os -T $(LINKMAP)
 CP_HEXFLAGS = -Oihex

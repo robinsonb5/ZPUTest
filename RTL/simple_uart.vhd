@@ -7,7 +7,9 @@ use IEEE.numeric_std.ALL;
 
 entity simple_uart is
 	generic(
-		counter_bits : natural := 16
+		counter_bits : natural := 16;
+		enable_rx : boolean := true;
+		enable_tx : boolean := true
 	);
 	port(
 		clk : in std_logic;
@@ -60,7 +62,7 @@ begin
 	
 	process(clk,rxd)
 	begin
-		if rising_edge(clk) then
+		if enable_rx and rising_edge(clk) then
 			rxd_sync2<=rxd;
 			rxd_sync<=rxd_sync2;
 		end if;
@@ -78,7 +80,7 @@ begin
 
 	process(clk)
 	begin
-		if rising_edge(clk) then
+		if enable_tx and rising_edge(clk) then
 			txclock<='0';
 
 			if txstate=idle then
@@ -100,7 +102,7 @@ begin
 	-- set to a full bit width, so clock ticks should land in the centre of each bit.
 	process(clk,reset,rxd_sync,rxcounter,rxstate)
 	begin
-		if rising_edge(clk) then
+		if enable_rx and rising_edge(clk) then
 			rxclock<='0';
 
 			if rxstate=idle then
@@ -129,7 +131,7 @@ begin
 		if reset='0' then
 			rxstate<=idle;
 			rxint<='0';
-		elsif rising_edge(clk) then
+		elsif enable_rx and rising_edge(clk) then
 			rxint<='0';
 			case rxstate is
 				when idle =>
@@ -178,7 +180,7 @@ begin
 			txready<='1';
 			txd<='1';
 			txint<='0';
-		elsif rising_edge(clk) then
+		elsif enable_tx and rising_edge(clk) then
 			txint <='0';
 			case txstate is
 				when idle =>

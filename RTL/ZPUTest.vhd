@@ -176,7 +176,7 @@ begin
 	if rising_edge(clk) then
 		spiclk_in<='0';
 		spi_tick<=spi_tick+1;
-		if (spi_fast='1' and spi_tick(3)='1') or spi_tick(8)='1' then
+		if (spi_fast='1' and spi_tick(4)='1') or spi_tick(8)='1' then
 			spiclk_in<='1'; -- Momentary pulse for SPI host.
 			spi_tick<='0'&X"00";
 		end if;
@@ -284,14 +284,17 @@ end process;
 -- UART
 
 	myuart : entity work.simple_uart
+		generic map(
+			enable_rx => false
+		)
 		port map(
 			clk => clk,
 			reset => reset, -- active low
 			txdata => ser_txdata,
 			txready => ser_txready,
 			txgo => ser_txgo,
-			rxdata => ser_rxdata,
-			rxint => ser_rxint,
+--			rxdata => ser_rxdata,
+--			rxint => ser_rxint,
 			txint => open,
 			clock_divisor => ser_clock_divisor,
 			rxd => rxd,
@@ -451,7 +454,7 @@ begin
 							case mem_addr(7 downto 0) is
 								when X"84" => -- UART
 									mem_read<=(others=>'X');
-									mem_read(9 downto 0)<=ser_rxrecv&ser_txready&ser_rxdata;
+									mem_read(9 downto 8)<=ser_rxrecv&ser_txready; -- &ser_rxdata;
 									ser_rxrecv<='0';	-- Clear rx flag.
 									mem_busy<='0';
 									

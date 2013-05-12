@@ -308,42 +308,13 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 //				printf("%d: %d\n",buf,t);
 				buf+=4;
 			}
-
-//			SPI_PUMP();
-
-#if 0
-
-			for(j=0;j<256;++j)
-			{
-				*(short *)buf=SPI_PUMP();
-				buf+=2;
-			}
-#endif
-
-#if 0
-			for(j=0;j<256;++j)
-			{
-				int t;
-				SPI(0xff);
-				SPI_WAIT();
-				v=SPI_READ()&255;
-				t=v<<8;
-
-				SPI(0xff);
-				SPI_WAIT();
-				v=SPI_READ()&255;
-				t|=v&255;
-
-				*(short *)buf=t;
-				buf+=2;
-			}
-			SPI(0xff); SPI(0xff); // Fetch CRC
-			SPI(0xff); SPI(0xff);
-#endif
 			i=1; // break out of the loop
 			result=1;
 		}
 	}
+	SPI(0xff);
+	SPI(0xff);
+	SPI(0xff);
 	SPI(0xff);
 //	SPI_WAIT();
 	SPI_CS(0);
