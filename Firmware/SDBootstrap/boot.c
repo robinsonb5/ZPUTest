@@ -84,6 +84,7 @@ int main(int argc,char **argv)
 			LoadImage("PIC2    RAW",(unsigned char *)0x20000);
 			LoadImage("PIC3    RAW",(unsigned char *)0x20000);
 			LoadImage("PIC4    RAW",(unsigned char *)0x20000);
+			LoadImage("PIC5    RAW",(unsigned char *)0x20000);
 		}
 	}
 

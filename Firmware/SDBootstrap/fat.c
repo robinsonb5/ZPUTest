@@ -209,6 +209,49 @@ unsigned char FindDrive(void)
     return(1);
 }
 
+
+int GetCluster(int cluster)
+{
+	int i;
+	int sb;
+    if (fat32)
+    {
+        sb = cluster >> 7; // calculate sector number containing FAT-link
+        i = cluster & 0x7F; // calculate link offsset within sector
+    }
+    else
+    {
+        sb = cluster >> 8; // calculate sector number containing FAT-link
+        i = cluster & 0xFF; // calculate link offsset within sector
+    }
+
+    // read sector of FAT if not already in the buffer
+    if (sb != buffered_fat_index)
+    {
+        if (!sd_read_sector(fat_start + sb, (unsigned char*)&fat_buffer))
+            return(0);
+
+        // remember current buffer index
+        buffered_fat_index = sb;
+    }
+    i = fat32 ? SwapBBBB(fat_buffer.fat32[i]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[i]); // get FAT link for 68000 
+	return(i);
+}
+
+#if 0
+unsigned int GetFATLink(unsigned int cluster)
+{
+// this function returns linked cluster for the given one
+// remember to check if the returned value indicates end of chain condition
+
+    unsigned int buffer_index;
+
+	buffer_index=GetCluster(cluster);
+
+    return(fat32 ? SwapBBBB(fat_buffer.fat32[buffer_index]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[buffer_index]));
+}
+#endif
+
 unsigned char FileOpen(fileTYPE *file, const char *name)
 {
     unsigned long  iDirectory = 0;       // only root directory is supported
@@ -230,6 +273,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
         {
             if ((iEntry & 0x0F) == 0) // first entry in sector, load the sector
             {
+				printf("Reading directory sector %d\n",iDirectorySector);
                 sd_read_sector(iDirectorySector++, sector_buffer); // root directory is linear
                 pEntry = (DIRENTRY*)sector_buffer;
             }
@@ -255,6 +299,20 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
             }
         }
 
+        if (fat32) // subdirectory is a linked cluster chain
+        {
+            iDirectoryCluster = GetCluster(iDirectoryCluster); // get next cluster in chain
+			printf("GetFATLink returned %d\n",iDirectoryCluster);
+
+//            if (fat32 ? (iDirectoryCluster & 0x0FFFFFF8) == 0x0FFFFFF8 : (iDirectoryCluster & 0xFFF8) == 0xFFF8) // check if end of cluster chain
+            if ((iDirectoryCluster & 0x0FFFFFF8) == 0x0FFFFFF8) // check if end of cluster chain
+                 break; // no more clusters in chain
+
+            iDirectorySector = data_start + cluster_size * (iDirectoryCluster - 2); // calculate first sector address of the new cluster
+        }
+        else
+            break;
+
     }
     return(0);
 }
@@ -271,29 +329,9 @@ unsigned char FileNextSector(fileTYPE *file)
     // cluster's boundary crossed?
     if ((file->sector&~cluster_mask) == 0)
     {
-        if (fat32)
-        {
-            sb = file->cluster >> 7; // calculate sector number containing FAT-link
-            i = file->cluster & 0x7F; // calculate link offsset within sector
-        }
-        else
-        {
-            sb = file->cluster >> 8; // calculate sector number containing FAT-link
-            i = file->cluster & 0xFF; // calculate link offsset within sector
-        }
-
-        // read sector of FAT if not already in the buffer
-        if (sb != buffered_fat_index)
-        {
-            if (!sd_read_sector(fat_start + sb, (unsigned char*)&fat_buffer))
-                return(0);
-
-            // remember current buffer index
-            buffered_fat_index = sb;
-        }
-
+		file->cluster=GetCluster(file->cluster);
 //        file->cluster = fat32 ? fat_buffer.fat32[i] & 0x0FFFFFFF: fat_buffer.fat16[i]; // get FAT link
-        file->cluster = fat32 ? SwapBBBB(fat_buffer.fat32[i]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[i]); // get FAT link for 68000 
+//        file->cluster = fat32 ? SwapBBBB(fat_buffer.fat32[i]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[i]); // get FAT link for 68000 
     }
 
     return(1);
