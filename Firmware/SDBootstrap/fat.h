@@ -3,13 +3,6 @@
 
 #define MAXDIRENTRIES 8
 
-// FIXME - derive CHS address from FAT boot sector for card and partition mount modes.
-
-typedef struct
-{
-    unsigned long sector;
-    unsigned long index;
-} entryTYPE;
 
 typedef struct
 {
@@ -32,8 +25,8 @@ struct MasterBootRecord
 	unsigned short Signature;		// This lets us detect an MBR (and the need for byteswapping).
 } __attribute__ ((packed));
 
-extern struct PartitionEntry partitions[4];	// FirstBlock and LastBlock will be byteswapped as necessary
-extern int partitioncount;
+//extern struct PartitionEntry partitions[4];	// FirstBlock and LastBlock will be byteswapped as necessary
+//extern int partitioncount;
 
 typedef struct
 {

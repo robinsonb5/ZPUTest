@@ -70,21 +70,12 @@ unsigned char sector_buffer[512];       // sector buffer
 
 //unsigned char *sector_buffer=0x18000;
 
-struct PartitionEntry partitions[4]; 	// [4];	// lbastart and sectors will be byteswapped as necessary
+//struct PartitionEntry partitions[4]; 	// [4];	// lbastart and sectors will be byteswapped as necessary
 int partitioncount;
 
 #define fat_buffer (*(FATBUFFER*)&sector_buffer) // Don't need a separate buffer for this.
 unsigned long buffered_fat_index;       // index of buffered FAT sector
 
-
-#if 0
-void SwapPartitionBytes(int i)
-{
-	// We don't bother to byteswap the CHS geometry fields since we don't use them.
-	partitions[i].startlba=SwapBBBB(partitions[i].startlba);
-	partitions[i].sectors=SwapBBBB(partitions[i].sectors);
-}
-#endif
 
 #define BootPrint(x) puts(x);
 
@@ -107,6 +98,7 @@ int cmpsig(const char *s1, const char *s2)
 	return(0);
 }
 
+
 int cmpfn(const char *s1, const char *s2)
 {
 	long *p1=(long *)s1;
@@ -118,31 +110,6 @@ int cmpfn(const char *s1, const char *s2)
 	if((*p1&0xffffff00)!=(*p2&0xffffff00))
 		return(1);
 	return(0);
-}
-
-
-void copyfn(const char *s2, const char *s1)
-{
-	long *p1=(long *)s1;
-	long *p2=(long *)s2;
-	*p2++=*p1++;	
-	*p2++=*p1++;	
-	*p2++=*p1++;	
-}
-
-
-void *copy(void *s2, const void *s1,int s)
-{
-	const long *p1=(const long *)s1;
-	long *p2=(long *)s2;
-	while(s-->3)
-		*p2++=*p1++;
-
-	const char *c1=(const char *)p1;
-	char *c2=(char *)p2;
-	while(s--)
-		*c2++=*c1++;
-	return(s2);
 }
 
 
@@ -168,16 +135,10 @@ unsigned char FindDrive(void)
 	{
 		// We have at least one partition, parse the MBR.
 		struct MasterBootRecord *mbr=(struct MasterBootRecord *)sector_buffer;
-		copy(&partitions[0],&mbr->Partition[0],sizeof(struct PartitionEntry));
-//		copy(&partitions[1],&mbr->Partition[1],sizeof(struct PartitionEntry));
-//		copy(&partitions[2],&mbr->Partition[2],sizeof(struct PartitionEntry));
-//		copy(&partitions[3],&mbr->Partition[3],sizeof(struct PartitionEntry));
 
-		printf("Done - signature: %d\n",mbr->Signature);
-
-		boot_sector = partitions[0].startlba;
+		boot_sector = mbr->Partition[0].startlba;
 		if(mbr->Signature==0x55aa)
-				boot_sector=SwapBBBB(partitions[0].startlba);
+				boot_sector=SwapBBBB(mbr->Partition[0].startlba);
 		else if(mbr->Signature!=0xaa55)
 		{
 				BootPrint("No partition signature found\n");
@@ -186,14 +147,6 @@ unsigned char FindDrive(void)
 		if (!sd_read_sector(boot_sector, sector_buffer)) // read discriptor
 		    return(0);
 		BootPrint("Read boot sector from first partition\n");
-	}
-
-	int ti;
-	int *tp=(int *)sector_buffer;
-	for(ti=0;ti<128;++ti)
-	{
-		printf("%d: %d\n",tp,*tp);
-		++tp;
 	}
 
     if (cmpsig(sector_buffer+0x52, "FAT32   ")==0) // check for FAT16
@@ -206,9 +159,6 @@ unsigned char FindDrive(void)
 
     if (sector_buffer[510] != 0x55 || sector_buffer[511] != 0xaa)  // check signature
         return(0);
-
-//    if (!sd_read_sector(boot_sector, sector_buffer)) // read boot sector
-//        return(0);
 
     // check for near-jump or short-jump opcode
     if (sector_buffer[0] != 0xe9 && sector_buffer[0] != 0xeb)
@@ -225,6 +175,7 @@ unsigned char FindDrive(void)
     cluster_mask = ~(cluster_size - 1);
 
     fat_start = boot_sector + sector_buffer[0x0E] + (sector_buffer[0x0F] << 8); // reserved sector count before FAT table (usually 32 for FAT32)
+	fat_number = sector_buffer[0x10];
 
     if (fat32)
     {
@@ -233,7 +184,6 @@ unsigned char FindDrive(void)
 
         dir_entries = cluster_size << 4; // total number of dir entries (16 entries per sector)
         root_directory_size = cluster_size; // root directory size in sectors
-        fat_number = sector_buffer[0x10];
         fat_size = sector_buffer[0x24] + (sector_buffer[0x25] << 8) + (sector_buffer[0x26] << 16) + (sector_buffer[0x27] << 24);
         data_start = fat_start + (fat_number * fat_size);
         root_directory_cluster = sector_buffer[0x2C] + (sector_buffer[0x2D] << 8) + (sector_buffer[0x2E] << 16) + ((sector_buffer[0x2F] & 0x0F) << 24);
@@ -246,14 +196,11 @@ unsigned char FindDrive(void)
         root_directory_size = ((dir_entries << 5) + 511) >> 9;
 
         // calculate start of FAT,size of FAT and number of FAT's
-//        fat_start = boot_sector + sector_buffer[14] + (sector_buffer[15] << 8);
         fat_size = sector_buffer[22] + (sector_buffer[23] << 8);
-        fat_number = sector_buffer[16];
 
         // calculate start of directory
         root_directory_start = fat_start + (fat_number * fat_size);
         root_directory_cluster = 0; // unused
-
 
         // calculate start of data
         data_start = root_directory_start + root_directory_size;
@@ -312,49 +259,6 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
     return(0);
 }
 
-
-#if 0
-void ChangeDirectory(unsigned long iStartCluster)
-{
-    iPreviousDirectory = iCurrentDirectory;
-    iCurrentDirectory = iStartCluster;
-}
-#endif
-
-#if 0
-unsigned long GetFATLink(unsigned long cluster)
-{
-// this function returns linked cluster for the given one
-// remember to check if the returned value indicates end of chain condition
-
-    unsigned long fat_index;
-    unsigned short buffer_index;
-
-    if (fat32)
-    {
-        fat_index    = cluster >> 7;    // calculate sector number in the FAT32 that contains the desired link (256 links per sector)
-        buffer_index = cluster & 0x7F;  // calculate offset in the buffered FAT32 sector containing the link
-    }
-    else
-    {
-        fat_index    = cluster >> 8;    // calculate sector number in the FAT16 that contains the desired link (256 links per sector)
-        buffer_index = cluster & 0xFF;  // calculate offset in the buffered FAT16 sector containing the link
-    }
-
-    // read the desired FAT sector if not already in the buffer
-    if (fat_index != buffered_fat_index)
-    {
-        if (!sd_read_sector(fat_start+fat_index, (unsigned char*)&fat_buffer))
-            return(0);
-
-        // remember the index of buffered FAT sector
-        buffered_fat_index = fat_index;
-    }
-
-//    return(fat32 ? fat_buffer.fat32[buffer_index] & 0x0FFFFFFF : fat_buffer.fat16[buffer_index]); // get FAT link
-    return(fat32 ? SwapBBBB(fat_buffer.fat32[buffer_index]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[buffer_index])); // get FAT link for 68000
-}
-#endif
 
 unsigned char FileNextSector(fileTYPE *file)
 {
