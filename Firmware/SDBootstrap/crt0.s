@@ -162,6 +162,7 @@ _memreg:
 		.long 0
 		.long 0
 		.long 0
+		.long 0
 
         .balign 32,0
 # offset 0x0000 0020

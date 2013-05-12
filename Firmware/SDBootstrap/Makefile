@@ -61,7 +61,7 @@ $(ROMGEN): $(ROMGEN).c
 	srec_cat $< -o $@ -mif 32
 
 %.rpt: %.elf
-	$(DUMP) -x $< | grep _edata   #  End of Boot ROM
+	$(DUMP) -x $< | grep _romend   #  End of Boot ROM
 	$(DUMP) -x $< | grep __bss_start__   #  Start of BSS data in SDRAM
 	$(DUMP) -x $< | grep __bss_end__   #  End of BSS data in SDRAM
 

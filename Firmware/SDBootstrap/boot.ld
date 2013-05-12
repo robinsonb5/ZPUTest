@@ -4,7 +4,7 @@
 MEMORY
 {
   BOOT (rx) : ORIGIN = 0x00000000, LENGTH = 0x00002000 /* 8192 bytes */
-  SDRAM (rw)  : ORIGIN = 0x07ff000, LENGTH = 0x00010000 /* 128k at top end of DE1's SDRAM */
+  SDRAM (rw)  : ORIGIN = 0x007ff000, LENGTH = 0x00001000 /* 4k at top end of DE1's SDRAM */
   STACK (rw) : ORIGIN = 0x40000000, LENGTH = 0x00000400 /* 1024 bytes */
 }
 
@@ -20,30 +20,23 @@ SECTIONS
     *(.fixed_vectors)
   }>BOOT
 
-  . = ALIGN(4);
   /* Remaining code sections */
+  . = ALIGN(4);
   .text :
   {
     *(.text)                   /* remaining code */
   } >BOOT
 
-  . = ALIGN(4);
-
   /* .rodata section which is used for read-only data (constants) */
-
+  . = ALIGN(4);
   .rodata :
   {
     *(.rodata)
   } >BOOT
 
-  . = ALIGN(4);
-
-  _etext = . ;
-  PROVIDE (etext = .);
-
   /* .data section which is used for initialized data */
-
-  .data : AT (_etext)
+  . = ALIGN(4);
+  .data :
   {
     _data = . ;
     *(.data)
@@ -51,12 +44,9 @@ SECTIONS
     . = ALIGN(4);
   } >BOOT
   . = ALIGN(4);
-
-  _edata = . ;
-   PROVIDE (edata = .);
+  _romend = . ;
 
   /* .bss section which is used for uninitialized data */
-
   .bss :
   {
     __bss_start = . ;
@@ -64,9 +54,5 @@ SECTIONS
     *(.bss)
     *(COMMON)
   } >SDRAM
-  . = ALIGN(4);
   __bss_end__ = . ;
-  __end__ = . ;
-  _end = .;
-  PROVIDE (end = .);
 }
