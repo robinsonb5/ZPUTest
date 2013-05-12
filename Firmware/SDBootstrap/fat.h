@@ -13,14 +13,9 @@ typedef struct
 
 typedef struct
 {
-    char name[12];                 /* name of file */
-    unsigned int attributes;      /* file attributes */
-    entryTYPE     entry;           /* file entry location */
     unsigned long sector;          /* sector index in file */
     unsigned long size;            /* file size */
     unsigned long cluster;         /* current cluster */
-    unsigned long start_cluster;   /* first cluster of file */
-    char          long_name[261];
 } fileTYPE;
 
 struct PartitionEntry
