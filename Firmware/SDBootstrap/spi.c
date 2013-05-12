@@ -217,7 +217,7 @@ short spi_init()
 	spi_spin();
 //	puts("Activating CS\n");
 	SPI_CS(1);
-	i=8;
+	i=20;
 	while(--i)
 	{
 		if(cmd_reset()==1) // Enable SPI mode

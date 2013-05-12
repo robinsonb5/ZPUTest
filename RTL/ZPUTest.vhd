@@ -302,7 +302,7 @@ end process;
 spi : entity work.spi_interface
 	port map(
 		sysclk => clk,
-		reset => reset,
+		reset => reset and sdr_ready,
 
 		-- Host interface
 		spiclk_in => spiclk_in,
@@ -362,7 +362,7 @@ process(clk)
 begin
 	zpu_interrupt<='0';
 
-	if reset='0' then
+	if (reset and sdr_ready)='0' then
 		currentstate<=WAITING;
 		spi_cs<='1';
 	elsif rising_edge(clk2) then
