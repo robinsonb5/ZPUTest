@@ -133,9 +133,9 @@ output			SRAM_WE_N;				//	SRAM Write Enable
 output			SRAM_CE_N;				//	SRAM Chip Enable
 output			SRAM_OE_N;				//	SRAM Output Enable
 ////////////////////	SD Card Interface	////////////////////////
-inout			SD_DAT;					//	SD Card Data
-inout			SD_DAT3;				//	SD Card Data 3
-inout			SD_CMD;					//	SD Card Command Signal
+input				SD_DAT;					//	SD Card Data
+output			SD_DAT3;				//	SD Card Data 3
+output			SD_CMD;					//	SD Card Command Signal
 output			SD_CLK;					//	SD Card Clock
 ////////////////////////	I2C		////////////////////////////////
 inout			I2C_SDAT;				//	I2C Data
@@ -170,7 +170,7 @@ inout	[35:0]	GPIO_1;					//	GPIO Connection 1
 assign	DRAM_DQ		=	16'hzzzz;
 assign	FL_DQ		=	8'hzz;
 assign	SRAM_DQ		=	16'hzzzz;
-assign	SD_DAT		=	1'bz;
+// assign	SD_DAT		=	1'bz;
 assign	I2C_SDAT	=	1'bz;
 assign	GPIO_0		=	36'hzzzzzzzzz;
 assign	GPIO_1		=	36'hzzzzzzzzz;
@@ -183,15 +183,15 @@ reg				ST;
 
 // Clocks
 
-wire clk100;
-wire clk200;
+wire clk133;
+wire pll_locked;
 
 PLL mypll
 (
 	.inclk0(CLOCK_50),
 	.c0(DRAM_CLK),
-	.c1(clk100),
-	.c2(clk200)
+	.c1(clk133),
+	.locked(pll_locked)
 );
 
 
@@ -214,7 +214,7 @@ video_vga_dither
 # (
 	.outbits(4) )
 mydither (
-	.clk(clk100),
+	.clk(clk133),
 	.hsync(VGA_HS),
 	.vsync(VGA_VS),
 	.vid_ena(vga_window),
@@ -233,10 +233,9 @@ defparam myZPUTest.spi_maxspeed = 4;
 
 ZPUTest myZPUTest
 (	
-	.clk(clk100),
-	.clk2(clk100),
+	.clk(clk133),
 	.src({SW[9:5],SW[5],SW[5],SW[4],SW[4],SW[4],SW[3],SW[3],SW[3:0]}),
-	.reset_in(!SW[0]^KEY[0]),
+	.reset_in((!SW[0]^KEY[0])&pll_locked),
 	.counter(mSEG7_DIG),
 	.keys(KEY),
 

@@ -61,6 +61,9 @@ use IEEE.numeric_std.ALL;
 -- FIXME - make address bus 32 bits wide.
 
 entity vga_controller is
+  generic(
+		enable_sprite : boolean := true
+	);
   port (
 		clk : in std_logic;
 		reset : in std_logic;
@@ -230,15 +233,15 @@ begin
 						end if;
 					when X"100" =>
 	--					reg_data_out<=X"00"&sprite0_pointer(23 downto 16);
-						if reg_rw='0' then
+						if reg_rw='0' and enable_sprite then
 							sprite0_pointer(31 downto 0) <= reg_data_in;
 						end if;
 					when X"104" =>
-						if reg_rw='0' then
+						if reg_rw='0' and enable_sprite then
 							sprite0_xpos <= unsigned(reg_data_in(11 downto 0));
 						end if;
 					when X"108" =>
-						if reg_rw='0' then
+						if reg_rw='0' and enable_sprite then
 							sprite0_ypos <= unsigned(reg_data_in(11 downto 0));
 						end if;
 					when others =>
@@ -282,7 +285,7 @@ begin
 	begin
 		if rising_edge(clk) then
 			req_spr0<='0';
-			if currentX>=sprite0_xpos and currentX-sprite0_xpos<16
+			if enable_sprite and currentX>=sprite0_xpos and currentX-sprite0_xpos<16
 						and currentY>=sprite0_ypos and currentY-sprite0_ypos<16 then	
 				if end_of_pixel='1' then
 					case sprite0_counter is
@@ -307,12 +310,12 @@ begin
 			end if;
 
 --			Prefetch first word.
-			if setaddr_spr0='1' then
+			if enable_sprite and setaddr_spr0='1' then
 				req_spr0<='1';
 				sprite0_counter<="11";
 			end if;
 			
-			if valid_spr0='1' then
+			if enable_sprite and valid_spr0='1' then
 				sprite0_data<=data_from_dma;
 			end if;
 
@@ -392,7 +395,7 @@ begin
 						dma_len<=TO_UNSIGNED(640,12);
 						setlen_vga<='1';
 --						sdr_reservebank<='0'; -- in blank areas, so there's no need to keep slot 2 off the next bank.
-					elsif currentX=(htotal - 19) then
+					elsif enable_sprite and currentX=(htotal - 19) then
 						dma_len<=TO_UNSIGNED(4,12);
 						setlen_spr0<='1';
 					end if;

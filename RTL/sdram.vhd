@@ -64,13 +64,13 @@ port
 	-- Port 1
 	datawr1		: in std_logic_vector(31 downto 0);	-- Data in from ZPU
 	Addr1		: in std_logic_vector(31 downto 0);	-- Address in from ZPU - FIXME case
+	dataout1		: out std_logic_vector(31 downto 0); -- Data destined for Minimig
 	req1		: in std_logic;
 --	cachesel	: in std_logic :='0'; -- 1 => data cache, 0 => instruction cache
 	wr1			: in std_logic;	-- Read/write from Minimig
 	wrL1		: in std_logic;	-- Minimig write lower byte
 	wrU1		: in std_logic;	-- Minimig write upper byte
 	wrU2		: in std_logic;	-- Minimig write upper word
-	dataout1		: out std_logic_vector(15 downto 0); -- Data destined for Minimig
 	dtack1	: buffer std_logic
 	);
 end;
@@ -84,7 +84,7 @@ signal cas_sd_ras	:std_logic;
 signal cas_sd_cas	:std_logic;
 signal cas_sd_we 	:std_logic;
 signal cas_dqm		:std_logic_vector(1 downto 0);	-- ...mask register for entire burst
-signal init_done	:std_logic;
+signal init_done	:std_logic :='0';
 signal datain		:std_logic_vector(15 downto 0);
 signal casaddr		:std_logic_vector(31 downto 0);
 signal sdwrite 		:std_logic;
@@ -98,7 +98,7 @@ signal qdataout1	:std_logic_vector(15 downto 0); -- temp data for Minimig
 type sdram_states is (ph0,ph1,ph2,ph3,ph4,ph5,ph6,ph7,ph8,ph9,ph10,ph11,ph12,ph13,ph14,ph15);
 signal sdram_state		: sdram_states;
 
-type sdram_ports is (idle,refresh,port0,port1,writecache);
+type sdram_ports is (idle,refresh,port0,port1,zpu,writecache);
 
 signal sdram_slot1 : sdram_ports :=refresh;
 signal sdram_slot1_readwrite : std_logic;
@@ -157,31 +157,8 @@ signal instcache_dirty : std_logic;
 
 signal cache_ready : std_logic;
 
-COMPONENT TwoWayCache
-	GENERIC ( WAITING : INTEGER := 0; WAITRD : INTEGER := 1; WAITFILL : INTEGER := 2; FILL2 : INTEGER := 3;
-		 FILL3 : INTEGER := 4; FILL4 : INTEGER := 5; FILL5 : INTEGER := 6; PAUSE1 : INTEGER := 7 );
-		
-	PORT
-	(
-		clk		:	 IN STD_LOGIC;
-		reset	: IN std_logic;
-		ready : out std_logic;
-		cpu_addr		:	 IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		cpu_req		:	 IN STD_LOGIC;
-		cpu_ack		:	 OUT STD_LOGIC;
-		cpu_rw		:	 IN STD_LOGIC;
-		cpu_rwl	: in std_logic;
-		cpu_rwu : in std_logic;
-		data_from_cpu		:	 IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-		data_to_cpu		:	 OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-		sdram_addr		:	 OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
-		data_from_sdram		:	 IN STD_LOGIC_VECTOR(15 DOWNTO 0);
-		data_to_sdram		:	 OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
-		sdram_req		:	 OUT STD_LOGIC;
-		sdram_fill		:	 IN STD_LOGIC;
-		sdram_rw		:	 OUT STD_LOGIC
-	);
-END COMPONENT;
+signal zpu_out : std_logic_vector(31 downto 0);
+signal zpu_ack : std_logic;
 
 
 begin
@@ -189,7 +166,7 @@ begin
 	process(sysclk)
 	begin
 	
-	dtack1 <= port1_dtack and writecache_dtack and not readcache_dtack;
+	dtack1 <= port1_dtack and writecache_dtack and zpu_ack; -- and not readcache_dtack;
 
 -- Write cache implementation: (AMR)
 -- states:
@@ -261,29 +238,6 @@ begin
 	end if;
 end process;
 
-
-mytwc : component TwoWayCache
-	PORT map
-	(
-		clk => sysclk,
-		reset => reset,
-		ready => cache_ready,
-		cpu_addr => addr1,
-		cpu_req => req1,
-		cpu_ack => readcache_dtack,
-		cpu_rw => wr1,
-		cpu_rwl => wrL1,
-		cpu_rwu => wrU1,
-		data_from_cpu => datawr1,
-		data_to_cpu => dataout1,
-		sdram_addr(31 downto 3) => readcache_addr(31 downto 3),
-		sdram_addr(2 downto 0) => open,
-		data_from_sdram => sdata_reg,
-		data_to_sdram => open,
-		sdram_req => readcache_req,
-		sdram_fill => readcache_fill,
-		sdram_rw => open
-	);
 
 --
 ---- read cache
@@ -413,7 +367,7 @@ mytwc : component TwoWayCache
 -------------------------------------------------------------------------
 -- SDRAM Basic
 -------------------------------------------------------------------------
-	reset_out <= init_done and cache_ready;
+	reset_out <= init_done;
 --	port1bank <= unsigned(Addr1(4 downto 3));
 
 	process (sysclk, reset, sdwrite, datain) begin
@@ -552,6 +506,7 @@ mytwc : component TwoWayCache
 			dqm <= "00";  -- safe defaults for everything...
 
 			port1_dtack<='1';
+			zpu_ack<='1';
 
 			-- The following block only happens during reset.
 			if init_done='0' then
@@ -685,9 +640,23 @@ mytwc : component TwoWayCache
 							sdram_slot1_readwrite <= '0';
 							sd_cs <= '0'; --ACTIVE
 							sd_ras <= '0';
-						elsif readcache_req='1' --req1='1' and wr1='1'
+--						elsif readcache_req='1' --req1='1' and wr1='1'
+--								and (Addr1(4 downto 3)/=slot2_bank or sdram_slot2=idle) then
+--							sdram_slot1<=port1;
+--							sdaddr <= Addr1(22 downto 11);
+--							ba <= Addr1(4 downto 3);
+--							slot1_bank <= Addr1(4 downto 3); -- slot1 bank
+--							cas_dqm <= "00";
+--							casaddr <= Addr1(31 downto 1) & "0";
+----							datain <= datawr1;
+--							cas_sd_cas <= '0';
+--							cas_sd_we <= '1';
+--							sdram_slot1_readwrite <= '1';
+--							sd_cs <= '0'; --ACTIVE
+--							sd_ras <= '0';
+						elsif req1='1' and wr1='1'
 								and (Addr1(4 downto 3)/=slot2_bank or sdram_slot2=idle) then
-							sdram_slot1<=port1;
+							sdram_slot1<=zpu;
 							sdaddr <= Addr1(22 downto 11);
 							ba <= Addr1(4 downto 3);
 							slot1_bank <= Addr1(4 downto 3); -- slot1 bank
@@ -701,15 +670,18 @@ mytwc : component TwoWayCache
 							sd_ras <= '0';
 						end if;
 
-						if sdram_slot2=port1 then
-							readcache_fill<='1';
+						if sdram_slot2=zpu then
+							dataout1(31 downto 16)<=sdata_reg;
 						end if;
+--						if sdram_slot2=port1 then
+--							readcache_fill<='1';
+--						end if;
 
 
 					when ph3 =>
-						if sdram_slot2=port1 then
-							readcache_fill<='1';
-						end if;
+--						if sdram_slot2=port1 then
+--							readcache_fill<='1';
+--						end if;
 						-- If we're doing a read cycle for the second slot, assert dtack.
 --						case sdram_slot2 is
 	--						when port0 =>
@@ -725,11 +697,15 @@ mytwc : component TwoWayCache
 						if sdram_slot1=writecache then
 							writecache_burst<='1';	-- Close the door on new write data
 						end if;
+						if sdram_slot2=zpu then
+							dataout1(15 downto 0)<=sdata_reg;
+							zpu_ack<='0';
+						end if;
 
 					when ph4 =>
-						if sdram_slot2=port1 then
-							readcache_fill<='1';
-						end if;
+--						if sdram_slot2=port1 then
+--							readcache_fill<='1';
+--						end if;
 						
 					when ph5 => -- Read or Write command			
 						sdaddr <=  "0100" & casaddr(10 downto 5) & casaddr(2 downto 1) ;--auto precharge
@@ -769,9 +745,9 @@ mytwc : component TwoWayCache
 						end if;
 
 					when ph9 =>
-						if sdram_slot1=port1 then
-							readcache_fill<='1';
-						end if;
+--						if sdram_slot1=port1 then
+--							readcache_fill<='1';
+--						end if;
 
 					when ph10 => -- Second access slot...
 						cas_sd_cs <= '0';  -- Only the lowest bit has any significance...
@@ -801,16 +777,16 @@ mytwc : component TwoWayCache
 							sdram_slot2_readwrite <= '0';
 							sd_cs <= '0'; --ACTIVE
 							sd_ras <= '0';
-						elsif readcache_req='1' -- req1='1' and wr1='1'
+						elsif req1='1' and wr1='1'
 								and (Addr1(4 downto 3)/=slot1_bank or sdram_slot1=idle)
-								and (Addr1(4 downto 3)/=vga_reserveaddr(4 downto 3)
+								and (writecache_addr(4 downto 3)/=vga_reserveaddr(4 downto 3)
 									or vga_reservebank='0') then  -- Safe to use this slot with this bank?
-							sdram_slot2<=port1;
+							sdram_slot2<=zpu;
 							sdaddr <= Addr1(22 downto 11);
 							ba <= Addr1(4 downto 3);
-							slot2_bank <= Addr1(4 downto 3);
+							slot2_bank <= Addr1(4 downto 3); -- slot1 bank
 							cas_dqm <= "00";
-							casaddr <= Addr1(31 downto 1) & "0"; -- We no longer mask off LSBs for burst read
+							casaddr <= Addr1(31 downto 1) & "0";
 --							datain <= datawr1;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '1';
@@ -820,14 +796,21 @@ mytwc : component TwoWayCache
 						end if;
 
 						-- Fill - takes effect next cycle.
-						if sdram_slot1=port1 then
-							readcache_fill<='1';
+--						if sdram_slot1=port1 then
+--							readcache_fill<='1';
+--						end if;
+						if sdram_slot1=zpu then
+							dataout1(31 downto 16)<=sdata_reg;
 						end if;
 				
 					when ph11 =>
-						if sdram_slot1=port1 then
-							readcache_fill<='1';
+						if sdram_slot1=zpu then
+							dataout1(15 downto 0)<=sdata_reg;
+							zpu_ack<='0';
 						end if;
+--						if sdram_slot1=port1 then
+--							readcache_fill<='1';
+--						end if;
 --						case sdram_slot1 is
 	--						when port0 =>
 	--							dtack0<='0';
@@ -843,9 +826,9 @@ mytwc : component TwoWayCache
 						end if;
 
 					when ph12 =>
-						if sdram_slot1=port1 then
-							readcache_fill<='1';
-						end if;
+--						if sdram_slot1=port1 then
+--							readcache_fill<='1';
+--						end if;
 						
 					-- Phase 13 - CAS for second window...
 					when ph13 =>
@@ -888,9 +871,9 @@ mytwc : component TwoWayCache
 --						end if;
 
 					when ph1 =>
-						if sdram_slot2=port1 then
-							readcache_fill<='1';
-						end if;
+--						if sdram_slot2=port1 then
+--							readcache_fill<='1';
+--						end if;
 
 					when others =>
 						null;

@@ -13,8 +13,6 @@ entity ZPUTest is
 	);
 	port (
 		clk 			: in std_logic;
-		clk2			: in std_logic;
---		clk50			: in std_logic;
 		src 			: in std_logic_vector(15 downto 0);
 		counter 		: buffer unsigned(15 downto 0);
 		reset_in 	: in std_logic;
@@ -141,7 +139,7 @@ signal sdram_write : std_logic_vector(31 downto 0); -- 32-bit width for ZPU
 signal sdram_addr : std_logic_vector(31 downto 0);
 signal sdram_req : std_logic;
 signal sdram_wr : std_logic;
-signal sdram_read : std_logic_vector(15 downto 0);
+signal sdram_read : std_logic_vector(31 downto 0);
 signal sdram_ack : std_logic;
 
 signal sdram_wrL : std_logic;
@@ -234,6 +232,9 @@ mysdram : entity work.sdram
 -- Video
 	
 	myvga : entity work.vga_controller
+		generic map (
+			enable_sprite => false
+		)
 		port map (
 		clk => clk,
 		reset => reset,
@@ -284,6 +285,10 @@ end process;
 -- UART
 
 	myuart : entity work.simple_uart
+		generic map(
+			enable_tx=>true,
+			enable_rx=>false
+		)
 		port map(
 			clk => clk,
 			reset => reset, -- active low
@@ -330,7 +335,7 @@ spi : entity work.spi_interface
 			STOREBH => true
 		)
     port map (
-        clk                 => clk2,
+        clk                 => clk,
         reset               => not reset,
         enable              => zpu_enable,
         in_mem_busy         => mem_busy, 
@@ -352,7 +357,7 @@ spi : entity work.spi_interface
 	ram : entity work.ExternalRAM
 	port map (
 		address => mem_addr(12 downto 2),
-		clock	=> clk2,
+		clock	=> clk,
 		data => mem_write,
 		wren => externram_wren,
 		q => externram_data
@@ -366,7 +371,7 @@ begin
 	if reset='0' then
 		currentstate<=WAITING;
 		spi_cs<='1';
-	elsif rising_edge(clk2) then
+	elsif rising_edge(clk) then
 		mem_busy<='1';
 
 		ser_txgo<='0';
@@ -425,6 +430,7 @@ begin
 									currentstate<=WAITSPI;
 									
 								when others =>
+									mem_busy<='0'; -- FIXME - shouldn't need this
 									null;
 							end case;
 						when others => -- SDRAM access
@@ -480,6 +486,7 @@ begin
 									currentstate<=WAITSPI;
 
 								when others =>
+									mem_busy<='0'; -- FIXME - shouldn't need this
 									null;
 							end case;
 
@@ -535,19 +542,8 @@ begin
 				sdram_addr<=mem_Addr;
 				sdram_wr<='1';
 				sdram_req<='1';
-				if sdram_ack='0' then -- is first word ready?
-					mem_read(31 downto 16)<=sdram_read;
-					sdram_req<='0';
-					sdram_state<=read2;
-				end if;
-			when read2 =>	-- Prepare for second word...
-				sdram_addr<=std_logic_vector(unsigned(mem_Addr)+2);
---				sdram_addr(1)<='1';
-				sdram_req<='1';
-				sdram_state<=read3;
-			when read3 =>  -- Wait for second word...
-				if sdram_ack='0' then -- is first word ready?
-					mem_read(15 downto 0)<=sdram_read;
+				if sdram_ack='0' then
+					mem_read<=sdram_read;
 					sdram_req<='0';
 					sdram_state<=idle;
 					mem_busy<='0';
