@@ -155,14 +155,6 @@ Boston, MA 02111-1307, USA.  */
 _start:
 		jmp main
 
-        .balign 4,0
-		.globl _memreg
-_memreg:
-		.long 0
-		.long 0
-		.long 0
-		.long 0
-
         .balign 32,0
 # offset 0x0000 0020
 		.globl _zpu_interrupt_vector
@@ -937,11 +929,21 @@ _slowmultImpl:
 	storesp 4
 	poppc
 	
-	.data
+;	.data // This is read only, so we don't really want it in a normal data section
+	.section ".rodata"
 	.balign 4,0
 _mask:
 	.long 0x00ffffff
 	.long 0xff00ffff
 	.long 0xffff00ff
 	.long 0xffffff00
+
+	.section ".bss"
+    .balign 4,0
+	.globl _memreg
+_memreg:
+		.long 0
+		.long 0
+		.long 0
+		.long 0
 

@@ -54,7 +54,7 @@ unsigned int directory_cluster;       // first cluster of directory (0 if root)
 unsigned int entries_per_cluster;     // number of directory entries per cluster
 
 // internal global variables
-unsigned int fat32 = 0;                // volume format is FAT32
+unsigned int fat32;                // volume format is FAT32
 unsigned long fat_start;                // start LBA of first FAT table
 unsigned long data_start;               // start LBA of data field
 unsigned long root_directory_cluster;   // root directory cluster (used in FAT32)
@@ -118,6 +118,7 @@ unsigned char FindDrive(void)
 {
 	unsigned long boot_sector;              // partition boot sector
     buffered_fat_index = -1;
+	fat32=0;
 
     if (!sd_read_sector(0, sector_buffer)) // read MBR
         return(0);

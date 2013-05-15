@@ -4,6 +4,7 @@
 MEMORY
 {
   BOOT (rx) : ORIGIN = 0x00000000, LENGTH = 0x00002000 /* 8192 bytes */
+  TRAP (rx) : ORIGIN = 0x00008000, LENGTH = 0x00000000 /* Dummy region to ensure we don't have any Initialized writable data */
   SDRAM (rw)  : ORIGIN = 0x007ff000, LENGTH = 0x00001000 /* 4k at top end of DE1's SDRAM */
   STACK (rw) : ORIGIN = 0x40000000, LENGTH = 0x00000400 /* 1024 bytes */
 }
@@ -33,8 +34,12 @@ SECTIONS
   {
     *(.rodata)
   } >BOOT
+  . = ALIGN(4);
+  _romend = . ;
 
-  /* .data section which is used for initialized data */
+  /* .data section which is used for initialized data.
+     Since we don't want any writable data within the ROM
+     itself, we put this stuff in a "trap" section. */
   . = ALIGN(4);
   .data :
   {
@@ -42,11 +47,10 @@ SECTIONS
     *(.data)
     SORT(CONSTRUCTORS)
     . = ALIGN(4);
-  } >BOOT
-  . = ALIGN(4);
-  _romend = . ;
+  } >TRAP
 
   /* .bss section which is used for uninitialized data */
+  . = ALIGN(4);
   .bss :
   {
     __bss_start = . ;

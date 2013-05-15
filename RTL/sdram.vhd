@@ -48,7 +48,6 @@ port
 	sysclk		: in std_logic;
 	reset		: in std_logic;
 	reset_out	: out std_logic;
-	reinit : in std_logic :='0';
 
 -- Port 0 - VGA
 	vga_addr : in std_logic_vector(31 downto 0);
@@ -114,13 +113,6 @@ signal slot2_bank : std_logic_vector(1 downto 0) := "11";
 -- signal refreshcounter : unsigned(12 downto 0);	-- 13 bits gives us 8192 cycles between refreshes => pretty conservative.
 signal refreshpending : std_logic :='0';
 
---signal vga_cachehit : std_logic;
---signal vga_sdrfill : std_logic;
---signal vga_sdrreq : std_logic;
---signal vga_sdraddr : std_logic_vector(23 downto 0);
-
---signal vga_nextbank : unsigned(1 downto 0);
---signal port1bank : unsigned(1 downto 0);
 signal port1_dtack : std_logic;
 
 type writecache_states is (waitwrite,fill,finish);
@@ -129,33 +121,10 @@ signal writecache_state : writecache_states;
 signal writecache_addr : std_logic_vector(31 downto 1); -- Burst can start at 16-bit alignment
 signal writecache_word0 : std_logic_vector(15 downto 0);
 signal writecache_word1 : std_logic_vector(15 downto 0);
-signal writecache_dqm : std_logic_vector(7 downto 0);
+signal writecache_dqm : std_logic_vector(3 downto 0);
 signal writecache_req : std_logic;
-signal writecache_dirty : std_logic;
 signal writecache_dtack : std_logic;
-signal writecache_burst : std_logic;
-
-type readcache_states is (waitread,req,fill1,fill2,fill3,fill4,fill2_1,fill2_2,fill2_3,fill2_4,finish);
-signal readcache_state : readcache_states;
-
-signal readcache_addr : std_logic_vector(31 downto 3);
-signal readcache_word0 : std_logic_vector(15 downto 0);
-signal readcache_word1 : std_logic_vector(15 downto 0);
-signal readcache_word2 : std_logic_vector(15 downto 0);
-signal readcache_word3 : std_logic_vector(15 downto 0);
-signal readcache_dirty : std_logic;
-signal readcache_req : std_logic;
-signal readcache_dtack : std_logic;
-signal readcache_fill : std_logic;
-
-signal instcache_addr : std_logic_vector(31 downto 3);
-signal instcache_word0 : std_logic_vector(15 downto 0);
-signal instcache_word1 : std_logic_vector(15 downto 0);
-signal instcache_word2 : std_logic_vector(15 downto 0);
-signal instcache_word3 : std_logic_vector(15 downto 0);
-signal instcache_dirty : std_logic;
-
-signal cache_ready : std_logic;
+signal writecache_ack : std_logic;
 
 signal zpu_out : std_logic_vector(31 downto 0);
 signal zpu_ack : std_logic;
@@ -168,207 +137,41 @@ begin
 	
 	dtack1 <= port1_dtack and writecache_dtack and zpu_ack; -- and not readcache_dtack;
 
--- Write cache implementation: (AMR)
--- states:
---    main:	wait for req1='1' and wr1='0'
---				Compare addrin(23 downto 3) with stored address, or stored address is FFFFFF
---					if equal, store data and DQM according to LSBs, assert dtack,
---				if stored address/=X"FFFFFF" assert req_sdram, set data/dqm for first word
---				if fill from SDRAM
---					write second word/dqm
---					goto state fill3
---		fill3
---			write third word / dqm
---			goto state fill4
---		fill4
---			write fourth word / dqm
---			goto state finish
---		finish
---			addr<=X"FFFFFF";
---			dqms<=X"11111111";
---			goto state main
-	
 
 	if reset='0' then
 		writecache_req<='0';
-		writecache_dirty<='0';
-		writecache_dqm<="11111111";
-		writecache_state<=waitwrite;
 	elsif rising_edge(sysclk) then
 
 		writecache_dtack<='1';
-		writecache_dqm(7 downto 4)<="1111"; -- Never write the upper quadword.
 
 		-- 32-bit variant of writecache for ZPU...
-		case writecache_state is
-			when waitwrite =>
-				if req1='1' and wr1='0' then -- write request
-					if writecache_dirty='0' then
-						writecache_addr(31 downto 3)<=addr1(31 downto 3);
-						if wrU2='1' then -- is this a halfword write?	
-							-- 00 -> 11, 01 -> 00, 10 -> 01, 11 -> 10
-							writecache_addr(2)<=addr1(2) xor not addr1(1);
-							writecache_addr(1)<=not addr1(1);
-						else
-							writecache_addr(2 downto 1)<=addr1(2 downto 1);
-						end if;
-						writecache_word0<=datawr1(31 downto 16);
-						writecache_dqm(1 downto 0)<=wrU2&wrU2; -- Are we writing the upper word?
-						writecache_word1<=datawr1(15 downto 0);
-						writecache_dqm(3 downto 2)<=wrU1&wrL1; -- Are we writing the lower two bytes?
-						writecache_req<='1';
-						writecache_dtack<='0';
-						writecache_dirty<='1';
-					end if;
-				end if;
-				if writecache_burst='1' and writecache_dirty='1' then
-					writecache_req<='0';
-					writecache_state<=fill;
-				end if;
-			when fill =>
-				if writecache_burst='0' then
-					writecache_dirty<='0';
-					writecache_dqm<="11111111";
-					writecache_state<=waitwrite;
-				end if;
-			when others =>
-				null;
-		end case;
-				
+		if req1='1' and wr1='0' and writecache_req='0' then
+			writecache_addr(31 downto 3)<=addr1(31 downto 3);
+			if wrU2='1' then -- is this a halfword write?	
+				-- 00 -> 11, 01 -> 00, 10 -> 01, 11 -> 10
+				writecache_addr(2)<=addr1(2) xor not addr1(1);
+				writecache_addr(1)<=not addr1(1);
+			else
+				writecache_addr(2 downto 1)<=addr1(2 downto 1);
+			end if;
+			writecache_word0<=datawr1(31 downto 16);
+			writecache_dqm(1 downto 0)<=wrU2&wrU2; -- Are we writing the upper word?
+			writecache_word1<=datawr1(15 downto 0);
+			writecache_dqm(3 downto 2)<=wrU1&wrL1; -- Are we writing the lower two bytes?
+			writecache_req<='1';
+			writecache_dtack<='0';
+		end if;
+		if writecache_ack='1' then
+			writecache_req<='0';
+		end if;				
 	end if;
 end process;
-
-
---
----- read cache
---
---	process(reset,sysclk)
---	begin
---		if reset='0' then
---			readcache_dirty<='1';
---			readcache_dtack<='1';
---			readcache_req<='0';
---			readcache_state<=waitread;
---			instcache_dirty<='1';
---		elsif rising_edge(sysclk) then
---			readcache_dtack<='1';
---
---			case readcache_state is
---				when waitread =>
---					if req1='1' and wr1='1' then -- read cycle
---						if Addr1(31 downto 3)=readcache_addr and readcache_dirty='0' then -- cache hit
---							case addr1(2 downto 1) is
---								when "00" =>
---									dataout1<=readcache_word0;
---								when "01" =>
---									dataout1<=readcache_word1;
---								when "10" =>
---									dataout1<=readcache_word2;
---								when "11" =>
---									dataout1<=readcache_word3;
---							end case;
---							readcache_dtack<='0';
---						elsif Addr1(31 downto 3)=instcache_addr and instcache_dirty='0' then -- cache hit
---							case addr1(2 downto 1) is
---								when "00" =>
---									dataout1<=instcache_word0;
---								when "01" =>
---									dataout1<=instcache_word1;
---								when "10" =>
---									dataout1<=instcache_word2;
---								when "11" =>
---									dataout1<=instcache_word3;
---							end case;
---							readcache_dtack<='0';
---						else	-- cache miss
---							if cachesel='0' then
---								instcache_addr<=addr1(31 downto 3);
---								instcache_dirty<='1';
---								readcache_state<=fill2_1;
---							else
---								readcache_addr<=addr1(31 downto 3);
---								readcache_dirty<='1';
---								readcache_state<=fill1;
---							end if;
---							readcache_req<='1';
---						end if;
---					end if;
---				-- FIXME - can we respond as soon as the required word comes in?
---				when fill1 =>
---					if readcache_fill='1' then
---						readcache_word0<=sdata_reg;
---						readcache_state<=fill2;
---					end if;
---				when fill2 =>
---					readcache_word1<=sdata_reg;
---					readcache_state<=fill3;
---				when fill3 =>
---					readcache_word2<=sdata_reg;
---					readcache_state<=fill4;
---				when fill4 =>
---					readcache_word3<=sdata_reg;
---					readcache_dirty<='0';
---					readcache_req<='0';
---					readcache_state<=waitread;
---				when fill2_1 =>
---					if readcache_fill='1' then
---						instcache_word0<=sdata_reg;
---						readcache_state<=fill2_2;
---					end if;
---				when fill2_2 =>
---					instcache_word1<=sdata_reg;
---					readcache_state<=fill2_3;
---				when fill2_3 =>
---					instcache_word2<=sdata_reg;
---					readcache_state<=fill2_4;
---				when fill2_4 =>
---					instcache_word3<=sdata_reg;
---					instcache_dirty<='0';
---					readcache_req<='0';
---					readcache_state<=waitread;
---				when others =>
---					null;
---			end case;
---
---			-- Invalidate cacheline if the write cache is writing to the same address.
---			-- Better yet, replace the cached word with the newly-written data.
---			-- FIXME - need to take into account byte masking.
---			if req1='1' and wr1='0' and addr1(31 downto 3) = readcache_addr(31 downto 3) then
---				case addr1(2 downto 1) is
---					when "00" =>
---						readcache_word0<=datawr1;
---					when "01" =>
---						readcache_word1<=datawr1;
---					when "10" =>
---						readcache_word2<=datawr1;
---					when "11" =>
---						readcache_word3<=datawr1;
---				end case;
-----				readcache_dirty<='1';
---				-- Also cancel any read from the cache, and force a wait state.
-----				readcache_req<='0';
-----				readcache_state<=waitread;
-----				readcache_dtack<='1';
---			end if;
---
---			-- In most cases there'll be no need to bus-snoop on the instruction cache.
-----			if writecache_dirty='1' and instcache_addr(23 downto 3) = writecache_addr(23 downto 3) then
-----				instcache_dirty<='1';
-----				-- Also cancel any read from the cache, and force a wait state.
-----				readcache_req<='0';
-----				readcache_state<=waitread;
-----				readcache_dtack<='1';
-----			end if;
---
---		end if;
---	end process;
 
 	
 -------------------------------------------------------------------------
 -- SDRAM Basic
 -------------------------------------------------------------------------
 	reset_out <= init_done;
---	port1bank <= unsigned(Addr1(4 downto 3));
 
 	process (sysclk, reset, sdwrite, datain) begin
 		IF sdwrite='1' THEN	-- Keep sdram data high impedence if not writing to it.
@@ -389,22 +192,7 @@ end process;
 			sdram_state <= ph0;
 			sdwrite <= '0';
 		ELSIF rising_edge(sysclk) THEN
-			sdwrite <= '0';
-
-			if reinit='1' then
-				init_done<='0';
-				initstate<="1111";
-			end if;			
-			
-
---                          (sync)
--- Phase     :  0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
--- sysclk    :/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__/  \__
-
--- _RAS      :            \_____/
--- _CAS      :           (\auto/)           \_____/
-
--- SDWrite   :________________________/                 \_________________________________________
+			sdwrite <= '0';			
 
 			case sdram_state is	--LATENCY=3
 				when ph0 =>	
@@ -419,7 +207,6 @@ end process;
 					sdram_state <= ph2;
 				when ph2 =>
 					sdram_state <= ph3;
---					enaRDreg <= '1';
 				when ph3 =>
 					sdram_state <= ph4;
 				when ph4 =>	sdram_state <= ph5;
@@ -429,8 +216,6 @@ end process;
 					sdwrite <= '1';
 				when ph6 =>	sdram_state <= ph7;
 					sdwrite <= '1';
---							enaWRreg <= '1';
---							ena7RDreg <= '1';
 				when ph7 =>	sdram_state <= ph8;
 					sdwrite <= '1';
 				when ph8 =>	sdram_state <= ph9;
@@ -443,12 +228,8 @@ end process;
 						vga_fill<='1';
 					end if;
 				when ph10 => sdram_state <= ph11;
---					cachefill<='1';
---							enaRDreg <= '1';
 				when ph11 => sdram_state <= ph12;
---					cachefill<='1';
 				when ph12 => sdram_state <= ph13;
---					cachefill<='1';
 					sdwrite<='1';
 				when ph13 => sdram_state <= ph14;
 					vga_fill<='0';
@@ -464,8 +245,6 @@ end process;
 							init_done <='1';
 							sdram_state <= ph0;
 						end if;
---							enaWRreg <= '1';
---							ena7WRreg <= '1';
 				when ph15 => sdram_state <= ph0;
 					sdwrite<='1';
 				when others => sdram_state <= ph0;
@@ -483,7 +262,6 @@ end process;
 			sdram_slot2<=idle;
 			slot1_bank<="00";
 			slot2_bank<="11";
-			writecache_burst<='0';
 		elsif rising_edge(sysclk) THEN -- rising edge
 	
 			-- Attend to refresh counter
@@ -496,7 +274,6 @@ end process;
 				refreshpending<='1';
 			end if;
 
-		--		ba <= Addr(22 downto 21);
 			sd_cs <='1';
 			sd_ras <= '1';
 			sd_cas <= '1';
@@ -587,17 +364,16 @@ end process;
 
 -- Time slot control			
 
-				readcache_fill<='0';
 				vga_ack<='0';
+				writecache_ack<='0';
+
 				case sdram_state is
 
 					when ph2 => -- ACTIVE for first access slot
-						cas_sd_cs <= '0';  -- Only the lowest bit has any significance...
+						cas_sd_cs <= '0';
 						cas_sd_ras <= '1';
 						cas_sd_cas <= '1';
 						cas_sd_we <= '1';
-
-						cas_dqm <= "00";
 
 						sdram_slot1<=idle;
 						if refreshpending='1' and sdram_slot2=idle then	-- refreshcycle
@@ -611,18 +387,12 @@ end process;
 								sdaddr <= vga_addr(22 downto 11);
 								ba <= vga_addr(4 downto 3);
 								slot1_bank <= vga_addr(4 downto 3);
---								if vga_idle='0' then
---									vga_nextbank <= unsigned(vga_addr(4 downto 3))+"01";
---								end if;
 								casaddr <= vga_addr(31 downto 3) & "000"; -- read whole cache line in burst mode.
-	--							datain <= X"0000";
 								cas_sd_cas <= '0';
 								cas_sd_we <= '1';
 								sd_cs <= '0'; --ACTIVE
 								sd_ras <= '0';
 								vga_ack<='1'; -- Signal to VGA controller that it can bump bankreserve
---							else
---								vga_nextbank <= unsigned(vga_addr(4 downto 3)); -- reserve bank for next access
 							end if;
 						elsif writecache_req='1'
 								and sdram_slot2/=writecache
@@ -634,35 +404,19 @@ end process;
 							slot1_bank <= writecache_addr(4 downto 3);
 							cas_dqm <= wrU1&wrL1;
 							casaddr <= writecache_addr&"0";
---							datain <= writecache_word0;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '0';
 							sdram_slot1_readwrite <= '0';
 							sd_cs <= '0'; --ACTIVE
 							sd_ras <= '0';
---						elsif readcache_req='1' --req1='1' and wr1='1'
---								and (Addr1(4 downto 3)/=slot2_bank or sdram_slot2=idle) then
---							sdram_slot1<=port1;
---							sdaddr <= Addr1(22 downto 11);
---							ba <= Addr1(4 downto 3);
---							slot1_bank <= Addr1(4 downto 3); -- slot1 bank
---							cas_dqm <= "00";
---							casaddr <= Addr1(31 downto 1) & "0";
-----							datain <= datawr1;
---							cas_sd_cas <= '0';
---							cas_sd_we <= '1';
---							sdram_slot1_readwrite <= '1';
---							sd_cs <= '0'; --ACTIVE
---							sd_ras <= '0';
 						elsif req1='1' and wr1='1'
+								and sdram_slot2/=zpu
 								and (Addr1(4 downto 3)/=slot2_bank or sdram_slot2=idle) then
 							sdram_slot1<=zpu;
 							sdaddr <= Addr1(22 downto 11);
 							ba <= Addr1(4 downto 3);
 							slot1_bank <= Addr1(4 downto 3); -- slot1 bank
-							cas_dqm <= "00";
 							casaddr <= Addr1(31 downto 1) & "0";
---							datain <= datawr1;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '1';
 							sdram_slot1_readwrite <= '1';
@@ -673,47 +427,20 @@ end process;
 						if sdram_slot2=zpu then
 							dataout1(31 downto 16)<=sdata_reg;
 						end if;
---						if sdram_slot2=port1 then
---							readcache_fill<='1';
---						end if;
 
 
 					when ph3 =>
---						if sdram_slot2=port1 then
---							readcache_fill<='1';
---						end if;
-						-- If we're doing a read cycle for the second slot, assert dtack.
---						case sdram_slot2 is
-	--						when port0 =>
-	--							dtack0<='0';
---							when port1 =>
---								if sdram_slot2_readwrite='1' then
---									port1_dtack<='0'; -- only for read cycles, write cycles can finish sooner.
---								end if;
---								readcache_fill='1';
---							when others =>
---								null;
---						end case;
-						if sdram_slot1=writecache then
-							writecache_burst<='1';	-- Close the door on new write data
-						end if;
 						if sdram_slot2=zpu then
 							dataout1(15 downto 0)<=sdata_reg;
 							zpu_ack<='0';
 						end if;
 
 					when ph4 =>
---						if sdram_slot2=port1 then
---							readcache_fill<='1';
---						end if;
 						
 					when ph5 => -- Read or Write command			
 						sdaddr <=  "0100" & casaddr(10 downto 5) & casaddr(2 downto 1) ;--auto precharge
 						ba <= casaddr(4 downto 3);
 						sd_cs <= cas_sd_cs; 
-
-						dqm <= cas_dqm;
-
 						sd_ras <= cas_sd_ras;
 						sd_cas <= cas_sd_cas;
 						sd_we  <= cas_sd_we;
@@ -723,39 +450,29 @@ end process;
 						end if;
 
 					when ph6 => -- Next word of burst write
---						if sdram_slot2=port1 then
---							readcache_fill<='1';
---						end if;
 						if sdram_slot1=writecache then
 							datain <= writecache_word1;
 							dqm <= writecache_dqm(3 downto 2);
-							writecache_burst<='0'; -- End write burst after 32 bits.
+							writecache_ack<='1'; -- End write burst after 32 bits.
 						end if;
 
 					when ph7 => -- third word of burst write
 						if sdram_slot1=writecache then
---							datain <= writecache_word2;
-							dqm <= writecache_dqm(5 downto 4);
+							dqm <= "11";
 						end if;
 				
 					when ph8 =>
 						if sdram_slot1=writecache then
---							datain <= writecache_word3;
-							dqm <= writecache_dqm(7 downto 6);
+							dqm <= "11";
 						end if;
 
 					when ph9 =>
---						if sdram_slot1=port1 then
---							readcache_fill<='1';
---						end if;
 
 					when ph10 => -- Second access slot...
 						cas_sd_cs <= '0';  -- Only the lowest bit has any significance...
 						cas_sd_ras <= '1';
 						cas_sd_cas <= '1';
 						cas_sd_we <= '1';
-						
-						cas_dqm <= "00";
 
 						sdram_slot2<=idle;
 						if refreshpending='1' or sdram_slot1=refresh then
@@ -771,7 +488,6 @@ end process;
 							slot2_bank <= writecache_addr(4 downto 3);
 							cas_dqm <= wrU1&wrL1;
 							casaddr <= writecache_addr&"0";
---							datain <= writecache_word0;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '0';
 							sdram_slot2_readwrite <= '0';
@@ -779,15 +495,13 @@ end process;
 							sd_ras <= '0';
 						elsif req1='1' and wr1='1'
 								and (Addr1(4 downto 3)/=slot1_bank or sdram_slot1=idle)
-								and (writecache_addr(4 downto 3)/=vga_reserveaddr(4 downto 3)
+								and (Addr1(4 downto 3)/=vga_reserveaddr(4 downto 3)
 									or vga_reservebank='0') then  -- Safe to use this slot with this bank?
 							sdram_slot2<=zpu;
 							sdaddr <= Addr1(22 downto 11);
 							ba <= Addr1(4 downto 3);
 							slot2_bank <= Addr1(4 downto 3); -- slot1 bank
-							cas_dqm <= "00";
 							casaddr <= Addr1(31 downto 1) & "0";
---							datain <= datawr1;
 							cas_sd_cas <= '0';
 							cas_sd_we <= '1';
 							sdram_slot2_readwrite <= '1';
@@ -796,9 +510,6 @@ end process;
 						end if;
 
 						-- Fill - takes effect next cycle.
---						if sdram_slot1=port1 then
---							readcache_fill<='1';
---						end if;
 						if sdram_slot1=zpu then
 							dataout1(31 downto 16)<=sdata_reg;
 						end if;
@@ -808,27 +519,8 @@ end process;
 							dataout1(15 downto 0)<=sdata_reg;
 							zpu_ack<='0';
 						end if;
---						if sdram_slot1=port1 then
---							readcache_fill<='1';
---						end if;
---						case sdram_slot1 is
-	--						when port0 =>
-	--							dtack0<='0';
---							when port1 =>
---								if sdram_slot1_readwrite='1' then
---									port1_dtack<='0'; -- only for read cycles, write cycles can finish sooner.
---								end if;
---							when others =>
---								null;
---						end case;
-						if sdram_slot2=writecache then
-							writecache_burst<='1';  -- close the door on new write data
-						end if;
 
 					when ph12 =>
---						if sdram_slot1=port1 then
---							readcache_fill<='1';
---						end if;
 						
 					-- Phase 13 - CAS for second window...
 					when ph13 =>
@@ -836,8 +528,6 @@ end process;
 							sdaddr <=  "0100" & casaddr(10 downto 5) & casaddr(2 downto 1) ;--auto precharge
 							ba <= casaddr(4 downto 3);
 							sd_cs <= cas_sd_cs; 
-
-							dqm <= cas_dqm;
 
 							sd_ras <= cas_sd_ras;
 							sd_cas <= cas_sd_cas;
@@ -852,28 +542,20 @@ end process;
 						if sdram_slot2=writecache then
 							datain <= writecache_word1;
 							dqm <= writecache_dqm(3 downto 2);
-							writecache_burst<='0'; -- End burst after 32 bits for ZPU
+							writecache_ack<='1'; -- End burst after 32 bits for ZPU
 						end if;
 
 					when ph15 => -- Third word of burst write
 						if sdram_slot2=writecache then
---							datain <= writecache_word2;
-							dqm <= writecache_dqm(5 downto 4);
+							dqm <= "11";
 						end if;
 
 					when ph0 => -- Final word of burst write
 						if sdram_slot2=writecache then
---							datain <= writecache_word3;
-							dqm <= writecache_dqm(7 downto 6);
+							dqm <= "11";
 						end if;
---						if sdram_slot2=port1 then
---							readcache_fill<='1';
---						end if;
 
 					when ph1 =>
---						if sdram_slot2=port1 then
---							readcache_fill<='1';
---						end if;
 
 					when others =>
 						null;
