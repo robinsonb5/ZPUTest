@@ -56,7 +56,7 @@ signal reset : std_logic := '0';
 signal reset_counter : unsigned(15 downto 0) := X"FFFF";
 
 -- State machine
-type SOCStates is (WAITING,READ1,WRITE1,PAUSE,WAITSPI,WAITSPI2,VGAREAD,VGAWRITE);
+type SOCStates is (WAITING,READ1,WRITE1,PAUSE,WAITSPIR,WAITSPIW,VGAREAD,VGAWRITE);
 signal currentstate : SOCStates;
 
 -- UART signals
@@ -99,6 +99,8 @@ signal mem_readEnable       : std_logic;
 signal zpu_enable               : std_logic;
 signal zpu_interrupt            : std_logic;
 signal zpu_break                : std_logic;
+
+signal bootrom_overlay	: std_logic :='0';
 
 signal cpu_uds	: std_logic;
 signal cpu_lds : std_logic;
@@ -376,6 +378,7 @@ begin
 
 	if reset='0' then
 		currentstate<=WAITING;
+		sdram_state<=idle;
 		spi_cs<='1';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
@@ -413,6 +416,10 @@ begin
 								when X"88" => -- UART Clock divisor
 									ser_clock_divisor<=unsigned(mem_write(15 downto 0));
 									mem_busy<='0';
+
+								when X"8C" => -- Flags (switches) register
+									bootrom_overlay<=mem_write(0);
+									mem_busy<='0';
 									
 								when X"90" => -- HEX display
 									counter<=unsigned(mem_write(15 downto 0));
@@ -427,13 +434,13 @@ begin
 									spi_wide<='0';
 									spi_trigger<='1';
 									host_to_spi<=mem_write(7 downto 0);
-									currentstate<=WAITSPI;
+									currentstate<=WAITSPIW;
 									
 								when X"CC" => -- SPI write wide (blocking)
 									spi_wide<='1';
 									spi_trigger<='1';
 									host_to_spi<=mem_write(7 downto 0);
-									currentstate<=WAITSPI;
+									currentstate<=WAITSPIW;
 									
 								when others =>
 									mem_busy<='0'; -- FIXME - shouldn't need this
@@ -453,7 +460,11 @@ begin
 				elsif mem_readEnable='1' then
 					case mem_addr(31 downto 20) is
 						when X"000" =>	-- Boot BlockRAM
-							currentstate<=READ1;
+							if bootrom_overlay='0' then
+								currentstate<=READ1;
+							else
+								sdram_state<=read1;
+							end if;
 
 						when X"FEF" =>	-- VGA controller
 							vga_reg_req<='1';
@@ -483,13 +494,13 @@ begin
 									
 								when X"C8" => -- SPI read (blocking)
 									spi_wide<='0';
-									currentstate<=WAITSPI;
+									currentstate<=WAITSPIR;
 
 								when X"CC" => -- SPI read (blocking)
 									spi_wide<='1';
 									spi_trigger<='1';
 									host_to_spi<=X"FF";
-									currentstate<=WAITSPI;
+									currentstate<=WAITSPIR;
 
 								when others =>
 									mem_busy<='0'; -- FIXME - shouldn't need this
@@ -522,10 +533,13 @@ begin
 					currentstate<=WAITING;
 				end if;
 
-			when WAITSPI =>
-				currentstate<=WAITSPI2;
+			when WAITSPIW =>
+				if spi_busy='0' then
+					mem_busy<='0';
+					currentstate<=WAITING;
+				end if;
 
-			when WAITSPI2 =>
+			when WAITSPIR =>
 --				mem_read(31 downto 16)<=(others => 'X');
 				mem_read<=spi_to_host;
 				if spi_busy='0' then

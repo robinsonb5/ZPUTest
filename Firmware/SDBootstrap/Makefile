@@ -14,6 +14,10 @@ BOOT_PRJ = boot
 BOOT_SRC = boot.c spi.c sdboot.c spi.h fat.c fat.h minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h swap.c # spi.c
 BOOT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
 
+FBTEST_PRJ = fbtest
+FBTEST_SRC = fbtest.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
+FBTEST_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FBTEST_SRC))
+
 LINKMAP  = boot.ld
 LIBDIR   = 
 
@@ -36,8 +40,8 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec $(BOOT_PRJ).rpt
-
+all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec $(BOOT_PRJ).rpt \
+		$(FBTEST_PRJ).bin $(FBTEST_PRJ).rpt
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
 
@@ -68,6 +72,9 @@ $(ROMGEN): $(ROMGEN).c
 # Link - this produces an ELF binary.
 
 $(BOOT_PRJ).elf: $(STARTUP_OBJ) $(BOOT_OBJ)
+	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
+
+$(FBTEST_PRJ).elf: $(STARTUP_OBJ) $(FBTEST_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
 %.rom: %.bin $(ROMGEN)

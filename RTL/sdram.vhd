@@ -494,6 +494,7 @@ end process;
 							sd_cs <= '0'; --ACTIVE
 							sd_ras <= '0';
 						elsif req1='1' and wr1='1'
+								and sdram_slot1/=zpu
 								and (Addr1(4 downto 3)/=slot1_bank or sdram_slot1=idle)
 								and (Addr1(4 downto 3)/=vga_reserveaddr(4 downto 3)
 									or vga_reservebank='0') then  -- Safe to use this slot with this bank?

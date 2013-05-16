@@ -5,7 +5,7 @@
    Based on the similar TG68MiniSOC project, but with
    changes to suit the ZPU's archicture */
 
-#define VGABASE 0xFFFE0000
+#define VGABASE 0xFEFF0000
 
 #define FRAMEBUFFERPTR 0
 
@@ -43,13 +43,10 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 		bit 0	visible.  (not yet implemented)
 */
 
-#define VGACHARBUFFERBASE 0xFFFE0800
-extern char *VGACharBuffer;
-
-
 
 #define PERIPHERALBASE 0xFFFFFF84
 #define HW_PER(x) *(volatile unsigned int *)(PERIPHERALBASE+x)
+#define HW_PER_L(x) *(volatile unsigned int *)(PERIPHERALBASE+x)
 
 #define PER_UART 0
 #define PER_UART_CLKDIV 4
@@ -58,6 +55,8 @@ extern char *VGACharBuffer;
 #define PER_UART_TXREADY 8
 
 #define PER_FLAGS 0x8  /* Currently only contains ROM overlay */
+#define PER_FLAGS_OVERLAY 0
+
 #define PER_HEX 0xc
 
 #define PER_PS2_KEYBOARD 0x10
@@ -98,11 +97,11 @@ extern char *VGACharBuffer;
 #define PER_MILLISECONDS 0x3c
 
 /* SPI register */
-#define PER_SPI 0x40
-#define PER_SPI_CS 0x44	/* CS bits are write-only, but bit 15 reads as the SPI busy signal */
-#define PER_SPI_BLOCKING 0x48
-#define PER_SPI_PUMP 0x4c /* Push 32-bits through SPI in one instruction */
+#define PER_SPI_CS 0x40	/* CS bits are write-only, but bit 15 reads as the SPI busy signal */
+#define PER_SPI 0x44 /* Blocks on both reads and writes, making BUSY signal redundant. */
+#define PER_SPI_PUMP 0x48 /* Push 16-bits through SPI in one instruction */
 
+#define PER_SPI_FAST 8
 #define PER_SPI_BUSY 15
 
 /* Capability registers */
@@ -117,8 +116,11 @@ extern char *VGACharBuffer;
 #define PER_INT_TIMER 3
 #define PER_INT_PS2 4
 
-
+#ifndef DISABLE_UART
 void putserial(char *msg);
+#else
+#define putserial(x)
+#endif
 
 #endif
 

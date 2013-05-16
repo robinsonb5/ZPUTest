@@ -1,5 +1,6 @@
 #include "minisoc_hardware.h"
 
+#ifndef DISABLE_UART
 void putserial(char *msg)
 {
 	while(*msg)
@@ -9,5 +10,6 @@ void putserial(char *msg)
 		HW_PER(PER_UART)=*msg++;
 	}
 }
+#endif
 
 

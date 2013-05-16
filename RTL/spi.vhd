@@ -39,7 +39,7 @@ begin
 -- SPI-Interface
 -----------------------------------------------------------------	
 	spiclk_out <= sck;
-	busy <= shiftcnt(5);
+	busy <= shiftcnt(5) or trigger;
    spi_to_host <= sd_shift;
 
 	PROCESS (sysclk, reset) BEGIN

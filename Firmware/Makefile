@@ -12,11 +12,8 @@ CT_SRC = countertest.c # spi.c
 CT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CT_SRC))
 
 FB_PRJ = fbtest
-FB_SRC = fbtest.c textbuffer.c minisoc_hardware.c # spi.c
-FB_ASM = spritedata.s
-FB_C_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
-FB_ASM_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(FB_ASM))
-FB_OBJ = $(FB_C_OBJ) $(FB_ASM_OBJ)
+FB_SRC = fbtest.c minisoc_hardware.c
+FB_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FB_SRC))
 
 LINKMAP  = 
 LIBDIR   = 
@@ -40,7 +37,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(CT_PRJ).mif $(FB_PRJ).mif
+all: $(BUILD_DIR) $(CT_PRJ).mif $(FB_PRJ).mif $(FB_PRJ).bin
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -49,11 +46,11 @@ $(ROMGEN): $(ROMGEN).c
 	gcc  -o $@ $<
 
 # Convert ELF binary to bin file.
-$(PRJ).bin: $(PRJ).elf
+%.bin: %.elf
 	$(CP) -O binary $< $@
 
 # Convert ELF binary to Intel HEX file.
-$(PRJ).hex: $(PRJ).elf
+%.hex: %.elf
 	$(CP) $(CPFLAGS) $< $@
 
 # Convert ELF binary to SREC file

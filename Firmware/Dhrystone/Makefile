@@ -7,21 +7,21 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
-DH_PRJ = dhrystone
-DH_SRC = dhry_1.c dhry_2.c ../minisoc_hardware.c
-DH_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DH_SRC))
+DHRY_PRJ = dhry
+DHRY_SRC = dhry_1.c dhry_2.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
+DHRY_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DHRY_SRC))
 
-LINKMAP  = 
+LINKMAP  = dhry.ld
 LIBDIR   = 
 
 # Commandline options for each tool.
-ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
-  -mno-call -mno-neqbranch -mno-pushspadd \
-  -mno-neg -mno-mod -mno-div
+#ZPUOPTS= -mno-poppcrel -mno-compare -mno-byteop -mno-shortop -mno-callpcrel \
+#  -mno-call -mno-neqbranch -mno-pushspadd \
+#  -mno-neg -mno-mod -mno-div
 
-ZPUOPTS2= -mno-poppcrel -mno-callpcrel -mno-call -mno-pushspadd -mno-neg
+ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel # -mno-neg
 
-CFLAGS  = -I../ -I. -c -Os
+CFLAGS  = -I. -c -Os $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
 LFLAGS  = -Os
 CP_HEXFLAGS = -Oihex
@@ -33,7 +33,7 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(DH_PRJ).mif
+all: $(BUILD_DIR) $(DHRY_PRJ).mif $(DHRY_PRJ).bin $(DHRY_PRJ).srec $(DHRY_PRJ).rpt
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
@@ -42,11 +42,11 @@ $(ROMGEN): $(ROMGEN).c
 	gcc  -o $@ $<
 
 # Convert ELF binary to bin file.
-$(PRJ).bin: $(PRJ).elf
+%.bin: %.elf
 	$(CP) -O binary $< $@
 
 # Convert ELF binary to Intel HEX file.
-$(PRJ).hex: $(PRJ).elf
+%.hex: %.elf
 	$(CP) $(CPFLAGS) $< $@
 
 # Convert ELF binary to SREC file
@@ -57,8 +57,15 @@ $(PRJ).hex: $(PRJ).elf
 %.mif: %.srec
 	srec_cat $< -o $@ -mif 32
 
+%.rpt: %.elf
+#	$(DUMP) -x $< | grep _romend   #  End of Boot ROM
+#	$(DUMP) -x $< | grep __bss_start__   #  Start of BSS data in SDRAM
+#	$(DUMP) -x $< | grep __bss_end__   #  End of BSS data in SDRAM
+	echo done
+
 # Link - this produces an ELF binary.
-$(DH_PRJ).elf: $(DH_OBJ)
+
+$(DHRY_PRJ).elf: $(DHRY_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
 %.rom: %.bin $(ROMGEN)

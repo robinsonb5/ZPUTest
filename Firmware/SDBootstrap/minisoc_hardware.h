@@ -55,6 +55,8 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 #define PER_UART_TXREADY 8
 
 #define PER_FLAGS 0x8  /* Currently only contains ROM overlay */
+#define PER_FLAGS_OVERLAY 0
+
 #define PER_HEX 0xc
 
 #define PER_PS2_KEYBOARD 0x10

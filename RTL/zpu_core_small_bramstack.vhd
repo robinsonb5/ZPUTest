@@ -592,7 +592,8 @@ begin
               if MMAP_STACK=true and memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
                 memAAddr <= memARead(maxAddrBitStackBRAM downto minAddrBit);
 				  else
-                out_mem_addr       <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
+					 out_mem_addr(1 downto 0) <="00";
+                out_mem_addr(maxAddrBitIncIO downto 2)<= std_logic_vector(memARead(maxAddrBitIncIO downto 2));
                 out_mem_readEnable <= '1';
                 state              <= State_ReadIO;
              end if;
@@ -668,7 +669,7 @@ begin
           out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
           mem_write           <= std_logic_vector(memBRead);
           state               <= State_WriteIODone;
-			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
+--			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
 			when State_WriteIOBH =>
 				if STOREBH=true then
@@ -690,7 +691,7 @@ begin
         when State_Fetch =>
 			 -- AMR - fetch from external RAM, not Block RAM.
 			 out_mem_addr <= (others => '0');
-          out_mem_addr(maxAddrBit downto 0)<=std_logic_vector(pc(maxAddrBit downto 0));
+          out_mem_addr(maxAddrBit downto 2)<=std_logic_vector(pc(maxAddrBit downto 2));
           out_mem_readEnable <= fetchneeded;
           -- FIXME - don't refetch if data is still valid.
 
@@ -699,19 +700,19 @@ begin
           -- be available for State_Execute the cycle after
           -- next
 --          memBAddr <= pc(maxAddrBit downto minAddrBit);
-			 if in_mem_busy='0' or fetchneeded='0' then
-				 state    <= State_FetchNext;
-			 end if;
+			 state    <= State_FetchNext;
 
         when State_FetchNext =>
           -- at this point memARead contains the value that is either
           -- from the top of stack or should be copied to the top of the stack
-          memAWriteEnable <= '1';
-		    fetchneeded<='0';
-          memAWrite       <= memARead;
-          memAAddr        <= sp;
-          memBAddr        <= sp + 1;
-          state           <= State_Decode;
+			 if in_mem_busy='0' or fetchneeded='0' then
+				 memAWriteEnable <= '1';
+				 fetchneeded<='0';
+				 memAWrite       <= memARead;
+				 memAAddr        <= sp;
+				 memBAddr        <= sp + 1;
+				 state           <= State_Decode;
+			 end if;
 
         when State_Decode =>
           if interrupt = '1' and inInterrupt = '0' and idim_flag = '0' then

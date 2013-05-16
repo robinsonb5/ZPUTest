@@ -36,12 +36,12 @@ int SDCardInit()
 
 fileTYPE file;
 
-int LoadImage(const char *fn, unsigned char *buf)
+int LoadFile(const char *fn, unsigned char *buf)
 {
 	if(FileOpen(&file,fn))
 	{
 		putserial("Opened file, loading...\n");
-		short imgsize=file.size/512;
+		short imgsize=(file.size+511)/512;
 		int c=0;
 		while(c<imgsize)
 		{
@@ -62,6 +62,43 @@ int LoadImage(const char *fn, unsigned char *buf)
 }
 
 
+void _boot();
+
+void CopyImage(int *src,int *dst)
+{
+	int x,y;
+	for(y=0;y<480;++y)
+	{
+		for(x=0;x<640;x+=2)
+		{
+			*dst++=*src++^0xffffffff;
+		}
+	}
+}
+
+
+void MemTest()
+{
+	int *p=0x100000;
+	int c=0x100000;
+	printf("Checking memory starting at %d\n",p);
+	while(--c)
+	{
+		*p++=c;
+	}
+	printf("Write done, reading\n");
+	p=0x100000;
+	c=0x100000;
+	while(--c)
+	{
+		int t=*p++;
+		if(t!=c)
+			printf("Error at %d, got %d\n",c,t);
+	}
+	printf("Memory test completed\n");
+}
+
+
 int main(int argc,char **argv)
 {
 	int i;
@@ -72,20 +109,21 @@ int main(int argc,char **argv)
 	for(i=0;i<32;++i)
 		*sprite++=0;
 
-	HW_VGA(FRAMEBUFFERPTR)=0x20000;
+	HW_VGA(FRAMEBUFFERPTR)=0x100000;
 //	putserial("Initialising SD card\n");
 
-//	SD_Boot("ZPUFirmware.bin",0);
+	MemTest();
+
 	if(SDCardInit())
 	{
-		while(1)
-		{
-			LoadImage("PIC1    RAW",(unsigned char *)0x20000);
-			LoadImage("PIC2    RAW",(unsigned char *)0x20000);
-			LoadImage("PIC3    RAW",(unsigned char *)0x20000);
-			LoadImage("PIC4    RAW",(unsigned char *)0x20000);
-			LoadImage("PIC5    RAW",(unsigned char *)0x20000);
-		}
+		LoadFile("PIC1    RAW",(unsigned char *)0x100000);
+		CopyImage(0x100000,0x100000);
+		LoadFile("PIC2    RAW",(unsigned char *)0x100000);
+		CopyImage(0x100000,0x100000);
+		LoadFile("PIC3    RAW",(unsigned char *)0x100000);
+		CopyImage(0x100000,0x100000);
+		LoadFile("DHRY    BIN",(unsigned char *)0x0);
+		_boot();
 	}
 
 	return(0);

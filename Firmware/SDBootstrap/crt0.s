@@ -928,6 +928,17 @@ _slowmultImpl:
 	storesp 12
 	storesp 4
 	poppc
+
+	.balign 4,0
+	.global _boot
+_boot:
+	im 0
+	nop
+	im 1	; 1<<PER_FLAGS_OVERLAY
+	nop	; First 4-byte word
+	im 0xffffff8c	; PER_FLAGS
+	store
+	poppc ; should execute without a further fetch
 	
 ;	.data // This is read only, so we don't really want it in a normal data section
 	.section ".rodata"

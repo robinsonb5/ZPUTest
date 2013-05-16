@@ -3,8 +3,8 @@
 
 MEMORY
 {
-  BOOT (rx) : ORIGIN = 0x00000000, LENGTH = 0x00002000 /* 8192 bytes */
-  TRAP (rx) : ORIGIN = 0x00008000, LENGTH = 0x00000000 /* Dummy region to ensure we don't have any Initialized writable data */
+  BOOT (rx) : ORIGIN = 0x00000000, LENGTH = 0x00001FF8 /* 8192 bytes */
+  TRAP (rx) : ORIGIN = 0x00001FFC, LENGTH = 0x00000000 /* Dummy region to ensure we don't have any Initialized writable data */
   SDRAM (rw)  : ORIGIN = 0x007ff000, LENGTH = 0x00001000 /* 4k at top end of DE1's SDRAM */
   STACK (rw) : ORIGIN = 0x40000000, LENGTH = 0x00000400 /* 1024 bytes */
 }
