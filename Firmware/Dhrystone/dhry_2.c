@@ -16,6 +16,7 @@
  */
 
 #include "dhry.h"
+#include <string.h>
 
 #ifndef REG
 #define REG
@@ -26,6 +27,25 @@
 extern  int     Int_Glob;
 extern  char    Ch_1_Glob;
 
+#if 0
+#define strcmp _strcmp
+
+int _strcmp(const char *s1,const char *s2)
+{
+	char t,u;
+	while(1)
+	{
+		t=*s1++;
+		u=*s2++;
+		if(t>u)
+			return(1);
+		if(t<u)
+			return(-1);
+		if(!t)
+			return(0);
+	}
+}
+#endif 
 
 Proc_6 (Enum_Val_Par, Enum_Ref_Par)
 /*********************************/

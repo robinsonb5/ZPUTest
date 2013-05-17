@@ -16,9 +16,8 @@
  */
 
 #include "dhry.h"
+#include <string.h>
 #include <stdarg.h>
-
-#include "minisoc_hardware.h"
 #include "small_printf.h"
 
 
@@ -28,7 +27,7 @@ Rec_Pointer     Ptr_Glob,
                 Next_Ptr_Glob;
 int             Int_Glob;
 Boolean         Bool_Glob;
-int            Ch_1_Glob,
+char            Ch_1_Glob,
                 Ch_2_Glob;
 int             Arr_1_Glob [50];
 int             Arr_2_Glob [50] [50];
@@ -69,10 +68,29 @@ long            Microseconds,
                 
 /* end of variables for time measurement */
 
-int             Number_Of_Runs = 5000;
+int             Number_Of_Runs = 25000;
 
-#define _readMilliseconds() HW_PER(PER_MILLISECONDS);
+long _readMilliseconds()
+{
+	return(HW_PER(PER_MILLISECONDS));
+}
 
+#if 0
+#define strcpy _strcpy
+
+_strcpy(char *dst,const char *src)
+{
+	while(*dst++=*src++);
+}
+#endif
+
+Rec_Type rec1;
+Rec_Type rec2;
+
+
+// Keep anything remotely large off the stack...
+Str_30          Str_1_Loc;
+Str_30          Str_2_Loc;
 
 int main ()
 /*****/
@@ -85,24 +103,15 @@ int main ()
         One_Fifty       Int_3_Loc;
   REG   char            Ch_Index;
         Enumeration     Enum_Loc;
-
-char *Str_1_Loc=0x50000;
-char *Str_2_Loc=0x50100;
-//        Str_30          Str_1_Loc;
-//        Str_30          Str_2_Loc;
   REG   int             Run_Index;
 
   /* Initializations */
-  HW_PER(PER_UART_CLKDIV)=1330000/1152;
-  small_printf("UART Initialized\n");
 
 //  Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
 //  Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
 
-Next_Ptr_Glob = (Rec_Pointer) 0x20000;
-Ptr_Glob = (Rec_Pointer) 0x30000;
-
-  small_printf("Allocated buffers: %d, %d\n",Next_Ptr_Glob, Ptr_Glob);
+  Next_Ptr_Glob = &rec1;
+  Ptr_Glob = &rec2;
 
   Ptr_Glob->Ptr_Comp                    = Next_Ptr_Glob;
   Ptr_Glob->Discr                       = Ident_1;
@@ -112,17 +121,14 @@ Ptr_Glob = (Rec_Pointer) 0x30000;
           "DHRYSTONE PROGRAM, SOME STRING");
   strcpy (Str_1_Loc, "DHRYSTONE PROGRAM, 1'ST STRING");
 
-  putserial("Done strcpy\n");
-
   Arr_2_Glob [8][7] = 10;
         /* Was missing in published program. Without this statement,    */
         /* Arr_2_Glob [8][7] would have an undefined value.             */
         /* Warning: With 16-Bit processors and Number_Of_Runs > 32000,  */
         /* overflow may occur for this array element.                   */
-//  small_printf ("\n");
-  putserial("\nDhrystone Benchmark, Version 2.1 (Language: C)\n");
-//  small_printf ("\n");
-
+  small_printf ("\n");
+  small_printf ("Dhrystone Benchmark, Version 2.1 (Language: C)\n");
+  small_printf ("\n");
   if (Reg)
   {
     small_printf ("Program compiled with 'register' attribute\n");
@@ -130,17 +136,16 @@ Ptr_Glob = (Rec_Pointer) 0x30000;
   }
   else
   {
-    putserial ("Program compiled without 'register' attribute\n");
-//    small_printf ("\n");
+    small_printf ("Program compiled without 'register' attribute\n");
+    small_printf ("\n");
   }
+  Number_Of_Runs;
 
   small_printf ("Execution starts, %d runs through Dhrystone\n", Number_Of_Runs);
 
   /***************/
   /* Start timer */
   /***************/
-
-#define STR_BASE 0x40000
 
 #if 0
 #ifdef TIMES
@@ -155,33 +160,27 @@ Ptr_Glob = (Rec_Pointer) 0x30000;
 #endif
   for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
   {
-//	putserial(".");
     Proc_5();
     Proc_4();
       /* Ch_1_Glob == 'A', Ch_2_Glob == 'B', Bool_Glob == true */
     Int_1_Loc = 2;
     Int_2_Loc = 3;
-    strcpy (STR_BASE+Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
-//	putserial("o");
+    strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
     Enum_Loc = Ident_2;
     Bool_Glob = ! Func_2 (Str_1_Loc, Str_2_Loc);
       /* Bool_Glob == 1 */
-//	putserial("a");
     while (Int_1_Loc < Int_2_Loc)  /* loop body executed once */
     {
-      Int_3_Loc = (5 * Int_1_Loc - Int_2_Loc);
+      Int_3_Loc = 5 * Int_1_Loc - Int_2_Loc;
         /* Int_3_Loc == 7 */
       Proc_7 (Int_1_Loc, Int_2_Loc, &Int_3_Loc);
         /* Int_3_Loc == 7 */
       Int_1_Loc += 1;
     } /* while */
-//	putserial("b");
       /* Int_1_Loc == 3, Int_2_Loc == 3, Int_3_Loc == 7 */
-//    Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
-    Proc_8 (0x33000, 0x34000, Int_1_Loc, Int_3_Loc);
+    Proc_8 (Arr_1_Glob, Arr_2_Glob, Int_1_Loc, Int_3_Loc);
       /* Int_Glob == 5 */
     Proc_1 (Ptr_Glob);
-//	putserial("c");
     for (Ch_Index = 'A'; Ch_Index <= Ch_2_Glob; ++Ch_Index)
                              /* loop body executed twice */
     {
@@ -221,9 +220,9 @@ Ptr_Glob = (Rec_Pointer) 0x30000;
 #endif
   
   small_printf ("Execution ends\n");
-//  small_printf ("\n");
+  small_printf ("\n");
   small_printf ("Final values of the variables used in the benchmark:\n");
-//  small_printf ("\n");
+  small_printf ("\n");
   small_printf ("Int_Glob:            %d\n", Int_Glob);
   small_printf ("        should be:   %d\n", 5);
   small_printf ("Bool_Glob:           %d\n", Bool_Glob);
@@ -274,8 +273,6 @@ Ptr_Glob = (Rec_Pointer) 0x30000;
   small_printf ("\n");
 
   User_Time = End_Time - Begin_Time;
-  small_printf ("Begin time: %d\n", (int)Begin_Time);
-  small_printf ("End time: %d\n", (int)End_Time);
   small_printf ("User time: %d\n", (int)User_Time);
   
   if (User_Time < Too_Small_Time)
@@ -300,10 +297,9 @@ Ptr_Glob = (Rec_Pointer) 0x30000;
     Vax_Mips = Dhrystones_Per_Second / 1757.0;
 #endif
 #else
-    Microseconds = User_Time  / Number_Of_Runs;
+    Microseconds = (1000*User_Time) / Number_Of_Runs;
     Dhrystones_Per_Second =  (Number_Of_Runs*1000) / User_Time;
-	long scaled_time=(1757*User_Time)>>6;
-    Vax_Mips = ((Number_Of_Runs)*(1000000/64)) / scaled_time;
+    Vax_Mips = (Number_Of_Runs*569) / User_Time;
 #endif 
     small_printf ("Microseconds for one run through Dhrystone: ");
     small_printf ("%d \n", (int)Microseconds);

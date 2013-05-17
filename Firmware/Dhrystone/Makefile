@@ -8,8 +8,11 @@ DUMP    = $(BASE)-objdump
 BUILD_DIR=zpu_obj
 
 DHRY_PRJ = dhry
-DHRY_SRC = dhry_1.c dhry_2.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
-DHRY_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DHRY_SRC))
+DHRY_SRC_C = dhry_1.c dhry_2.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
+DHRY_SRC_S = crt0.s
+DHRY_OBJ_C = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DHRY_SRC_C))
+DHRY_OBJ_S = $(patsubst %.s,$(BUILD_DIR)/%.o,$(DHRY_SRC_S))
+DHRY_OBJ = $(DHRY_OBJ_C)
 
 LINKMAP  = dhry.ld
 LIBDIR   = 
@@ -19,7 +22,7 @@ LIBDIR   =
 #  -mno-call -mno-neqbranch -mno-pushspadd \
 #  -mno-neg -mno-mod -mno-div
 
-ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel # -mno-neg
+ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-mult -mno-div # -mno-neg
 
 CFLAGS  = -I. -c -Os $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
