@@ -54,7 +54,8 @@ entity zpu_core is
 	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
 	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
 	 STOREBH : boolean := true; -- Include halfword and byte writes
-	 CALL : boolean := true -- Include call
+	 CALL : boolean := true; -- Include call
+	 SHIFT : boolean := true -- Include lshiftright, ashiftright and ashiftleft
   );
   port ( 
     clk                 : in std_logic;
@@ -144,7 +145,8 @@ architecture behave of zpu_core is
 	 State_Comparison,
 	 State_EqNeq,
 	 State_Sub,
-	 State_IncSP
+	 State_IncSP,
+	 State_Shift
     );
 
   type DecodedOpcodeType is (
@@ -173,7 +175,8 @@ architecture behave of zpu_core is
 	 Decoded_Comparison,
 	 Decoded_EqNeq,
 	 Decoded_EqBranch,
-	 Decoded_Call
+	 Decoded_Call,
+	 Decoded_Shift
     );
 
 
@@ -205,6 +208,12 @@ architecture behave of zpu_core is
   signal comparison_eq : std_logic;
 
   signal eqbranch_zero : std_logic;
+  
+  signal shift_done : std_logic;
+  signal shift_sign : std_logic;
+  signal shift_count : unsigned(4 downto 0);
+  signal shift_reg : unsigned(31 downto 0);
+  signal shift_direction : std_logic;
   
 begin
 
@@ -337,6 +346,13 @@ begin
 				sampledDecodedOpcode <= Decoded_StoreBH;
 			end if;
 		end if;
+		if SHIFT=true then
+			if tOpcode(5 downto 0) = OpCode_Lshiftright
+				or tOpcode(5 downto 0) = OpCode_Ashiftright
+				or tOpcode(5 downto 0) = OpCode_Ashiftleft then
+				sampledDecodedOpcode <= Decoded_Shift;
+			end if;
+		end if;
     elsif (tOpcode(7 downto 4) = OpCode_AddSP) then
       sampledDecodedOpcode <= Decoded_AddSP;
     else
@@ -381,7 +397,13 @@ begin
 		else
 			comparison_eq<='0';
 		end if;
-  
+
+		if SHIFT=true and shift_count="00000" then
+			shift_done<='1';
+		else 
+			shift_done<='0';
+		end if;
+		
 --	if STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
 --		mem_writeMask <= (others => '1');
 --	end if;
@@ -433,6 +455,19 @@ begin
       if interrupt = '0' then
         inInterrupt <= '0';             -- no longer in an interrupt
       end if;
+		
+		-- Handle shift instructions
+		IF SHIFT=true then
+			if shift_done='0' then
+				if shift_direction='1' then
+					shift_reg<=shift_reg(30 downto 0)&"0";	-- Shift left
+				else
+					shift_reg<=shift_sign&shift_reg(31 downto 1); -- Shift right
+				end if;
+				shift_count<=shift_count-1;
+			end if;
+		end if;
+
 
 		if HARDWARE_MULTIPLY=true then
 			tMultResult := memARead * memBRead;
@@ -645,6 +680,16 @@ begin
 						memAWrite(maxAddrBit downto 0) <= pc + 1;
 					end if;
 
+				when Decoded_Shift =>
+					IF SHIFT=true then
+						sp    <= sp + 1;
+						shift_count<=unsigned(memARead(4 downto 0));	-- 5 bit distance
+						shift_reg<=memBRead;	-- 32-bit value
+						shift_direction<=opcode(0); -- 1 for left, (opcode 43 for Ashiftleft)
+						shift_sign<=memBRead(31) and opcode(2);  -- 1 for arithmetic, (opcode 44 for Ashiftright, 42 for lshiftright)
+						state <= State_Shift;
+					end if;
+
 				when Decoded_Nop =>
               memAAddr <= sp;
 
@@ -790,6 +835,14 @@ begin
 				memAWrite(0) <= not (comparison_sub_result(wordSize)
 											xor (not opCode(0) and comparison_eq));
 				state <= State_Fetch;
+
+			when State_Shift =>
+				if shift_done='1' then
+					memAAddr        <= sp;
+					memAWriteEnable <= '1';
+					memAWrite       <= shift_reg;
+					state           <= State_Fetch;
+				end if;
 
         when others =>
           null;
