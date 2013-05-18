@@ -100,7 +100,7 @@ signal zpu_enable               : std_logic;
 signal zpu_interrupt            : std_logic;
 signal zpu_break                : std_logic;
 
-signal bootrom_overlay	: std_logic :='0';
+signal bootrom_overlay	: std_logic;
 
 signal cpu_uds	: std_logic;
 signal cpu_lds : std_logic;
@@ -382,6 +382,7 @@ begin
 		currentstate<=WAITING;
 		sdram_state<=idle;
 		spi_cs<='1';
+		bootrom_overlay<='0';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 

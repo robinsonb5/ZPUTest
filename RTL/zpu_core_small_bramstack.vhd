@@ -50,7 +50,7 @@ use work.zpupkg.all;
 entity zpu_core is
   generic (
     HARDWARE_MULTIPLY : boolean := true; -- Self explanatory
-	 COMPARISON_SUB : boolean := true; -- Include sub (and also lessthan, etc - but not yet implemented)
+	 COMPARISON_SUB : boolean := true; -- Include sub and (U)lessthan(orequal)
 	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
 	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
 	 STOREBH : boolean := true; -- Include halfword and byte writes

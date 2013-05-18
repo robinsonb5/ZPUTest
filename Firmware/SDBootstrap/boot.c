@@ -109,14 +109,14 @@ int main(int argc,char **argv)
 //	for(i=0;i<32;++i)
 //		*sprite++=0;
 
-//	HW_VGA(FRAMEBUFFERPTR)=0x100000;
+	HW_VGA(FRAMEBUFFERPTR)=0x100000;
 //	putserial("Initialising SD card\n");
 
 //	MemTest();
 
 	if(SDCardInit())
 	{
-//		LoadFile("PIC1    RAW",(unsigned char *)0x100000);
+		LoadFile("SPLASH  RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);
 //		LoadFile("PIC2    RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);
