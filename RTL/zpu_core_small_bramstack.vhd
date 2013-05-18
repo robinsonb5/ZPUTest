@@ -55,7 +55,8 @@ entity zpu_core is
 	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
 	 STOREBH : boolean := true; -- Include halfword and byte writes
 	 CALL : boolean := true; -- Include call
-	 SHIFT : boolean := true -- Include lshiftright, ashiftright and ashiftleft
+	 SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
+	 HARDWARE_XOR : boolean := true -- include xor instruction
   );
   port ( 
     clk                 : in std_logic;
@@ -130,6 +131,7 @@ architecture behave of zpu_core is
     State_Add,
     State_Or,
     State_And,
+    State_Xor,
     State_Store,
     State_ReadIO,
     State_WriteIO,
@@ -165,6 +167,7 @@ architecture behave of zpu_core is
     Decoded_And,
     Decoded_Load,
     Decoded_Not,
+    Decoded_Xor,
     Decoded_Flip,
     Decoded_Store,
     Decoded_StoreBH,
@@ -322,6 +325,9 @@ begin
 		if HARDWARE_MULTIPLY=true and tOpcode(5 downto 0) = OpCode_Mult then
 			sampledDecodedOpcode <= Decoded_Mult;
 		end if;
+		if HARDWARE_XOR=true and tOpcode(5 downto 0) = OpCode_Xor then
+			sampledDecodedOpcode <= Decoded_Xor;
+		end if;
 		if COMPARISON_SUB=true then
 			if tOpcode(5 downto 0) = OpCode_Eq
 				or tOpcode(5 downto 0) = OpCode_Neq then
@@ -330,6 +336,8 @@ begin
 				sampledDecodedOpcode <= Decoded_Sub;
 			elsif tOpcode(5 downto 0)= OpCode_Lessthanorequal
 				or tOpcode(5 downto 0)= OpCode_Lessthan
+				or tOpcode(5 downto 0)= OpCode_Ulessthanorequal
+				or tOpcode(5 downto 0)= OpCode_Ulessthan
 					then
 				sampledDecodedOpcode <= Decoded_Comparison;
 			end if;
@@ -619,7 +627,11 @@ begin
               sp    <= sp + 1;
               state <= State_And;
 
-			   when Decoded_Mult =>
+            when Decoded_Xor =>
+              sp    <= sp + 1;
+              state <= State_Xor;
+
+				  when Decoded_Mult =>
               sp    <= sp + 1;
               state <= State_Mult;
 
@@ -806,7 +818,13 @@ begin
           memAWrite       <= memARead or memBRead;
           state           <= State_Fetch;
 
-			when State_IncSP =>
+		  when State_Xor =>
+          memAAddr        <= sp;
+          memAWriteEnable <= '1';
+          memAWrite       <= memARead xor memBRead;
+          state           <= State_Fetch;
+
+			 when State_IncSP =>
 				sp<=sp+1;
 				state <= State_Resync;
 
@@ -828,12 +846,16 @@ begin
 				state <= State_Fetch;
 				
 			when State_Comparison =>
-				-- FIXME - what about unsigned comparison - simpler or not?
 				memAAddr <= sp;
 				memAWriteEnable <= '1';
 				memAWrite <= (others => '0');
-				memAWrite(0) <= not (comparison_sub_result(wordSize)
-											xor (not opCode(0) and comparison_eq));
+				if opCode(1)='1' then -- Unsigned comparison, opcodes 38, 39				
+					memAWrite(0) <= not (comparison_sub_result(wordSize-1)
+												xor (not opCode(0) and comparison_eq));
+				else	-- Signed comparison, opcodes 36, 37
+					memAWrite(0) <= not (comparison_sub_result(wordSize)
+												xor (not opCode(0) and comparison_eq));
+				end if;
 				state <= State_Fetch;
 
 			when State_Shift =>

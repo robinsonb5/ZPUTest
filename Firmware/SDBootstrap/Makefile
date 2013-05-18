@@ -26,7 +26,7 @@ LIBDIR   =
 #  -mno-call -mno-neqbranch -mno-pushspadd \
 #  -mno-neg -mno-mod -mno-div
 
-ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel # -mno-neg
+ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
 CFLAGS  = -I. -c -Os $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 

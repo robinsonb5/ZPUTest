@@ -168,6 +168,7 @@ _zpu_interrupt_vector:
 # opcode 34
 # offset 0x0000 0040
 	.balign 32,0
+	.global _loadh
 _loadh:
 	loadsp 4
 	; by not masking out bit 0, we cause a memory access error 
@@ -196,6 +197,7 @@ _loadh:
 # opcode 35
 # offset 0x0000 0060
 	.balign 32,0
+	.global _storeh
 _storeh:
 	loadsp 4
 	; by not masking out bit 0, we cause a memory access error 
@@ -613,6 +615,7 @@ _xor:
 # opcode 51
 # offset 0x0000 0260
 	.balign 32,0
+	.global _loadb
 _loadb:
 	loadsp 4
 	im ~0x3
@@ -642,6 +645,7 @@ _loadb:
 # opcode 52
 # offset 0x0000 0280
 	.balign 32,0
+	.global _storeb
 _storeb:
 	loadsp 4
 	im ~0x3

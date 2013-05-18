@@ -127,7 +127,9 @@ package zpupkg is
 	 COMPARISON_SUB : boolean := true;
 	 EQBRANCH : boolean := true;
 	 MMAP_STACK : boolean := true;
-	 STOREBH : boolean := true
+	 STOREBH : boolean := true;
+	 SHIFT : boolean := true;
+	 HARDWARE_XOR : boolean := true
   );
     port ( 
       clk                 : in  std_logic;
@@ -224,7 +226,10 @@ package zpupkg is
   constant OpCode_Eq               : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(46, 6));
   constant OpCode_Neq              : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(47, 6));
   --
+  constant OpCode_Neg              : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(48, 6));
   constant OpCode_Sub              : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(49, 6));
+  constant OpCode_Xor              : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(50, 6));
+  --
   constant OpCode_Loadb            : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(51, 6));
   constant OpCode_Storeb           : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(52, 6));
   --
