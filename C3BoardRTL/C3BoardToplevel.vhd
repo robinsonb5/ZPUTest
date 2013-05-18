@@ -327,7 +327,7 @@ begin
 		)
 		port map(
 			clk => clk,
-			clk2 => clk,
+--			clk2 => clk,
 			reset_in => reset,
 			keys => "1111",
 			src => X"0000",
