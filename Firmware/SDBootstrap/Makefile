@@ -7,6 +7,9 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
+MINSTARTUP_SRC = mincrt0.s
+MINSTARTUP_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(MINSTARTUP_SRC))
+
 STARTUP_SRC = crt0.s
 STARTUP_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(STARTUP_SRC))
 
@@ -28,9 +31,9 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -c -Os $(ZPUOPTS) -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
-LFLAGS  = -nostdlib -Os -T $(LINKMAP)
+LFLAGS  = -Wl,--relax -nostdlib -Os -T $(LINKMAP)
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 
@@ -71,7 +74,7 @@ $(ROMGEN): $(ROMGEN).c
 
 # Link - this produces an ELF binary.
 
-$(BOOT_PRJ).elf: $(STARTUP_OBJ) $(BOOT_OBJ)
+$(BOOT_PRJ).elf: $(MINSTARTUP_OBJ) $(BOOT_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
 $(FBTEST_PRJ).elf: $(STARTUP_OBJ) $(FBTEST_OBJ)

@@ -24,9 +24,9 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-mult -mno-div # -mno-neg
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -c -O6 $(ZPUOPTS) # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
-LFLAGS  = -Os
+LFLAGS  = -mboard=abel -O6 -Wl,--relax
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 

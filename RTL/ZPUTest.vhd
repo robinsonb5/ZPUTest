@@ -368,7 +368,7 @@ spi : entity work.spi_interface
 
 	rom : entity work.BootROM
 	port map (
-		address => mem_addr(12 downto 2),
+		address => mem_addr(11 downto 2),
 		clock	=> clk,
 		q => externram_data
 	);
