@@ -23,15 +23,14 @@ You should have received a copy of the GNU General Public License
 along with this program; see the file COPYING.  If not, write to
 the Free Software Foundation, 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.  */
-	.file	"crt0.S"
+	.file	"mincrt0.S"
 
 
 /* Minimal startup code, usable where the core is complete enough not to require emulated instructions */
 	
 
-;	.section ".fixed_vectors","ax"
+	.section ".fixed_vectors","ax"
 ; KLUDGE!!! we remove the executable bit to avoid relaxation 
-	.section ".fixed_vectors","a" 
 
 
 	.macro fixedim value
@@ -49,6 +48,9 @@ Boston, MA 02111-1307, USA.  */
 	add
 	.endm
 
+	.balign 4,0
+	.section ".text","ax"
+	.balign 4,0
 		.globl _start
 _start:
 		jmp main

@@ -99,30 +99,68 @@ void MemTest()
 }
 #endif
 
+/* Load files named in a manifest file */
+
+void ParseManifest(unsigned char *buffer)
+{
+	int ptr;
+	int run=1;
+	while(run)
+	{
+		unsigned char c;
+		ptr=0;
+		// Parse address
+		while((c=*buffer++)!=' ')
+		{
+			if(c=='#') // Comment line?
+				break;
+			if(c=='\n')
+			{
+				run=0;
+				break;
+			}
+			c=(c&~64)-'0';
+			if(c>='9')
+				c-='A'-'0';
+			ptr<<=4;
+			ptr|=c;
+		}
+		// Parse filename
+		if(c!='#')
+		{
+			while((c=*buffer++)==' ')
+				;
+			--buffer;
+			// c-1 is now the filename pointer
+			LoadFile(buffer,ptr);
+		}
+
+		// Hunt for newline character
+		while((c=*buffer++)!='\n')
+			;
+	}
+}
+
+static unsigned char Manifest[512];
+
 int main(int argc,char **argv)
 {
 	int i;
-//	int *sprite=(int *)0x1ff80;
 	HW_PER(PER_UART_CLKDIV)=1330000/1152;
 
-//	HW_VGA(SP0PTR)=sprite;
-//	for(i=0;i<32;++i)
-//		*sprite++=0;
-
 	HW_VGA(FRAMEBUFFERPTR)=0x100000;
-//	putserial("Initialising SD card\n");
-
-//	MemTest();
 
 	if(SDCardInit())
 	{
-		LoadFile("SPLASH  RAW",(unsigned char *)0x100000);
+		LoadFile("nanifesttxt",Manifest);
+		ParseManifest(Manifest);
+//		LoadFile("SPLASH  RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);
 //		LoadFile("PIC2    RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);
 //		LoadFile("PIC3    RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);
-		LoadFile("DHRY    BIN",(unsigned char *)0x0);
+//		LoadFile("DHRY    BIN",(unsigned char *)0x0);
 		_boot();
 	}
 

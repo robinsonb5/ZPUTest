@@ -1,0 +1,16 @@
+# Example manifest file
+# Hexadecimal address comes first, followed by spaces, followed by the filename
+# To avoid mangling the filename any more than needed in the limited boot firmware
+# the filename should be 11 characters long, the last three being the file extension
+# and padded out with spaces, like so:
+# 10000  FN      EXT
+# 20000  FILE2   IMG
+# a blank line terminates the file list
+#
+20000 SPLASH  RAW
+20000 PIC1    RAW
+20000 PIC2    RAW
+0     DHRY    BIN
+
+# Don't forget the blank line at the end!
+

@@ -31,9 +31,9 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
-LFLAGS  = -Wl,--relax -nostdlib -Os -T $(LINKMAP)
+LFLAGS  = -Wl,--relax -nostdlib -Os
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 
@@ -75,10 +75,10 @@ $(ROMGEN): $(ROMGEN).c
 # Link - this produces an ELF binary.
 
 $(BOOT_PRJ).elf: $(MINSTARTUP_OBJ) $(BOOT_OBJ)
-	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
+	$(LD) $(LFLAGS) -T boot.ld -o $@ $+ $(LIBS)
 
 $(FBTEST_PRJ).elf: $(STARTUP_OBJ) $(FBTEST_OBJ)
-	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
+	$(LD) $(LFLAGS) -T fbtest.ld -o $@ $+ $(LIBS)
 
 %.rom: %.bin $(ROMGEN)
 	./$(ROMGEN) $< >$@
