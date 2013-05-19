@@ -58,6 +58,11 @@ int LoadFile(const char *fn, unsigned char *buf)
 			}
 		}
 	}
+	else
+	{
+		printf("Can't open %s\n",fn);
+		return(0);
+	}
 	return(1);
 }
 
@@ -101,6 +106,8 @@ void MemTest()
 
 /* Load files named in a manifest file */
 
+char fn[12];
+
 void ParseManifest(unsigned char *buffer)
 {
 	int ptr;
@@ -120,21 +127,32 @@ void ParseManifest(unsigned char *buffer)
 				run=0;
 				break;
 			}
-			c=(c&~64)-'0';
+			c=(c&~32)-('0'-32); // Convert to upper case
 			if(c>='9')
 				c-='A'-'0';
 			ptr<<=4;
 			ptr|=c;
 		}
 		// Parse filename
-		if(c!='#')
+		if(run && c!='#')
 		{
+			int i;
 			while((c=*buffer++)==' ')
 				;
 			--buffer;
 			// c-1 is now the filename pointer
-			printf("Loading file to %d\n",(long)ptr);
-			LoadFile(buffer,ptr);
+
+			for(i=0;i<11;++i)
+			{
+				char c=*buffer++;
+//				if(c!=' ')
+//					c&=~32; // To upper case
+				fn[i]=c;
+			}
+			fn[11]=0;
+			
+			printf("Loading file %s to %d\n",fn,(long)ptr);
+			LoadFile(fn,(unsigned char *)ptr);
 		}
 
 		// Hunt for newline character
@@ -150,12 +168,12 @@ int main(int argc,char **argv)
 	int i;
 	HW_PER(PER_UART_CLKDIV)=1330000/1152;
 
-	HW_VGA(FRAMEBUFFERPTR)=0x100000;
+	HW_VGA(FRAMEBUFFERPTR)=0x20000;
 
 	if(SDCardInit())
 	{
-		LoadFile("manifesttxt",Manifest);
-		ParseManifest(Manifest);
+		if(LoadFile("MANIFESTTXT",Manifest))
+			ParseManifest(Manifest);
 //		LoadFile("SPLASH  RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);
 //		LoadFile("PIC2    RAW",(unsigned char *)0x100000);
