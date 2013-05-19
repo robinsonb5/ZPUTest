@@ -17,8 +17,13 @@ _cvt(unsigned int val, char *buf, int radix, char *digits)
         *cp++ = '0';
     } else {
         while (val) {
+#ifdef PRINTF_HEX_ONLY
             *cp++ = digits[val &15]; // % radix];
             val >>=4; // /= radix;
+#else
+            *cp++ = digits[val % radix];
+            val /= radix;
+#endif
         }
     }
     while (cp != temp) {

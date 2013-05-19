@@ -105,6 +105,7 @@ void ParseManifest(unsigned char *buffer)
 {
 	int ptr;
 	int run=1;
+	puts("Parsing manifest\n");
 	while(run)
 	{
 		unsigned char c;
@@ -132,6 +133,7 @@ void ParseManifest(unsigned char *buffer)
 				;
 			--buffer;
 			// c-1 is now the filename pointer
+			printf("Loading file to %d\n",(long)ptr);
 			LoadFile(buffer,ptr);
 		}
 
@@ -141,7 +143,7 @@ void ParseManifest(unsigned char *buffer)
 	}
 }
 
-static unsigned char Manifest[512];
+static unsigned char Manifest[2048];
 
 int main(int argc,char **argv)
 {
@@ -152,7 +154,7 @@ int main(int argc,char **argv)
 
 	if(SDCardInit())
 	{
-		LoadFile("nanifesttxt",Manifest);
+		LoadFile("manifesttxt",Manifest);
 		ParseManifest(Manifest);
 //		LoadFile("SPLASH  RAW",(unsigned char *)0x100000);
 //		CopyImage(0x100000,0x100000);

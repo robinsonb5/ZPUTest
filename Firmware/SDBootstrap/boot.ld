@@ -30,18 +30,16 @@ SECTIONS
   } >CODE
 
   /* .rodata section which is used for read-only data (constants) */
-  . = ALIGN(4);
   .rodata :
   {
     *(.rodata*)
-  } >CODE
   . = ALIGN(4);
+  } >CODE
   _romend = . ;
 
   /* .data section which is used for initialized data.
      Since we don't want any writable data within the ROM
      itself, we put this stuff in a "trap" section. */
-  . = ALIGN(4);
   .data :
   {
     _data = . ;
@@ -51,13 +49,13 @@ SECTIONS
   } >TRAP
 
   /* .bss section which is used for uninitialized data */
-  . = ALIGN(4);
   .bss :
   {
     __bss_start = . ;
     __bss_start__ = . ;
     *(.bss)
     *(COMMON)
+    . = ALIGN(4);
   } >SDRAM
   __bss_end__ = . ;
 }
