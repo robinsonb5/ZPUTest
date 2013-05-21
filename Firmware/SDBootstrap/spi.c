@@ -139,7 +139,7 @@ short is_sdhc()
 		wait_init();
 		return(0);
 	}
-
+#if 0
 	SPI(0xff);
 //	SPI_WAIT();
 	r=SPI_READ();
@@ -166,6 +166,14 @@ short is_sdhc()
 		wait_init();
 		return(0);
 	}
+#endif
+	r=SPI_PUMP();
+	if((r&0xffff)!=0x01aa)
+	{
+		wait_init();
+		return(0);
+	}
+
 //	printf("CMD8_4 response: %d\n",r);
 
 	SPI(0xff);
@@ -184,10 +192,11 @@ short is_sdhc()
 //				SPI_WAIT();
 				r=SPI_READ();
 				printf("CMD58_2 %d\n  ",r);
-				SPI(0xff);
-				SPI(0xff);
-				SPI(0xff);
-				SPI(0xff);
+				SPI_PUMP();
+//				SPI(0xff);
+//				SPI(0xff);
+//				SPI(0xff);
+//				SPI(0xff);
 				if(r&0x40)
 					return(1);
 				else
@@ -288,58 +297,12 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 			for(j=0;j<128;++j)
 			{
 				int t,v;
-//				SPI(0xff);
 				t=SPI_PUMP();
-//				t=v<<16;
-
-//				v=SPI_PUMP();
-//				t|=v;
-
-#if 0
-				SPI(0xff);
-				v=SPI_READ();
-				t|=v<<8;
-
-				SPI(0xff);
-				v=SPI_READ();
-				t|=v;
-#endif
 				*(int *)buf=t;
 //				printf("%d: %d\n",buf,t);
 				buf+=4;
 			}
 
-//			SPI_PUMP();
-
-#if 0
-
-			for(j=0;j<256;++j)
-			{
-				*(short *)buf=SPI_PUMP();
-				buf+=2;
-			}
-#endif
-
-#if 0
-			for(j=0;j<256;++j)
-			{
-				int t;
-				SPI(0xff);
-				SPI_WAIT();
-				v=SPI_READ()&255;
-				t=v<<8;
-
-				SPI(0xff);
-				SPI_WAIT();
-				v=SPI_READ()&255;
-				t|=v&255;
-
-				*(short *)buf=t;
-				buf+=2;
-			}
-			SPI(0xff); SPI(0xff); // Fetch CRC
-			SPI(0xff); SPI(0xff);
-#endif
 			i=1; // break out of the loop
 			result=1;
 		}

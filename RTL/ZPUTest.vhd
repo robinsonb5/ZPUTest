@@ -462,7 +462,7 @@ begin
 
 				elsif mem_readEnable='1' then
 					case mem_addr(31 downto 20) is
-						when X"000" =>	-- Boot BlockRAM
+						when X"020" =>	-- Boot BlockRAM
 							if bootrom_overlay='0' then
 								currentstate<=READ1;
 							else

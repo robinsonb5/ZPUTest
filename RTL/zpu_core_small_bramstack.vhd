@@ -420,7 +420,7 @@ begin
       state               <= State_Resync;
       break               <= '0';
       sp                  <= unsigned(spStart(maxAddrBitStackBRAM downto minAddrBit));
-      pc                  <= (others => '0');
+      pc                  <= X"02000000"; -- (others => '0');
       idim_flag           <= '0';
       begin_inst          <= '0';
       memAAddr            <= (others => '0');

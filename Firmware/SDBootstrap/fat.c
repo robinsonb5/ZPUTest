@@ -79,36 +79,15 @@ unsigned long buffered_fat_index;       // index of buffered FAT sector
 
 #define BootPrint(x) puts(x);
 
-int cmpsig(const char *s1, const char *s2)
-{
-	short *p1=(short *)s1;
-	short *p2=(short *)s2;
-//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
-	if(*p1++!=*p2++)
-		return(1);
-//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
-	if(*p1++!=*p2++)
-		return(1);
-//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
-	if(*p1++!=*p2++)
-		return(1);
-//	printf("Comparing %d (%d) with %d\n",*p1,p1,*p2);
-	if(*p1++!=*p2++)
-		return(1);
-	return(0);
-}
 
-
-int cmpfn(const char *s1, const char *s2)
+int compare(const char *s1, const char *s2,int b)
 {
-	long *p1=(long *)s1;
-	long *p2=(long *)s2;
-	if(*p1++!=*p2++)
-		return(1);
-	if(*p1++!=*p2++)
-		return(1);
-	if((*p1&0xffffff00)!=(*p2&0xffffff00))
-		return(1);
+	int i;
+	for(i=0;i<b;++i)
+	{
+		if(*s1++!=*s2++)
+			return(1);
+	}
 	return(0);
 }
 
@@ -127,9 +106,9 @@ unsigned char FindDrive(void)
 	partitioncount=1;
 
 	// If we can identify a filesystem on block 0 we don't look for partitions
-    if (cmpsig((const char*)&sector_buffer[0x36], "FAT16   ")==0) // check for FAT16
+    if (compare((const char*)&sector_buffer[0x36], "FAT16   ",8)==0) // check for FAT16
 		partitioncount=0;
-    if (cmpsig((const char*)&sector_buffer[0x52], "FAT32   ")==0) // check for FAT32
+    if (compare((const char*)&sector_buffer[0x52], "FAT32   ",8)==0) // check for FAT32
 		partitioncount=0;
 
 	if(partitioncount)
@@ -150,9 +129,9 @@ unsigned char FindDrive(void)
 		BootPrint("Read boot sector from first partition\n");
 	}
 
-    if (cmpsig(sector_buffer+0x52, "FAT32   ")==0) // check for FAT16
+    if (compare(sector_buffer+0x52, "FAT32   ",8)==0) // check for FAT16
 		fat32=1;
-	else if (cmpsig(sector_buffer+0x36, "FAT16   ")!=0) // check for FAT32
+	else if (compare(sector_buffer+0x36, "FAT16   ",8)!=0) // check for FAT32
 	{
         printf("Unsupported partition type!\r");
 		return(0);
@@ -180,7 +159,7 @@ unsigned char FindDrive(void)
 
     if (fat32)
     {
-        if (cmpsig((const char*)&sector_buffer[0x52], "FAT32   ") != 0) // check file system type
+        if (compare((const char*)&sector_buffer[0x52], "FAT32   ",8) != 0) // check file system type
             return(0);
 
         dir_entries = cluster_size << 4; // total number of dir entries (16 entries per sector)
@@ -286,7 +265,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
             {
                 if (!(pEntry->Attributes & (ATTR_VOLUME | ATTR_DIRECTORY))) // not a volume nor directory
                 {
-                    if (cmpfn((const char*)pEntry->Name, name) == 0)
+                    if (compare((const char*)pEntry->Name, name,11) == 0)
                     {
                         file->size = SwapBBBB(pEntry->FileSize); 		// for 68000
                         file->cluster = SwapBB(pEntry->StartCluster) + (fat32 ? (SwapBB(pEntry->HighCluster) & 0x0FFF) << 16 : 0);

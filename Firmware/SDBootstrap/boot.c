@@ -23,17 +23,6 @@
 #include "small_printf.h"
 
 
-int SDCardInit()
-{
-	puts("Initialising SD card\n");
-	if(spi_init())
-	{
-		FindDrive();
-	}
-	return(1);
-}
-
-
 fileTYPE file;
 
 int LoadFile(const char *fn, unsigned char *buf)
@@ -68,98 +57,8 @@ int LoadFile(const char *fn, unsigned char *buf)
 
 
 void _boot();
-#if 0
-void CopyImage(int *src,int *dst)
-{
-	int x,y;
-	for(y=0;y<480;++y)
-	{
-		for(x=0;x<640;x+=2)
-		{
-			*dst++=*src++^0xffffffff;
-		}
-	}
-}
-
-
-void MemTest()
-{
-	int *p=0x100000;
-	int c=0x100000;
-	printf("Checking memory starting at %d\n",p);
-	while(--c)
-	{
-		*p++=c;
-	}
-	printf("Write done, reading\n");
-	p=0x100000;
-	c=0x100000;
-	while(--c)
-	{
-		int t=*p++;
-		if(t!=c)
-			printf("Error at %d, got %d\n",c,t);
-	}
-	printf("Memory test completed\n");
-}
-#endif
 
 /* Load files named in a manifest file */
-
-char fn[12];
-
-void ParseManifest(unsigned char *buffer)
-{
-	int ptr;
-	int run=1;
-	puts("Parsing manifest\n");
-	while(run)
-	{
-		unsigned char c;
-		ptr=0;
-		// Parse address
-		while((c=*buffer++)!=' ')
-		{
-			if(c=='#') // Comment line?
-				break;
-			if(c=='\n')
-			{
-				run=0;
-				break;
-			}
-			c=(c&~32)-('0'-32); // Convert to upper case
-			if(c>='9')
-				c-='A'-'0';
-			ptr<<=4;
-			ptr|=c;
-		}
-		// Parse filename
-		if(run && c!='#')
-		{
-			int i;
-			while((c=*buffer++)==' ')
-				;
-			--buffer;
-			// c-1 is now the filename pointer
-
-			for(i=0;i<11;++i)
-			{
-				char c=*buffer++;
-//				if(c!=' ')
-//					c&=~32; // To upper case
-				fn[i]=c;
-			}
-			fn[11]=0;
-			
-			printf("Loading file %s to %d\n",fn,(long)ptr);
-			LoadFile(fn,(unsigned char *)ptr);
-		}
-
-		// Hunt for newline character
-		while((c=*buffer++)!='\n')
-			;
-	}
-}
 
 static unsigned char Manifest[2048];
 
@@ -170,18 +69,50 @@ int main(int argc,char **argv)
 
 	HW_VGA(FRAMEBUFFERPTR)=0x20000;
 
-	if(SDCardInit())
+	if(spi_init())
 	{
+		FindDrive();
 		if(LoadFile("MANIFESTTXT",Manifest))
-			ParseManifest(Manifest);
-//		LoadFile("SPLASH  RAW",(unsigned char *)0x100000);
-//		CopyImage(0x100000,0x100000);
-//		LoadFile("PIC2    RAW",(unsigned char *)0x100000);
-//		CopyImage(0x100000,0x100000);
-//		LoadFile("PIC3    RAW",(unsigned char *)0x100000);
-//		CopyImage(0x100000,0x100000);
-//		LoadFile("DHRY    BIN",(unsigned char *)0x0);
-		_boot();
+		{
+			unsigned char *buffer=Manifest;
+			int ptr;
+			puts("Parsing manifest\n");
+			while(1)
+			{
+				unsigned char c;
+				ptr=0;
+				// Parse address
+				while((c=*buffer++)!=' ')
+				{
+					if(c=='#') // Comment line?
+						break;
+					if(c=='\n')
+						_boot();
+
+					c=(c&~32)-('0'-32); // Convert to upper case
+					if(c>='9')
+						c-='A'-'0';
+					ptr<<=4;
+					ptr|=c;
+				}
+				// Parse filename
+				if(c!='#')
+				{
+					int i;
+					while((c=*buffer++)==' ')
+						;
+					--buffer;
+					// c-1 is now the filename pointer
+
+//					printf("Loading file %s to %d\n",fn,(long)ptr);
+					LoadFile(buffer,(unsigned char *)ptr);
+				}
+
+				// Hunt for newline character
+				while((c=*buffer++)!='\n')
+					;
+			}
+		}
 	}
 
 	return(0);

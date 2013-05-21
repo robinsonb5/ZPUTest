@@ -31,7 +31,7 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
 LFLAGS  = -Wl,--relax -nostdlib -Os
 CP_HEXFLAGS = -Oihex
@@ -46,7 +46,11 @@ LIBS       =
 all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec $(BOOT_PRJ).rpt \
 		$(FBTEST_PRJ).bin $(FBTEST_PRJ).rpt
 clean:
-	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
+	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(BOOT_PRJ).mif $(BOOT_PRJ).rom *~ */*.o $(ROMGEN) *.bin
+
+link:
+	rm -f $(BOOT_PRJ).mif $(BOOT_PRJ).elf
+	make
 
 $(ROMGEN): $(ROMGEN).c
 	gcc  -o $@ $<
@@ -65,7 +69,7 @@ $(ROMGEN): $(ROMGEN).c
 
 # Convert SREC to .mif file
 %.mif: %.srec
-	srec_cat $< -o $@ -mif 32
+	srec_cat $< -offset=-0x02000000 -o $@ -mif 32
 
 %.rpt: %.elf
 	$(DUMP) -x $< | grep _romend   #  End of Boot ROM

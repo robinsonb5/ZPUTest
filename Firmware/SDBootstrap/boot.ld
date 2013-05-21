@@ -3,9 +3,9 @@
 
 MEMORY
 {
-  BOOT (rx) : ORIGIN = 0x00000000, LENGTH = 0x00000004 /* 8192 bytes */
-  TRAP (rx) : ORIGIN = 0x0000004, LENGTH = 0x00000000 /* Dummy region to ensure we don't have any Initialized writable data */
-  CODE (rx) : ORIGIN = 0x0000004, LENGTH = 0x00001ff8 /* 8192 bytes */
+  BOOT (rx) : ORIGIN = 0x02000000, LENGTH = 0x00000008 /* 8192 bytes */
+  TRAP (rx) : ORIGIN = 0x02000008, LENGTH = 0x00000000 /* Dummy region to ensure we don't have any Initialized writable data */
+  CODE (rx) : ORIGIN = 0x02000008, LENGTH = 0x00001ff8 /* 8192 bytes */
   SDRAM (rw)  : ORIGIN = 0x007ff000, LENGTH = 0x00001000 /* 4k at top end of DE1's SDRAM */
   STACK (rw) : ORIGIN = 0x40000000, LENGTH = 0x00000400 /* 1024 bytes */
 }
@@ -23,9 +23,9 @@ SECTIONS
   }>BOOT
 
   /* Remaining code sections */
-  . = ALIGN(4);
   .text :
   {
+	. = ALIGN(4);
     *(.text)                   /* remaining code */
   } >CODE
 

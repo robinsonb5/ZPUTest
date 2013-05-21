@@ -30,8 +30,6 @@ Boston, MA 02111-1307, USA.  */
 	
 
 	.section ".fixed_vectors","ax"
-; KLUDGE!!! we remove the executable bit to avoid relaxation 
-
 
 	.macro fixedim value
 			im \value
@@ -48,7 +46,6 @@ Boston, MA 02111-1307, USA.  */
 	add
 	.endm
 
-	.balign 4,0
 	.section ".text","ax"
 	.balign 4,0
 		.globl _start
@@ -158,7 +155,9 @@ _storeb:
 
 
 	.global _boot
+	.balign 4,0
 _boot:
+	nop
 	im 0
 	nop
 	im 1	; 1<<PER_FLAGS_OVERLAY
