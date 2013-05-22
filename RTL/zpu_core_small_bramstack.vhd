@@ -183,9 +183,11 @@ architecture behave of zpu_core is
     );
 
 
-
+  signal programword : std_logic_vector(wordSize-1 downto 0);
+  signal inrom : std_logic;
   signal sampledOpcode        : std_logic_vector(OpCode_Size-1 downto 0);
   signal opcode               : std_logic_vector(OpCode_Size-1 downto 0);
+  signal opcode_saved         : std_logic_vector(OpCode_Size-1 downto 0);
   --
   signal decodedOpcode        : DecodedOpcodeType;
   signal sampledDecodedOpcode : DecodedOpcodeType;
@@ -287,7 +289,8 @@ begin
 
   tOpcode_sel <= to_integer(pc(minAddrBit-1 downto 0));
 
-
+  inrom <='1' when pc(maxAddrBit downto maxAddrBit-7)=X"02" else '0';
+  programword <= memBRead_stdlogic when inrom='1' else mem_read;
 
   -- move out calculation of the opcode to a separate process
   -- to make things a bit easier to read
@@ -298,15 +301,15 @@ begin
     -- simplify opcode selection a bit so it passes more synthesizers
     case (tOpcode_sel) is
 
-      when 0 => tOpcode := std_logic_vector(mem_read(31 downto 24));
+      when 0 => tOpcode := std_logic_vector(programword(31 downto 24));
 
-      when 1 => tOpcode := std_logic_vector(mem_read(23 downto 16));
+      when 1 => tOpcode := std_logic_vector(programword(23 downto 16));
 
-      when 2 => tOpcode := std_logic_vector(mem_read(15 downto 8));
+      when 2 => tOpcode := std_logic_vector(programword(15 downto 8));
 
-      when 3 => tOpcode := std_logic_vector(mem_read(7 downto 0));
+      when 3 => tOpcode := std_logic_vector(programword(7 downto 0));
 
-      when others => tOpcode := std_logic_vector(mem_read(7 downto 0));
+      when others => tOpcode := std_logic_vector(programword(7 downto 0));
     end case;
 
     sampledOpcode <= tOpcode;
@@ -415,6 +418,13 @@ begin
 --	if STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
 --		mem_writeMask <= (others => '1');
 --	end if;
+
+-- Needs to happen outside the clock edge
+	eqbranch_zero<='0';
+	if EQBRANCH=true and memBRead=X"00000000" then
+		eqbranch_zero <='1';
+	end if;
+
  
     if reset = '1' then
       state               <= State_Resync;
@@ -450,6 +460,8 @@ begin
 --      memAAddr        <= (others => DontCareValue);
       memBAddr        <= (others => DontCareValue);
 
+		opcode_saved<=opcode;
+		
       out_mem_writeEnable <= '0';
       out_mem_writeEnableb <= '0';
       out_mem_writeEnableh <= '0';
@@ -458,11 +470,12 @@ begin
 --      out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
 --      mem_write           <= std_logic_vector(memBRead);
 
-      decodedOpcode <= sampledDecodedOpcode;
-      opcode        <= sampledOpcode;
-      if interrupt = '0' then
-        inInterrupt <= '0';             -- no longer in an interrupt
-      end if;
+		decodedOpcode <= sampledDecodedOpcode;
+		opcode <= sampledOpcode;
+
+		if interrupt = '0' then
+			inInterrupt <= '0';             -- no longer in an interrupt
+		end if;
 		
 		-- Handle shift instructions
 		IF SHIFT=true then
@@ -483,11 +496,6 @@ begin
 
 		if COMPARISON_SUB=true then
 			comparison_sub_result<=unsigned(memBRead(wordSize-1)&memBRead)-unsigned(memARead(wordSize-1)&memARead);
-		end if;
-
-		eqbranch_zero<='0';
-		if EQBRANCH=true and memBRead=X"00000000" then
-			eqbranch_zero <='1';
 		end if;
 
       case state is
@@ -697,7 +705,7 @@ begin
 						sp    <= sp + 1;
 						shift_count<=unsigned(memARead(4 downto 0));	-- 5 bit distance
 						shift_reg<=memBRead;	-- 32-bit value
-						shift_direction<=opcode(0); -- 1 for left, (opcode 43 for Ashiftleft)
+						shift_direction<=opcode(0); -- 1 for left, (Opcode 43 for Ashiftleft)
 						shift_sign<=memBRead(31) and opcode(2);  -- 1 for arithmetic, (opcode 44 for Ashiftright, 42 for lshiftright)
 						state <= State_Shift;
 					end if;
@@ -709,6 +717,8 @@ begin
               null;
 
           end case;  -- decodedOpcode
+
+		  -- From this point on opcode is not guaranteed to be valid if using BlockRAM.
 
         when State_ReadIO =>
           memAAddr <= sp;
@@ -733,8 +743,8 @@ begin
 				if STOREBH=true then
 --					mem_writeMask <= (others => '1');
 					sp                  <= sp + 1;
-					out_mem_writeEnableb <= not opcode(0); -- storeb is opcode 52
-					out_mem_writeEnableh <= opcode(1); -- storeh is opcode 35
+					out_mem_writeEnableb <= not opcode_saved(0); -- storeb is opcode 52
+					out_mem_writeEnableh <= opcode_saved(1); -- storeh is opcode 35
 					out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
 					mem_write           <= std_logic_vector(memBRead);
 					state               <= State_WriteIODone;
@@ -751,20 +761,20 @@ begin
 			 -- AMR - fetch from external RAM, not Block RAM.
 			 out_mem_addr <= (others => '0');
           out_mem_addr(maxAddrBit downto 2)<=std_logic_vector(pc(maxAddrBit downto 2));
-          out_mem_readEnable <= fetchneeded;
+          out_mem_readEnable <= fetchneeded and not inrom;
           -- FIXME - don't refetch if data is still valid.
 
           -- We need to resync. During the *next* cycle
           -- we'll fetch the opcode @ pc and thus it will
           -- be available for State_Execute the cycle after
           -- next
---          memBAddr <= pc(maxAddrBit downto minAddrBit);
+          memBAddr <= pc(maxAddrBitBRAM downto minAddrBit);
 			 state    <= State_FetchNext;
 
         when State_FetchNext =>
           -- at this point memARead contains the value that is either
           -- from the top of stack or should be copied to the top of the stack
-			 if in_mem_busy='0' or fetchneeded='0' then
+			 if in_mem_busy='0' or fetchneeded='0' or inrom='1' then
 				 memAWriteEnable <= '1';
 				 fetchneeded<='0';
 				 memAWrite       <= memARead;
@@ -842,19 +852,19 @@ begin
 				memAAddr <= sp;
 				memAWriteEnable <= '1';
 				memAWrite       <= (others =>'0');
-				memAWrite(0) <= comparison_eq xor opcode(4); -- eq is 46, neq is 48.
+				memAWrite(0) <= comparison_eq xor opcode_saved(4); -- eq is 46, neq is 48.
 				state <= State_Fetch;
 				
 			when State_Comparison =>
 				memAAddr <= sp;
 				memAWriteEnable <= '1';
 				memAWrite <= (others => '0');
-				if opCode(1)='1' then -- Unsigned comparison, opcodes 38, 39				
+				if opcode_saved(1)='1' then -- Unsigned comparison, opcodes 38, 39				
 					memAWrite(0) <= not (comparison_sub_result(wordSize-1)
-												xor (not opCode(0) and comparison_eq));
+												xor (not opcode_saved(0) and comparison_eq));
 				else	-- Signed comparison, opcodes 36, 37
 					memAWrite(0) <= not (comparison_sub_result(wordSize)
-												xor (not opCode(0) and comparison_eq));
+												xor (not opcode_saved(0) and comparison_eq));
 				end if;
 				state <= State_Fetch;
 

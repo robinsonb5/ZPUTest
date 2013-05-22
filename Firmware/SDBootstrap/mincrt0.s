@@ -46,12 +46,11 @@ Boston, MA 02111-1307, USA.  */
 	add
 	.endm
 
-	.section ".text","ax"
-	.balign 4,0
 		.globl _start
 _start:
 		jmp main
 
+	.section ".text","ax"
 	.global _loadh
 _loadh:
 	loadsp 4

@@ -54,43 +54,60 @@ port (clk : in std_logic;
 end stackram;
 
 architecture stackram_arch of stackram is
-
-
-type ram_type is array(natural range 0 to ((2**(maxAddrBitStackBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
-
-shared variable ram : ram_type :=
-(
-	others => x"00000000"
-);
-
 begin
+-- Using a megafunction here makes the project Altera-specific, but means that
+-- the project can be rebuilt much more quickly when the ROM is changed.
 
-process (clk)
-begin
-	if (clk'event and clk = '1') then
-		if (memAWriteEnable = '1') and (memBWriteEnable = '1') and (memAAddr=memBAddr) and (memAWrite/=memBWrite) then
-			report "write collision" severity failure;
-		end if;
-	
-		if (memAWriteEnable = '1') then
-			ram(to_integer(unsigned(memAAddr))) := memAWrite;
-			memARead <= memAWrite;
-		else
-			memARead <= ram(to_integer(unsigned(memAAddr)));
-		end if;
-	end if;
-end process;
+myram : ENTITY work.ZPU_StackRAM
+	PORT map
+	(
+		address_a => memAAddr,
+		address_b => memBAddr,
+		clock	=> clk,
+		data_a => memAWrite,
+		data_b => memBWrite,
+		wren_a => memAWriteEnable,
+		wren_b => memBWriteEnable,
+		q_a => memARead,
+		q_b => memBRead
+	);
 
-process (clk)
-begin
-	if (clk'event and clk = '1') then
-		if (memBWriteEnable = '1') then
-			ram(to_integer(unsigned(memBAddr))) := memBWrite;
-			memBRead <= memBWrite;
-		else
-			memBRead <= ram(to_integer(unsigned(memBAddr)));
-		end if;
-	end if;
-end process;
+--
+--type ram_type is array(natural range 0 to ((2**(maxAddrBitStackBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
+--
+--shared variable ram : ram_type :=
+--(
+--	others => x"00000000"
+--);
+--
+--begin
+--
+--process (clk)
+--begin
+--	if (clk'event and clk = '1') then
+--		if (memAWriteEnable = '1') and (memBWriteEnable = '1') and (memAAddr=memBAddr) and (memAWrite/=memBWrite) then
+--			report "write collision" severity failure;
+--		end if;
+--	
+--		if (memAWriteEnable = '1') then
+--			ram(to_integer(unsigned(memAAddr))) := memAWrite;
+--			memARead <= memAWrite;
+--		else
+--			memARead <= ram(to_integer(unsigned(memAAddr)));
+--		end if;
+--	end if;
+--end process;
+--
+--process (clk)
+--begin
+--	if (clk'event and clk = '1') then
+--		if (memBWriteEnable = '1') then
+--			ram(to_integer(unsigned(memBAddr))) := memBWrite;
+--			memBRead <= memBWrite;
+--		else
+--			memBRead <= ram(to_integer(unsigned(memBAddr)));
+--		end if;
+--	end if;
+--end process;
 
 end stackram_arch;
