@@ -51,7 +51,7 @@ package zpupkg is
   constant byteBits   : integer := wordPower-3;  -- # of bits in a word that addresses bytes
   constant maxAddrBit : integer := maxAddrBitIncIO;
 --  constant ioBit      : integer := maxAddrBit+1;
-  constant stackBit	 : integer := maxAddrBitIncIO-1;
+  constant stackBit	 : integer := maxAddrBitExternalRAM+1;
   constant wordSize   : integer := 2**wordPower;
   constant wordBytes  : integer := wordSize/8;
   constant minAddrBit : integer := byteBits;

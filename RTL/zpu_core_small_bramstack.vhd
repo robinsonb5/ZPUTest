@@ -56,7 +56,7 @@ entity zpu_core is
 	 IMPL_CALL : boolean := true; -- Include call
 	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
 	 IMPL_XOR : boolean := true; -- include xor instruction
-	 MMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x40000000, to allow pushsp, store to work.
+	 MMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x04000000, to allow pushsp, store to work.
 	 EXECUTE_RAM : boolean := true -- include support for executing code from outside the Boot ROM
   );
   port ( 
@@ -90,18 +90,18 @@ end zpu_core;
 architecture behave of zpu_core is
 
   signal memAWriteEnable : std_logic;
-  signal memAAddr        : unsigned(maxAddrBitStackBRAM downto minAddrBit);
+  signal memAAddr        : unsigned(maxAddrBitBRAM downto minAddrBit);
   signal memAWrite       : unsigned(wordSize-1 downto 0);
   signal memARead        : unsigned(wordSize-1 downto 0);
   signal memBWriteEnable : std_logic;
-  signal memBAddr        : unsigned(maxAddrBitStackBRAM downto minAddrBit);
+  signal memBAddr        : unsigned(maxAddrBitBRAM downto minAddrBit);
   signal memBWrite       : unsigned(wordSize-1 downto 0);
   signal memBRead        : unsigned(wordSize-1 downto 0);
 
 
 
   signal pc : unsigned(maxAddrBit downto 0);
-  signal sp : unsigned(maxAddrBitStackBRAM downto minAddrBit);
+  signal sp : unsigned(maxAddrBitBRAM downto minAddrBit);
 
   -- this signal is set upon executing an IM instruction
   -- the subsequence IM instruction will then behave differently.
@@ -288,7 +288,7 @@ begin
   tOpcode_sel <= to_integer(pc(minAddrBit-1 downto 0));
 
 	CodeFromRAM: if EXECUTE_RAM=true generate
-		inrom <='1' when EXECUTE_RAM=true or pc(maxAddrBit downto maxAddrBit-7)=X"40" else '0';
+		inrom <='1' when pc(stackBit)='1' else '0';
 		programword <= memBRead_stdlogic when inrom='1' else mem_read;
 	end generate;
 	CodeFromRAM2: if EXECUTE_RAM=false generate
@@ -419,9 +419,6 @@ begin
 			shift_done<='0';
 		end if;
 		
---	if IMPL_STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
---		mem_writeMask <= (others => '1');
---	end if;
 
 -- Needs to happen outside the clock edge
 	eqbranch_zero<='0';
@@ -433,8 +430,9 @@ begin
     if reset = '1' then
       state               <= State_Resync;
       break               <= '0';
-      sp                  <= unsigned(spStart(maxAddrBitStackBRAM downto minAddrBit));
-      pc                  <= X"40000000"; -- (others => '0');
+      sp                  <= unsigned(spStart(maxAddrBitBRAM downto minAddrBit));
+      pc                  <= (others => '0');
+		pc(stackBit)		  <= '1';
       idim_flag           <= '0';
       begin_inst          <= '0';
       memAAddr            <= (others => '0');
@@ -520,7 +518,7 @@ begin
           trace_pc(maxAddrBit downto 0)          <= std_logic_vector(pc);
           trace_opcode                           <= opcode;
           trace_sp                               <= (others => '0');
-          trace_sp(maxAddrBitStackBRAM downto minAddrBit) <= std_logic_vector(sp);
+          trace_sp(maxAddrBitBRAM downto minAddrBit) <= std_logic_vector(sp);
           trace_topOfStack                       <= std_logic_vector(memARead);
           trace_topOfStackB                      <= std_logic_vector(memBRead);
 
@@ -602,7 +600,7 @@ begin
 						memAWrite(maxAddrBitIncIO) <='0'; -- Mark address as being in the stack
 						memAWrite(stackBit) <='1'; -- Mark address as being in the stack
 					end if;
-					memAWrite(maxAddrBitStackBRAM downto minAddrBit) <= sp;
+					memAWrite(maxAddrBitBRAM downto minAddrBit) <= sp;
 
             when Decoded_PopPC =>
               pc    <= memARead(maxAddrBit downto 0);
@@ -649,8 +647,9 @@ begin
               state <= State_Mult;
 
             when Decoded_Load =>
-              if MMAP_STACK=true and memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
-                memAAddr <= memARead(maxAddrBitStackBRAM downto minAddrBit);
+              if MMAP_STACK=true and memARead(maxAddrBitIncIO)='0'
+							and memARead(stackBit) = '1' then -- Access is bound for stack RAM
+                memAAddr <= memARead(maxAddrBitBRAM downto minAddrBit);
 				  else
 					 out_mem_addr(1 downto 0) <="00";
                 out_mem_addr(maxAddrBitIncIO downto 2)<= std_logic_vector(memARead(maxAddrBitIncIO downto 2));
@@ -663,12 +662,12 @@ begin
 					state <= State_EqNeq;
 
             when Decoded_Not =>
-              memAAddr        <= sp(maxAddrBitStackBRAM downto minAddrBit);
+              memAAddr        <= sp(maxAddrBitBRAM downto minAddrBit);
               memAWriteEnable <= '1';
               memAWrite       <= not memARead;
 
             when Decoded_Flip =>
-              memAAddr        <= sp(maxAddrBitStackBRAM downto minAddrBit);
+              memAAddr        <= sp(maxAddrBitBRAM downto minAddrBit);
               memAWriteEnable <= '1';
               for i in 0 to wordSize-1 loop
                 memAWrite(i) <= memARead(wordSize-1-i);
@@ -677,7 +676,8 @@ begin
             when Decoded_Store =>
               memBAddr <= sp + 1;
               sp       <= sp + 1;
-              if MMAP_STACK=true and memARead(maxAddrBitIncIO downto stackBit) = "01" then -- Access is bound for stack RAM
+              if MMAP_STACK=true and memARead(maxAddrBitIncIO)='0'
+							and memARead(stackBit) = '1' then -- Access is bound for stack RAM
                 state <= State_Store;
 				  else
                 state <= State_WriteIO;
@@ -691,7 +691,7 @@ begin
 				  end if;
 
             when Decoded_PopSP =>
-              sp    <= memARead(maxAddrBitStackBRAM downto minAddrBit);
+              sp    <= memARead(maxAddrBitBRAM downto minAddrBit);
               state <= State_Resync;
 
 				when Decoded_Call =>
@@ -804,7 +804,7 @@ begin
         when State_Store =>
           sp              <= sp + 1;
           memAWriteEnable <= '1';
-          memAAddr        <= memARead(maxAddrBitStackBRAM downto minAddrBit);
+          memAAddr        <= memARead(maxAddrBitBRAM downto minAddrBit);
           memAWrite       <= memBRead;
           state           <= State_Resync;
 

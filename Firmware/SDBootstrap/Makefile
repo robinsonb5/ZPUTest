@@ -69,7 +69,7 @@ $(ROMGEN): $(ROMGEN).c
 
 # Convert SREC to .mif file
 %.mif: %.srec
-	srec_cat $< -offset=-0x40000000 -o $@ -mif 32
+	srec_cat $< -offset=-0x04000000 -o $@ -mif 32
 
 %.rpt: %.elf
 	$(DUMP) -x $< | grep _romend   #  End of Boot ROM
