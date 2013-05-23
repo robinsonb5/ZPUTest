@@ -25,12 +25,14 @@
 
 fileTYPE file;
 
+int LoadFile(const char *fn, unsigned char *buf);
+#if 0
 int LoadFile(const char *fn, unsigned char *buf)
 {
 	if(FileOpen(&file,fn))
 	{
 		putserial("Opened file, loading...\n");
-		short imgsize=(file.size+511)/512;
+		int imgsize=(file.size+511)/512;
 		int c=0;
 		while(c<imgsize)
 		{
@@ -54,7 +56,7 @@ int LoadFile(const char *fn, unsigned char *buf)
 	}
 	return(1);
 }
-
+#endif
 
 void _boot();
 

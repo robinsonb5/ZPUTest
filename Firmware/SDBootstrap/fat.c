@@ -152,7 +152,7 @@ unsigned char FindDrive(void)
     cluster_size = sector_buffer[13];
 
     // calculate cluster mask
-    cluster_mask = ~(cluster_size - 1);
+    cluster_mask = cluster_size - 1;
 
     fat_start = boot_sector + sector_buffer[0x0E] + (sector_buffer[0x0F] << 8); // reserved sector count before FAT table (usually 32 for FAT32)
 	fat_number = sector_buffer[0x10];
@@ -218,19 +218,6 @@ int GetCluster(int cluster)
 	return(i);
 }
 
-#if 0
-unsigned int GetFATLink(unsigned int cluster)
-{
-// this function returns linked cluster for the given one
-// remember to check if the returned value indicates end of chain condition
-
-    unsigned int buffer_index;
-
-	buffer_index=GetCluster(cluster);
-
-    return(fat32 ? SwapBBBB(fat_buffer.fat32[buffer_index]) & 0x0FFFFFFF : SwapBB(fat_buffer.fat16[buffer_index]));
-}
-#endif
 
 unsigned char FileOpen(fileTYPE *file, const char *name)
 {
@@ -297,6 +284,7 @@ unsigned char FileOpen(fileTYPE *file, const char *name)
     return(0);
 }
 
+#if 0
 
 unsigned char FileNextSector(fileTYPE *file)
 {
@@ -307,7 +295,7 @@ unsigned char FileNextSector(fileTYPE *file)
     file->sector++;
 
     // cluster's boundary crossed?
-    if ((file->sector&~cluster_mask) == 0)
+    if ((file->sector&cluster_mask) == 0)
     {
 		file->cluster=GetCluster(file->cluster);
 //        file->cluster = fat32 ? fat_buffer.fat32[i] & 0x0FFFFFFF: fat_buffer.fat16[i]; // get FAT link
@@ -317,19 +305,60 @@ unsigned char FileNextSector(fileTYPE *file)
     return(1);
 }
 
-
 unsigned char FileRead(fileTYPE *file, unsigned char *pBuffer)
 {
     unsigned long sb;
 
     sb = data_start;                         // start of data in partition
     sb += cluster_size * (file->cluster-2);  // cluster offset
-    sb += file->sector & ~cluster_mask;      // sector offset in cluster
+    sb += file->sector & cluster_mask;      // sector offset in cluster
 
     if (!sd_read_sector(sb, pBuffer)) // read sector from drive
         return(0);
     else
         return(1);
 }
+#endif
 
+fileTYPE file;
+
+int LoadFile(const char *fn, unsigned char *buf)
+{
+	if(FileOpen(&file,fn))
+	{
+		putserial("Opened file, loading...\n");
+		int imgsize=(file.size+511)/512;
+		int c=0;
+		int sector=0;
+
+		while(c<imgsize)
+		{
+			unsigned long sb;
+
+			sb = data_start;                         // start of data in partition
+			sb += cluster_size * (file.cluster-2);  // cluster offset
+			sb += sector & cluster_mask;      // sector offset in cluster
+
+			if (!sd_read_sector(sb, buf)) // read sector from drive
+				return(0);
+
+			++sector;
+
+		    // cluster's boundary crossed?
+    		if((sector&cluster_mask) == 0)
+		    {
+				file.cluster=GetCluster(file.cluster);
+		    }
+
+			buf+=512;
+			++c;
+		}
+	}
+	else
+	{
+		printf("Can't open %s\n",fn);
+		return(0);
+	}
+	return(1);
+}
 
