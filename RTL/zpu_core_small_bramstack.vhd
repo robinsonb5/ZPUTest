@@ -534,7 +534,8 @@ begin
               memAWriteEnable                <= '1';
               memAWrite                      <= (others => DontCareValue);
               memAWrite(maxAddrBit downto 0) <= pc;
-              pc                             <= to_unsigned(32, maxAddrBit+1);  -- interrupt address
+              pc(MaxAddrBitExternalRAM downto 0)	<= (others => '0');
+              pc(5 downto 0) <= to_unsigned(32, 6);  -- interrupt address
 				  fetchneeded<='1'; -- Need to set this any time PC changes.
               report "ZPU jumped to interrupt!" severity note;
 
@@ -574,8 +575,8 @@ begin
               -- The emulate address is:
               --        98 7654 3210
               -- 0000 00aa aaa0 0000
-              pc                             <= (others => '0');
-              pc(9 downto 5)                 <= unsigned(opcode(4 downto 0));
+              pc(MaxAddrBitExternalRAM downto 0)	<= (others => '0');
+              pc(9 downto 5)				<= unsigned(opcode(4 downto 0));
 				  fetchneeded<='1'; -- Need to set this any time pc changes.
 
 
