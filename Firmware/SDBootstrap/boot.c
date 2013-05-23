@@ -65,7 +65,7 @@ static unsigned char Manifest[2048];
 int main(int argc,char **argv)
 {
 	int i;
-	HW_PER(PER_UART_CLKDIV)=1330000/1152;
+	HW_PER(PER_UART_CLKDIV)=1250000/1152;
 
 	HW_VGA(FRAMEBUFFERPTR)=0x20000;
 

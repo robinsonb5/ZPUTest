@@ -289,7 +289,7 @@ begin
 
   tOpcode_sel <= to_integer(pc(minAddrBit-1 downto 0));
 
-  inrom <='1' when pc(maxAddrBit downto maxAddrBit-7)=X"02" else '0';
+  inrom <='1' when pc(maxAddrBit downto maxAddrBit-7)=X"40" else '0';
   programword <= memBRead_stdlogic when inrom='1' else mem_read;
 
   -- move out calculation of the opcode to a separate process
@@ -430,7 +430,7 @@ begin
       state               <= State_Resync;
       break               <= '0';
       sp                  <= unsigned(spStart(maxAddrBitStackBRAM downto minAddrBit));
-      pc                  <= X"02000000"; -- (others => '0');
+      pc                  <= X"40000000"; -- (others => '0');
       idim_flag           <= '0';
       begin_inst          <= '0';
       memAAddr            <= (others => '0');

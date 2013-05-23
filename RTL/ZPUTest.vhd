@@ -366,12 +366,12 @@ spi : entity work.spi_interface
 --		q => externram_data
 --	);
 
-	rom : entity work.BootROM
-	port map (
-		address => mem_addr(12 downto 2),
-		clock	=> clk,
-		q => externram_data
-	);
+--	rom : entity work.BootROM
+--	port map (
+--		address => mem_addr(12 downto 2),
+--		clock	=> clk,
+--		q => externram_data
+--	);
 
 process(clk)
 begin
@@ -421,7 +421,7 @@ begin
 									mem_busy<='0';
 
 								when X"8C" => -- Flags (switches) register
-									bootrom_overlay<=mem_write(0);
+--									bootrom_overlay<=mem_write(0);
 									mem_busy<='0';
 									
 								when X"90" => -- HEX display
@@ -462,12 +462,12 @@ begin
 
 				elsif mem_readEnable='1' then
 					case mem_addr(31 downto 20) is
-						when X"020" =>	-- Boot BlockRAM
-							if bootrom_overlay='0' then
-								currentstate<=READ1;
-							else
-								sdram_state<=read1;
-							end if;
+--						when X"020" =>	-- Boot BlockRAM
+--							if bootrom_overlay='0' then
+--								currentstate<=READ1;
+--							else
+--								sdram_state<=read1;
+--							end if;
 
 						when X"FEF" =>	-- VGA controller
 							vga_reg_req<='1';
@@ -515,10 +515,10 @@ begin
 					end case;
 				end if;
 
-			when READ1 =>
-				mem_read<=externram_data;
-				mem_busy<='0';
-				currentstate<=WAITING;
+--			when READ1 =>
+--				mem_read<=externram_data;
+--				mem_busy<='0';
+--				currentstate<=WAITING;
 
 --			when WRITE1 =>
 --				mem_busy<='0';
