@@ -123,13 +123,15 @@ package zpupkg is
 
   component zpu_core is
   generic (
-    HARDWARE_MULTIPLY : boolean := true;
-	 COMPARISON_SUB : boolean := true;
-	 EQBRANCH : boolean := true;
-	 MMAP_STACK : boolean := true;
-	 STOREBH : boolean := true;
-	 SHIFT : boolean := true;
-	 HARDWARE_XOR : boolean := true
+    IMPL_MULTIPLY : boolean := true; -- Self explanatory
+	 IMPL_COMPARISON_SUB : boolean := true; -- Include sub and (U)lessthan(orequal)
+	 IMPL_EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
+	 IMPL_STOREBH : boolean := true; -- Include halfword and byte writes
+	 IMPL_CALL : boolean := true; -- Include call
+	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
+	 IMPL_XOR : boolean := true; -- include xor instruction
+	 MMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x40000000, to allow pushsp, store to work.
+	 EXECUTE_RAM : boolean := true -- include support for executing code from outside the Boot ROM
   );
     port ( 
       clk                 : in  std_logic;

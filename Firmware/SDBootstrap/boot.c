@@ -23,41 +23,6 @@
 #include "small_printf.h"
 
 
-fileTYPE file;
-
-int LoadFile(const char *fn, unsigned char *buf);
-#if 0
-int LoadFile(const char *fn, unsigned char *buf)
-{
-	if(FileOpen(&file,fn))
-	{
-		putserial("Opened file, loading...\n");
-		int imgsize=(file.size+511)/512;
-		int c=0;
-		while(c<imgsize)
-		{
-			if(FileRead(&file, buf))
-			{
-				FileNextSector(&file);
-				buf+=512;
-				++c;
-			}
-			else
-			{
-				putserial("File load failed\n");
-				return(0);
-			}
-		}
-	}
-	else
-	{
-		printf("Can't open %s\n",fn);
-		return(0);
-	}
-	return(1);
-}
-#endif
-
 void _boot();
 
 /* Load files named in a manifest file */

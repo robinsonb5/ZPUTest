@@ -49,14 +49,15 @@ use work.zpupkg.all;
 
 entity zpu_core is
   generic (
-    HARDWARE_MULTIPLY : boolean := true; -- Self explanatory
-	 COMPARISON_SUB : boolean := true; -- Include sub and (U)lessthan(orequal)
-	 EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
-	 MMAP_STACK : boolean := true; -- Map the stack to 0x40000000, to allow pushsp, store to work.
-	 STOREBH : boolean := true; -- Include halfword and byte writes
-	 CALL : boolean := true; -- Include call
-	 SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
-	 HARDWARE_XOR : boolean := true -- include xor instruction
+    IMPL_MULTIPLY : boolean := true; -- Self explanatory
+	 IMPL_COMPARISON_SUB : boolean := true; -- Include sub and (U)lessthan(orequal)
+	 IMPL_EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
+	 IMPL_STOREBH : boolean := true; -- Include halfword and byte writes
+	 IMPL_CALL : boolean := true; -- Include call
+	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
+	 IMPL_XOR : boolean := true; -- include xor instruction
+	 MMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x40000000, to allow pushsp, store to work.
+	 EXECUTE_RAM : boolean := true -- include support for executing code from outside the Boot ROM
   );
   port ( 
     clk                 : in std_logic;
@@ -73,9 +74,6 @@ entity zpu_core is
     out_mem_writeEnableb : out std_logic;  -- Enable byte write
     out_mem_writeEnableh : out std_logic;  -- Enable halfword write
     out_mem_readEnable  : out std_logic;
-    -- this implementation of the ZPU *always* reads and writes entire
-    -- 32 bit words, so mem_writeMask is tied to (others => '1').
---    mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
     -- Set to one to jump to interrupt vector
     -- The ZPU will communicate with the hardware that caused the
     -- interrupt via memory mapped IO or the interrupt flag can
@@ -289,8 +287,14 @@ begin
 
   tOpcode_sel <= to_integer(pc(minAddrBit-1 downto 0));
 
-  inrom <='1' when pc(maxAddrBit downto maxAddrBit-7)=X"40" else '0';
-  programword <= memBRead_stdlogic when inrom='1' else mem_read;
+	CodeFromRAM: if EXECUTE_RAM=true generate
+		inrom <='1' when EXECUTE_RAM=true or pc(maxAddrBit downto maxAddrBit-7)=X"40" else '0';
+		programword <= memBRead_stdlogic when inrom='1' else mem_read;
+	end generate;
+	CodeFromRAM2: if EXECUTE_RAM=false generate
+		programword <= memBRead_stdlogic;
+		inrom <='1';
+	end generate;
 
   -- move out calculation of the opcode to a separate process
   -- to make things a bit easier to read
@@ -322,16 +326,16 @@ begin
       sampledDecodedOpcode <= Decoded_LoadSP;
     elsif (tOpcode(7 downto 5) = OpCode_Emulate) then
 		sampledDecodedOpcode <= Decoded_Emulate;
-		if CALL=true and tOpcode(5 downto 0) = OpCode_Call then
+		if IMPL_CALL=true and tOpcode(5 downto 0) = OpCode_Call then
 			sampledDecodedOpcode <= Decoded_Call;
 		end if;
-		if HARDWARE_MULTIPLY=true and tOpcode(5 downto 0) = OpCode_Mult then
+		if IMPL_MULTIPLY=true and tOpcode(5 downto 0) = OpCode_Mult then
 			sampledDecodedOpcode <= Decoded_Mult;
 		end if;
-		if HARDWARE_XOR=true and tOpcode(5 downto 0) = OpCode_Xor then
+		if IMPL_XOR=true and tOpcode(5 downto 0) = OpCode_Xor then
 			sampledDecodedOpcode <= Decoded_Xor;
 		end if;
-		if COMPARISON_SUB=true then
+		if IMPL_COMPARISON_SUB=true then
 			if tOpcode(5 downto 0) = OpCode_Eq
 				or tOpcode(5 downto 0) = OpCode_Neq then
 					sampledDecodedOpcode <= Decoded_EqNeq;
@@ -345,19 +349,19 @@ begin
 				sampledDecodedOpcode <= Decoded_Comparison;
 			end if;
 		end if;
-		if EQBRANCH=true then
+		if IMPL_EQBRANCH=true then
 			if tOpcode(5 downto 0) = OpCode_EqBranch
 				or tOpcode(5 downto 0)= OpCode_NeqBranch then
 				sampledDecodedOpcode <= Decoded_EqBranch;
 			end if;
 		end if;
-		if STOREBH=true then
+		if IMPL_STOREBH=true then
 			if tOpcode(5 downto 0) = OpCode_StoreB
 				or tOpcode(5 downto 0) = OpCode_StoreH then
 				sampledDecodedOpcode <= Decoded_StoreBH;
 			end if;
 		end if;
-		if SHIFT=true then
+		if IMPL_SHIFT=true then
 			if tOpcode(5 downto 0) = OpCode_Lshiftright
 				or tOpcode(5 downto 0) = OpCode_Ashiftright
 				or tOpcode(5 downto 0) = OpCode_Ashiftleft then
@@ -403,25 +407,25 @@ begin
   begin
 
 
-		if COMPARISON_SUB=true and comparison_sub_result='0'&X"00000000" then
+		if IMPL_COMPARISON_SUB=true and comparison_sub_result='0'&X"00000000" then
 			comparison_eq<='1';
 		else
 			comparison_eq<='0';
 		end if;
 
-		if SHIFT=true and shift_count="00000" then
+		if IMPL_SHIFT=true and shift_count="00000" then
 			shift_done<='1';
 		else 
 			shift_done<='0';
 		end if;
 		
---	if STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
+--	if IMPL_STOREBH=false then  -- If we're not implementing storeh or storeb then tie mask to 1
 --		mem_writeMask <= (others => '1');
 --	end if;
 
 -- Needs to happen outside the clock edge
 	eqbranch_zero<='0';
-	if EQBRANCH=true and memBRead=X"00000000" then
+	if IMPL_EQBRANCH=true and memBRead=X"00000000" then
 		eqbranch_zero <='1';
 	end if;
 
@@ -478,7 +482,7 @@ begin
 		end if;
 		
 		-- Handle shift instructions
-		IF SHIFT=true then
+		IF IMPL_SHIFT=true then
 			if shift_done='0' then
 				if shift_direction='1' then
 					shift_reg<=shift_reg(30 downto 0)&"0";	-- Shift left
@@ -490,11 +494,11 @@ begin
 		end if;
 
 
-		if HARDWARE_MULTIPLY=true then
+		if IMPL_MULTIPLY=true then
 			tMultResult := memARead * memBRead;
 		end if;
 
-		if COMPARISON_SUB=true then
+		if IMPL_COMPARISON_SUB=true then
 			comparison_sub_result<=unsigned(memBRead(wordSize-1)&memBRead)-unsigned(memARead(wordSize-1)&memARead);
 		end if;
 
@@ -607,7 +611,7 @@ begin
               state <= State_Resync;
 
 				when Decoded_EqBranch =>
-					if EQBRANCH=true then
+					if IMPL_EQBRANCH=true then
 						sp    <= sp + 1;
 						if (eqbranch_zero xor opcode(0))='0' then -- eqbranch is 55, neqbranch is 56
 							pc    <= pc+memARead(maxAddrBit downto 0);
@@ -680,7 +684,7 @@ begin
               end if;
 
 				when Decoded_StoreBH =>
-				  if STOREBH=true then
+				  if IMPL_STOREBH=true then
 					  memBAddr <= sp + 1;
 					  sp       <= sp + 1;
 					 state <= State_WriteIOBH;
@@ -691,7 +695,7 @@ begin
               state <= State_Resync;
 
 				when Decoded_Call =>
-					if CALL=true then
+					if IMPL_CALL=true then
 						pc <= memARead(maxAddrBit downto 0); -- Set PC to value on top of stack
 						fetchneeded<='1'; -- Need to set this any time PC changes.
 
@@ -702,7 +706,7 @@ begin
 					end if;
 
 				when Decoded_Shift =>
-					IF SHIFT=true then
+					IF IMPL_SHIFT=true then
 						sp    <= sp + 1;
 						shift_count<=unsigned(memARead(4 downto 0));	-- 5 bit distance
 						shift_reg<=memBRead;	-- 32-bit value
@@ -741,7 +745,7 @@ begin
 									-- (actually, not necessary for writes)
 
 			when State_WriteIOBH =>
-				if STOREBH=true then
+				if IMPL_STOREBH=true then
 --					mem_writeMask <= (others => '1');
 					sp                  <= sp + 1;
 					out_mem_writeEnableb <= not opcode_saved(0); -- storeb is opcode 52
@@ -760,9 +764,11 @@ begin
 
         when State_Fetch =>
 			 -- AMR - fetch from external RAM, not Block RAM.
-			 out_mem_addr <= (others => '0');
-          out_mem_addr(maxAddrBit downto 2)<=std_logic_vector(pc(maxAddrBit downto 2));
-          out_mem_readEnable <= fetchneeded and not inrom;
+			 if EXECUTE_RAM=true then -- Selectable
+				out_mem_addr <= (others => '0');
+				out_mem_addr(maxAddrBit downto 2)<=std_logic_vector(pc(maxAddrBit downto 2));
+				out_mem_readEnable <= fetchneeded and not inrom;
+			 end if;
           -- FIXME - don't refetch if data is still valid.
 
           -- We need to resync. During the *next* cycle
