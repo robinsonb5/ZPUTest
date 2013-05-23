@@ -51,6 +51,17 @@ _start:
 		jmp main
 
 	.section ".text","ax"
+	.global _boot
+	.balign 4,0
+_boot:
+	im 0
+	nop
+	im 1	; 1<<PER_FLAGS_OVERLAY
+	nop	; First 4-byte word
+	im 0xffffff8c	; PER_FLAGS
+	store
+	poppc ; should execute without a further fetch
+
 	.global _loadh
 _loadh:
 	loadsp 4
@@ -151,19 +162,6 @@ _storeb:
 	storesp 4
 	storesp 4
 	poppc
-
-
-	.global _boot
-	.balign 4,0
-_boot:
-	nop
-	im 0
-	nop
-	im 1	; 1<<PER_FLAGS_OVERLAY
-	nop	; First 4-byte word
-	im 0xffffff8c	; PER_FLAGS
-	store
-	poppc ; should execute without a further fetch
 
 	.section ".rodata"
 	.balign 4,0
