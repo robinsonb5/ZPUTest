@@ -403,15 +403,15 @@ begin
 			
 				-- Write from CPU
 				if mem_writeEnable='1' or mem_WriteEnableh='1' or mem_WriteEnableb='1' then
-					case mem_addr(31 downto 20) is
+					case mem_addr(31 downto 28) is
 --						when X"0000" =>	-- Boot BlockRAM
 --							currentstate<=WRITE1;
-						when X"FEF" =>	-- VGA controller
+						when X"E" =>	-- VGA controller
 							vga_reg_rw<='0';
 							vga_reg_req<='1';
 							currentstate<=VGAWRITE;
 
-						when X"FFF" =>	-- Peripherals
+						when X"F" =>	-- Peripherals
 							case mem_addr(7 downto 0) is
 								when X"84" => -- UART
 									ser_txdata<=mem_write(7 downto 0);
@@ -463,7 +463,7 @@ begin
 					end case;
 
 				elsif mem_readEnable='1' then
-					case mem_addr(31 downto 20) is
+					case mem_addr(31 downto 28) is
 --						when X"020" =>	-- Boot BlockRAM
 --							if bootrom_overlay='0' then
 --								currentstate<=READ1;
@@ -471,12 +471,12 @@ begin
 --								sdram_state<=read1;
 --							end if;
 
-						when X"FEF" =>	-- VGA controller
-							vga_reg_req<='1';
-							mem_read<="XXXXXXXXXXXXXXXX"&vga_reg_dataout;
-							currentstate<=VGAREAD;
+--						when X"FEF" =>	-- VGA controller
+--							vga_reg_req<='1';
+--							mem_read<="XXXXXXXXXXXXXXXX"&vga_reg_dataout;
+--							currentstate<=VGAREAD;
 
-						when X"FFF" =>	-- Peripherals
+						when X"F" =>	-- Peripherals
 							case mem_addr(7 downto 0) is
 								when X"84" => -- UART
 									mem_read<=(others=>'X');
@@ -526,11 +526,11 @@ begin
 --				mem_busy<='0';
 --				currentstate<=PAUSE;
 
-			when VGAREAD =>
-				if vga_reg_dtack='0' then
-					mem_busy<='0';
-					currentstate<=WAITING;
-				end if;
+--			when VGAREAD =>
+--				if vga_reg_dtack='0' then
+--					mem_busy<='0';
+--					currentstate<=WAITING;
+--				end if;
 
 			when VGAWRITE =>
 				if vga_reg_dtack='0' then
@@ -611,16 +611,6 @@ begin
 		end case;
 
 	end if; -- rising-edge(clk)
---	
---signal mem_read             : std_logic_vector(wordSize-1 downto 0);
---signal mem_write            : std_logic_vector(wordSize-1 downto 0);
---signal mem_addr             : std_logic_vector(maxAddrBitIncIO downto 0);
---signal mem_writeEnable      : std_logic; 
---signal mem_readEnable       : std_logic;
---signal mem_writeMask        : std_logic_vector(wordBytes-1 downto 0);
---signal zpu_enable               : std_logic;
---signal zpu_interrupt            : std_logic;
---signal zpu_break                : std_logic;
 
 end process;
 	
