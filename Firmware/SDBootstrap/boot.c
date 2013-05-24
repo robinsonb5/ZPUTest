@@ -24,6 +24,7 @@
 
 
 void _boot();
+void _break();
 
 /* Load files named in a manifest file */
 
@@ -34,7 +35,7 @@ int main(int argc,char **argv)
 	int i;
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;
 
-	HW_VGA(FRAMEBUFFERPTR)=0x20000;
+	HW_VGA(FRAMEBUFFERPTR)=0x00000;
 
 	if(spi_init())
 	{
@@ -53,8 +54,11 @@ int main(int argc,char **argv)
 				{
 					if(c=='#') // Comment line?
 						break;
-					if(c=='\n')
+					if(c=='G')
 						_boot();
+
+					if(c=='\n')
+						_break(); // Halt CPU
 
 					c=(c&~32)-('0'-32); // Convert to upper case
 					if(c>='9')
@@ -73,6 +77,7 @@ int main(int argc,char **argv)
 
 //					printf("Loading file %s to %d\n",fn,(long)ptr);
 					LoadFile(buffer,(unsigned char *)ptr);
+					HW_VGA(FRAMEBUFFERPTR)=ptr;
 				}
 
 				// Hunt for newline character

@@ -619,16 +619,20 @@ begin
 					end if;
 					
 				when Decoded_Comparison =>
-					sp    <= sp + 1;
-					state <= State_Comparison;
+					if IMPL_COMPARISON_SUB=true then
+						sp    <= sp + 1;
+						state <= State_Comparison;
+					end if;
 
             when Decoded_Add =>
               sp    <= sp + 1;
               state <= State_Add;
 
 			   when Decoded_Sub =>
-              sp    <= sp + 1;
-              state <= State_Sub;
+					if IMPL_COMPARISON_SUB=true then
+						sp    <= sp + 1;
+						state <= State_Sub;
+					end if;
 
             when Decoded_Or =>
               sp    <= sp + 1;

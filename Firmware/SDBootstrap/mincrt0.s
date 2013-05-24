@@ -62,6 +62,20 @@ _boot:
 	store
 	poppc ; should execute without a further fetch
 
+	.global _break;
+_break:
+	nop	; Align store and poppc in same longword
+	nop
+	im .loop
+	nop
+	im 1	; 1<<PER_FLAGS_OVERLAY
+	nop	; First 4-byte word
+	im 0xffffff8c	; PER_FLAGS
+	store
+.loop:
+	loadsp 0
+	poppc	
+
 	.global _loadh
 _loadh:
 	loadsp 4

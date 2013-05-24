@@ -7,10 +7,18 @@
 # 20000  FILE2   IMG
 # a blank line terminates the file list
 #
-20000 SPLASH  RAW
-20000 PIC1    RAW
-20000 PIC2    RAW
-0     DHRY    BIN
+a0000 SPLASH  RAW
+00000 PIC1    RAW
+a0000 PIC2    RAW
+00000 PIC3    RAW
+a0000 PIC4    RAW
+00000 SPLASH  RAW
+a0000 PIC1    RAW
+00000 PIC2    RAW
+a0000 PIC3    RAW
+00000 PIC4    RAW
+a0000 SPLASH  RAW
 
-# Don't forget the blank line at the end!
+# Finish the file with either "Go" to launch the loaded firmware,
+# or a blank line to stop the CPU
 
