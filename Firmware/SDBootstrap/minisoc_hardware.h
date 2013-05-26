@@ -104,11 +104,8 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 #define PER_SPI_FAST 8
 #define PER_SPI_BUSY 15
 
-/* Capability registers */
-
-#define PER_CAP_RAMSIZE 0x4c
-#define PER_CAP_CLOCKSPEED 0x50
-#define PER_CAP_SPISPEED 0x54
+#define PER_MANIFEST1 0x74 /* First four characters of Manifest filename */
+#define PER_MANIFEST2 0x78 /* Second four characters of Manifest filename */
 
 /* Interrupts */
 

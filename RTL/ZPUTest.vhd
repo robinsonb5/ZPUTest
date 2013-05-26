@@ -322,6 +322,7 @@ spi : entity work.spi_interface
 		miso => spi_miso,
 		mosi => spi_mosi,
 		spiclk_out => spi_clk
+
 	);
 
 
@@ -506,6 +507,14 @@ begin
 									spi_trigger<='1';
 									host_to_spi<=X"FF";
 									currentstate<=WAITSPIR;
+
+								when X"F8" => -- Filename 1
+									mem_read(31 downto 0)<=X"534c4944"; -- "SLID"
+									mem_busy<='0';
+
+								when X"FC" => -- Filename 2
+									mem_read(31 downto 0)<=X"45534857"; -- "ESHW"
+									mem_busy<='0';
 
 								when others =>
 									mem_busy<='0'; -- FIXME - shouldn't need this

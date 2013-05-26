@@ -29,25 +29,34 @@ void _break();
 /* Load files named in a manifest file */
 
 static unsigned char Manifest[2048];
+static int Manifestfn[3];
 
 int main(int argc,char **argv)
 {
 	int i;
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;
+	puts("Hello, world\n");
 
 	HW_VGA(FRAMEBUFFERPTR)=0x00000;
 
+	Manifestfn[0]=HW_PER(PER_MANIFEST1);
+	Manifestfn[1]=HW_PER(PER_MANIFEST2);
+	Manifestfn[2]=0x4d535400;
+
+	printf("Manifest: %s\n",Manifestfn);
+
+	puts("Initializing SD card\n");
 	if(spi_init())
 	{
 		FindDrive();
-		if(LoadFile("MANIFESTTXT",Manifest))
+		if(LoadFile((char *)Manifestfn,Manifest))
 		{
 			unsigned char *buffer=Manifest;
 			int ptr;
 			puts("Parsing manifest\n");
 			while(1)
 			{
-				unsigned char c;
+				unsigned char c=0;
 				ptr=0;
 				// Parse address
 				while((c=*buffer++)!=' ')
@@ -59,6 +68,9 @@ int main(int argc,char **argv)
 
 					if(c=='\n')
 						_break(); // Halt CPU
+
+					if(c=='L')
+						buffer=Manifest;
 
 					c=(c&~32)-('0'-32); // Convert to upper case
 					if(c>='9')
@@ -86,6 +98,7 @@ int main(int argc,char **argv)
 			}
 		}
 	}
+	puts("Returning\n");
 
 	return(0);
 }
