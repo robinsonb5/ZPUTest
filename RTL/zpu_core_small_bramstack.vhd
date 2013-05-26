@@ -56,7 +56,7 @@ entity zpu_core is
 	 IMPL_CALL : boolean := true; -- Include call
 	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
 	 IMPL_XOR : boolean := true; -- include xor instruction
-	 MMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x04000000, to allow pushsp, store to work.
+	 REMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x04000000
 	 EXECUTE_RAM : boolean := true -- include support for executing code from outside the Boot ROM
   );
   port ( 
@@ -432,7 +432,9 @@ begin
       break               <= '0';
       sp                  <= unsigned(spStart(maxAddrBitBRAM downto minAddrBit));
       pc                  <= (others => '0');
-		pc(stackBit)		  <= '1';
+		if REMAP_STACK=true then
+			pc(stackBit)		  <= '1';
+		end if;
       idim_flag           <= '0';
       begin_inst          <= '0';
       memAAddr            <= (others => '0');
@@ -596,8 +598,8 @@ begin
               memAAddr                                <= sp - 1;
               sp                                      <= sp - 1;
               memAWrite                               <= (others => DontCareValue);
-					if MMAP_STACK=true then
-						memAWrite(maxAddrBitIncIO) <='0'; -- Mark address as being in the stack
+					if REMAP_STACK=true then
+--						memAWrite(maxAddrBitIncIO) <='0'; -- Mark address as being in the stack
 						memAWrite(stackBit) <='1'; -- Mark address as being in the stack
 					end if;
 					memAWrite(maxAddrBitBRAM downto minAddrBit) <= sp;
@@ -651,12 +653,14 @@ begin
               state <= State_Mult;
 
             when Decoded_Load =>
-              if MMAP_STACK=true and memARead(maxAddrBitIncIO)='0'
-							and memARead(stackBit) = '1' then -- Access is bound for stack RAM
-                memAAddr <= memARead(maxAddrBitBRAM downto minAddrBit);
+              if (REMAP_STACK=true and
+						memARead(maxAddrBitIncIO)='0' and memARead(stackBit) = '1')
+--						or (REMAP_STACK=false and memARead(maxAddrBitIncIO)='0') then
+						or (REMAP_STACK=false and memARead(maxAddrBitIncIO downto maxAddrBitBRAM+1)=to_unsigned(0,maxAddrBitIncIO-maxAddrBitBRAM)) then -- Access is bound for stack RAM
+							memAAddr <= memARead(maxAddrBitBRAM downto minAddrBit);
 				  else
 					 out_mem_addr(1 downto 0) <="00";
-                out_mem_addr(maxAddrBitIncIO downto 2)<= std_logic_vector(memARead(maxAddrBitIncIO downto 2));
+					 out_mem_addr(maxAddrBitIncIO downto 2)<= std_logic_vector(memARead(maxAddrBitIncIO downto 2));
                 out_mem_readEnable <= '1';
                 state              <= State_ReadIO;
              end if;
@@ -680,8 +684,9 @@ begin
             when Decoded_Store =>
               memBAddr <= sp + 1;
               sp       <= sp + 1;
-              if MMAP_STACK=true and memARead(maxAddrBitIncIO)='0'
-							and memARead(stackBit) = '1' then -- Access is bound for stack RAM
+              if (REMAP_STACK=true and memARead(maxAddrBitIncIO)='0'	and memARead(stackBit) = '1')
+--						or (REMAP_STACK=false and memARead(maxAddrBitIncIO)='0') then
+						or (REMAP_STACK=false and memARead(maxAddrBitIncIO downto maxAddrBitBRAM+1)=to_unsigned(0,maxAddrBitIncIO-maxAddrBitBRAM)) then -- Access is bound for stack RAM
                 state <= State_Store;
 				  else
                 state <= State_WriteIO;

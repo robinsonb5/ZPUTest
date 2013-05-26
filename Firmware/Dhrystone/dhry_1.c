@@ -107,6 +107,8 @@ int main ()
 
   /* Initializations */
 
+	HW_PER(PER_UART_CLKDIV)=1250000/1152;
+
 //  Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
 //  Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
 

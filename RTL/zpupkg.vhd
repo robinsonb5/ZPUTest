@@ -130,7 +130,7 @@ package zpupkg is
 	 IMPL_CALL : boolean := true; -- Include call
 	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
 	 IMPL_XOR : boolean := true; -- include xor instruction
-	 MMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x40000000, to allow pushsp, store to work.
+	 REMAP_STACK : boolean := true; -- Map the stack / Boot ROM to 0x40000000, to allow pushsp, store to work.
 	 EXECUTE_RAM : boolean := true -- include support for executing code from outside the Boot ROM
   );
     port ( 

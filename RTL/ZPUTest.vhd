@@ -330,14 +330,14 @@ spi : entity work.spi_interface
 
 	 zpu: zpu_core 
 	 generic map (
-		 IMPL_MULTIPLY => true,
-		 IMPL_COMPARISON_SUB => true,
-		 IMPL_EQBRANCH => true,
+		 IMPL_MULTIPLY => false,
+		 IMPL_COMPARISON_SUB => false,
+		 IMPL_EQBRANCH => false,
 		 IMPL_STOREBH => false,
-		 IMPL_CALL => true,
-		 IMPL_SHIFT => true,
-		 IMPL_XOR => true,
-		 MMAP_STACK => true,
+		 IMPL_CALL => false,
+		 IMPL_SHIFT => false,
+		 IMPL_XOR => false,
+		 REMAP_STACK => false,
 		 EXECUTE_RAM => false -- Save some LEs by omitting Execute from RAM support
 		)
     port map (

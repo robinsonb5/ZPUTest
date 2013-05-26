@@ -23,7 +23,9 @@ how you set these switches will depend on whether you're short of LEs or Block R
 
 There are a couple of other switches too:
 * EXECUTE_RAM - include support for executing code from outside the Boot ROM.
-* MMAP_STACK - maps the stack / Boot ROM to 0x04000000.  Normally necessary,
-  but if you're running from external RAM and your code never uses store and load to
-  manipulate data on the stack, you can omit it.
-
+* REMAP_STACK - maps the stack / Boot ROM to 0x04000000.
+  This is useful in combination with the EXECUTE_RAM switch.  With REMAP_STACK set to FALSE,
+  the ROM / Stack RAM appears in low memory, with any accesses above the ROM's size going to
+  the host.  If REMAP_STACK is set to true, the ROM / Stack is moved, allowing access to 
+  low memory.  Useful if you want to bootstrap a larger program than will fit in the
+  BlockRAM-based Boot ROM.
