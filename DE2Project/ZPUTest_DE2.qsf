@@ -525,7 +525,6 @@ set_global_assignment -name VHDL_FILE ../RTL/zpupkg.vhd
 set_global_assignment -name VHDL_FILE ../RTL/zpu_config.vhd
 set_global_assignment -name VHDL_FILE ../RTL/zpu_core_small_bramstack.vhd
 set_global_assignment -name VHDL_FILE ../RTL/stackram.vhd
-set_global_assignment -name QIP_FILE ../Generated/ExternalRAM.qip
 set_global_assignment -name SIGNALTAP_FILE stp1.stp
 set_global_assignment -name SDC_FILE ZPUTest.sdc
 set_global_assignment -name VHDL_FILE ../RTL/simple_uart.vhd
@@ -564,7 +563,6 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLE
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id auto_signaltap_0
-set_global_assignment -name QIP_FILE ../Generated/BootROM.qip
 set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE AREA
 set_global_assignment -name SYNTH_TIMING_DRIVEN_SYNTHESIS OFF
 set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON

@@ -303,16 +303,16 @@ wire [3:0] oblue;
 
 wire vga_window;
 
-assign VGA_R[9:2] = vga_window ? red : 8'b0;
+assign VGA_R[9:2] = red;
 assign VGA_R[1:0] = 2'b00;
-assign VGA_G[9:2] = vga_window ? green : 8'b0;
+assign VGA_G[9:2] = green;
 assign VGA_G[1:0] = 2'b00;
-assign VGA_B[9:2] = vga_window ? blue : 8'b0;
+assign VGA_B[9:2] = blue;
 assign VGA_B[1:0] = 2'b00;
 
 SEG7_LUT_4 			u0	(	HEX0,HEX1,HEX2,HEX3,mSEG7_DIG );
 
-assign	VGA_BLANK	=	VGA_HS & VGA_VS;
+assign	VGA_BLANK	=	vga_window;
 assign	VGA_SYNC	=	1'b0;
 assign	VGA_CLK	=	clk133;
 
@@ -364,6 +364,15 @@ ZPUTest myZPUTest
 	.sdr_ba({DRAM_BA_1,DRAM_BA_0}),
 //	.sdr_clk(DRAM_CLK),
 	.sdr_cke(DRAM_CKE),
+
+//	// SRAM
+//	.sr_data(SR_DATA),
+//	.sr_addr(SR_ADDR),
+//	.sr_ub_n(SR_UB_N),
+//	.sr_lb_n(SR_LB_N),
+//	.sr_we_n(SR_WE_N),
+//	.sr_ce_n(SR_CE_N),
+//	.sr_oe_n(SR_OE_N),
 	
 	// RS232
 	.rxd(UART_RXD),
