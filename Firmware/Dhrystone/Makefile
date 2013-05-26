@@ -26,7 +26,7 @@ ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-mult -mno-div # -mno-n
 
 CFLAGS  = -I. -c -O6 $(ZPUOPTS) -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
-LFLAGS  = -mboard=abel -O6 -Wl,--relax
+LFLAGS  = -mboard=phi -O6 -Wl,--relax
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 

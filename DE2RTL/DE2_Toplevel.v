@@ -334,7 +334,7 @@ assign	VGA_CLK	=	clk133;
 
 defparam myZPUTest.sdram_rows = 12;
 defparam myZPUTest.sdram_cols = 8;
-defparam myZPUTest.sysclk_frequency = 1330;
+defparam myZPUTest.sysclk_frequency = 1250;
 defparam myZPUTest.spi_maxspeed = 4;
 
 ZPUTest myZPUTest

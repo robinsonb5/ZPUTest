@@ -170,102 +170,102 @@ begin
 end process;
 
 
--- SPI Timer
-process(clk)
-begin
-	if rising_edge(clk) then
-		spiclk_in<='0';
-		spi_tick<=spi_tick+1;
-		if (spi_fast='1' and spi_tick(3)='1') or spi_tick(8)='1' then
-			spiclk_in<='1'; -- Momentary pulse for SPI host.
-			spi_tick<='0'&X"00";
-		end if;
-	end if;
-end process;
+---- SPI Timer
+--process(clk)
+--begin
+--	if rising_edge(clk) then
+--		spiclk_in<='0';
+--		spi_tick<=spi_tick+1;
+--		if (spi_fast='1' and spi_tick(3)='1') or spi_tick(8)='1' then
+--			spiclk_in<='1'; -- Momentary pulse for SPI host.
+--			spi_tick<='0'&X"00";
+--		end if;
+--	end if;
+--end process;
 
 
 -- SDRAM
-mysdram : entity work.sdram 
-	generic map
-	(
-		rows => sdram_rows,
-		cols => sdram_cols
-	)
-	port map
-	(
-	-- Physical connections to the SDRAM
-		sdata => sdr_data,
-		sdaddr => sdr_addr,
-		sd_we	=> sdr_we,
-		sd_ras => sdr_ras,
-		sd_cas => sdr_cas,
-		sd_cs	=> sdr_cs,
-		dqm => sdr_dqm,
-		ba	=> sdr_ba,
-
-	-- Housekeeping
-		sysclk => clk,
-		reset => reset_in,  -- Contributes to reset, so have to use reset_in here.
-		reset_out => sdr_ready,
-
-		vga_addr => vga_addr,
-		vga_data => vga_data,
-		vga_fill => vga_fill,
-		vga_req => vga_req,
-		vga_ack => vga_ack,
-		vga_refresh => vga_refresh,
-		vga_reservebank => vga_reservebank,
-		vga_reserveaddr => vga_reserveaddr,
-
-		vga_newframe => vga_newframe,
-
-		datawr1 => sdram_write,
-		Addr1 => sdram_addr,
-		req1 => sdram_req,
-		wr1 => sdram_wr, -- active low
-		wrL1 => sdram_wrL, -- lower byte
-		wrU1 => sdram_wrU, -- upper byte
-		wrU2 => sdram_wrU2, -- upper halfword, only written on longword accesses
-		dataout1 => sdram_read,
-		dtack1 => sdram_ack
-	);
+--mysdram : entity work.sdram 
+--	generic map
+--	(
+--		rows => sdram_rows,
+--		cols => sdram_cols
+--	)
+--	port map
+--	(
+--	-- Physical connections to the SDRAM
+--		sdata => sdr_data,
+--		sdaddr => sdr_addr,
+--		sd_we	=> sdr_we,
+--		sd_ras => sdr_ras,
+--		sd_cas => sdr_cas,
+--		sd_cs	=> sdr_cs,
+--		dqm => sdr_dqm,
+--		ba	=> sdr_ba,
+--
+--	-- Housekeeping
+--		sysclk => clk,
+--		reset => reset_in,  -- Contributes to reset, so have to use reset_in here.
+--		reset_out => sdr_ready,
+--
+--		vga_addr => vga_addr,
+--		vga_data => vga_data,
+--		vga_fill => vga_fill,
+--		vga_req => vga_req,
+--		vga_ack => vga_ack,
+--		vga_refresh => vga_refresh,
+--		vga_reservebank => vga_reservebank,
+--		vga_reserveaddr => vga_reserveaddr,
+--
+--		vga_newframe => vga_newframe,
+--
+--		datawr1 => sdram_write,
+--		Addr1 => sdram_addr,
+--		req1 => sdram_req,
+--		wr1 => sdram_wr, -- active low
+--		wrL1 => sdram_wrL, -- lower byte
+--		wrU1 => sdram_wrU, -- upper byte
+--		wrU2 => sdram_wrU2, -- upper halfword, only written on longword accesses
+--		dataout1 => sdram_read,
+--		dtack1 => sdram_ack
+--	);
 
 -- Video
 	
-	myvga : entity work.vga_controller
-		generic map (
-			enable_sprite => false
-		)
-		port map (
-		clk => clk,
-		reset => reset,
-
-		reg_addr_in => mem_addr(11 downto 0),
-		reg_data_in => mem_write,
-		reg_data_out => vga_reg_dataout,
-		reg_rw => vga_reg_rw,
-		reg_uds => cpu_uds,
-		reg_lds => cpu_lds,
-		reg_dtack => vga_reg_dtack,
-		reg_req => vga_reg_req,
-
-		sdr_addrout => vga_addr,
-		sdr_datain => vga_data, 
-		sdr_fill => vga_fill,
-		sdr_req => vga_req,
-		sdr_ack => vga_ack,
-		sdr_reservebank => vga_reservebank,
-		sdr_reserveaddr => vga_reserveaddr,
-		sdr_refresh => vga_refresh,
-
-		hsync => vga_hsync,
-		vsync => vga_vsync,
-		vblank_int => vblank_int,
-		red => vga_red,
-		green => vga_green,
-		blue => vga_blue,
-		vga_window => vga_window
-	);
+--	myvga : entity work.vga_controller
+--		generic map (
+--			enable_sprite => false
+--		)
+--		port map (
+--		clk => clk,
+--		reset => reset,
+--
+--		reg_addr_in => mem_addr(11 downto 0),
+--		reg_data_in => mem_write,
+--		reg_data_out => vga_reg_dataout,
+--		reg_rw => vga_reg_rw,
+--		reg_uds => cpu_uds,
+--		reg_lds => cpu_lds,
+--		reg_dtack => vga_reg_dtack,
+--		reg_req => vga_reg_req,
+--
+--		sdr_addrout => vga_addr,
+--		sdr_datain => vga_data, 
+--		sdr_fill => vga_fill,
+--		sdr_req => vga_req,
+--		sdr_ack => vga_ack,
+--		sdr_reservebank => vga_reservebank,
+--		sdr_reserveaddr => vga_reserveaddr,
+--		sdr_refresh => vga_refresh,
+--
+--		hsync => vga_hsync,
+--		vsync => vga_vsync,
+--		vblank_int => vblank_int,
+--		red => vga_red,
+--		green => vga_green,
+--		blue => vga_blue,
+--		vga_window => vga_window
+--	);
 	
 
 
@@ -277,7 +277,7 @@ begin
 	elsif rising_edge(clk) then
 		reset_counter<=reset_counter-1;
 		if reset_counter=X"0000" then
-			reset<='1' and sdr_ready;
+			reset<='1'; -- and sdr_ready;
 		end if;
 	end if;
 end process;
@@ -305,39 +305,39 @@ end process;
 		);
 
 -- SPI host
-spi : entity work.spi_interface
-	port map(
-		sysclk => clk,
-		reset => reset,
-
-		-- Host interface
-		spiclk_in => spiclk_in,
-		host_to_spi => host_to_spi,
-		spi_to_host => spi_to_host,
-		wide => spi_wide,
-		trigger => spi_trigger,
-		busy => spi_busy,
-
-		-- Hardware interface
-		miso => spi_miso,
-		mosi => spi_mosi,
-		spiclk_out => spi_clk
-
-	);
-
+--spi : entity work.spi_interface
+--	port map(
+--		sysclk => clk,
+--		reset => reset,
+--
+--		-- Host interface
+--		spiclk_in => spiclk_in,
+--		host_to_spi => host_to_spi,
+--		spi_to_host => spi_to_host,
+--		wide => spi_wide,
+--		trigger => spi_trigger,
+--		busy => spi_busy,
+--
+--		-- Hardware interface
+--		miso => spi_miso,
+--		mosi => spi_mosi,
+--		spiclk_out => spi_clk
+--
+--	);
+--
 
 -- Main CPU
 
 	 zpu: zpu_core 
 	 generic map (
-		 IMPL_MULTIPLY => true,
-		 IMPL_COMPARISON_SUB => true,
-		 IMPL_EQBRANCH => true,
+		 IMPL_MULTIPLY => false,
+		 IMPL_COMPARISON_SUB => false,
+		 IMPL_EQBRANCH => false,
 		 IMPL_STOREBH => false,
-		 IMPL_CALL => true,
-		 IMPL_SHIFT => true,
-		 IMPL_XOR => true,
-		 REMAP_STACK => true,
+		 IMPL_CALL => false,
+		 IMPL_SHIFT => false,
+		 IMPL_XOR => false,
+		 REMAP_STACK => false,
 		 EXECUTE_RAM => false -- Save some LEs by omitting Execute from RAM support
 		)
     port map (
@@ -407,10 +407,10 @@ begin
 					case mem_addr(31 downto 28) is
 --						when X"0000" =>	-- Boot BlockRAM
 --							currentstate<=WRITE1;
-						when X"E" =>	-- VGA controller
-							vga_reg_rw<='0';
-							vga_reg_req<='1';
-							currentstate<=VGAWRITE;
+--						when X"E" =>	-- VGA controller
+--							vga_reg_rw<='0';
+--							vga_reg_req<='1';
+--							currentstate<=VGAWRITE;
 
 						when X"F" =>	-- Peripherals
 							case mem_addr(7 downto 0) is
@@ -423,44 +423,45 @@ begin
 									ser_clock_divisor<=unsigned(mem_write(15 downto 0));
 									mem_busy<='0';
 
-								when X"8C" => -- Flags (switches) register
---									bootrom_overlay<=mem_write(0);
-									mem_busy<='0';
-									
-								when X"90" => -- HEX display
-									counter<=unsigned(mem_write(15 downto 0));
-									mem_busy<='0';
-
-								when X"C4" => -- SPI CS
-									spi_cs<=not mem_write(0);
-									spi_fast<=mem_write(8);
-									mem_busy<='0';
-
-								when X"C8" => -- SPI write (blocking)
-									spi_wide<='0';
-									spi_trigger<='1';
-									host_to_spi<=mem_write(7 downto 0);
-									currentstate<=WAITSPIW;
-									
-								when X"CC" => -- SPI write wide (blocking)
-									spi_wide<='1';
-									spi_trigger<='1';
-									host_to_spi<=mem_write(7 downto 0);
-									currentstate<=WAITSPIW;
+--								when X"8C" => -- Flags (switches) register
+----									bootrom_overlay<=mem_write(0);
+--									mem_busy<='0';
+--									
+--								when X"90" => -- HEX display
+--									counter<=unsigned(mem_write(15 downto 0));
+--									mem_busy<='0';
+--
+--								when X"C4" => -- SPI CS
+--									spi_cs<=not mem_write(0);
+--									spi_fast<=mem_write(8);
+--									mem_busy<='0';
+--
+--								when X"C8" => -- SPI write (blocking)
+--									spi_wide<='0';
+--									spi_trigger<='1';
+--									host_to_spi<=mem_write(7 downto 0);
+--									currentstate<=WAITSPIW;
+--									
+--								when X"CC" => -- SPI write wide (blocking)
+--									spi_wide<='1';
+--									spi_trigger<='1';
+--									host_to_spi<=mem_write(7 downto 0);
+--									currentstate<=WAITSPIW;
 									
 								when others =>
 									mem_busy<='0'; -- FIXME - shouldn't need this
 									null;
 							end case;
 						when others => -- SDRAM access
-							sdram_wrL<=mem_writeEnableb and not mem_addr(0);
-							sdram_wrU<=mem_writeEnableb and mem_addr(0);
-							sdram_wrU2<=mem_writeEnableh or mem_writeEnableb; -- Halfword access
-							if mem_writeEnableb='1' then
-								sdram_state<=writeb;
-							else
-								sdram_state<=write1;
-							end if;
+							null;
+--							sdram_wrL<=mem_writeEnableb and not mem_addr(0);
+--							sdram_wrU<=mem_writeEnableb and mem_addr(0);
+--							sdram_wrU2<=mem_writeEnableh or mem_writeEnableb; -- Halfword access
+--							if mem_writeEnableb='1' then
+--								sdram_state<=writeb;
+--							else
+--								sdram_state<=write1;
+--							end if;
 					end case;
 
 				elsif mem_readEnable='1' then
@@ -485,36 +486,36 @@ begin
 									ser_rxrecv<='0';	-- Clear rx flag.
 									mem_busy<='0';
 									
-								when X"8C" => -- Flags (switches) register
-									mem_read<="XXXXXXXXXXXXXXXX"&src;
-									mem_busy<='0';
+--								when X"8C" => -- Flags (switches) register
+--									mem_read<="XXXXXXXXXXXXXXXX"&src;
+--									mem_busy<='0';
 
 								when X"C0" => -- Millisecond counter
 									mem_read<=std_logic_vector(millisecond_counter);
 									mem_busy<='0';
 
-								when X"C4" => -- SPI_CS
-									mem_read<=(others=>'X');
-									mem_read(15)<=spi_busy;
-									mem_busy<='0';
-									
-								when X"C8" => -- SPI read (blocking)
-									spi_wide<='0';
-									currentstate<=WAITSPIR;
-
-								when X"CC" => -- SPI read (blocking)
-									spi_wide<='1';
-									spi_trigger<='1';
-									host_to_spi<=X"FF";
-									currentstate<=WAITSPIR;
-
-								when X"F8" => -- Filename 1
-									mem_read(31 downto 0)<=X"534c4944"; -- "SLID"
-									mem_busy<='0';
-
-								when X"FC" => -- Filename 2
-									mem_read(31 downto 0)<=X"45534857"; -- "ESHW"
-									mem_busy<='0';
+--								when X"C4" => -- SPI_CS
+--									mem_read<=(others=>'X');
+--									mem_read(15)<=spi_busy;
+--									mem_busy<='0';
+--									
+--								when X"C8" => -- SPI read (blocking)
+--									spi_wide<='0';
+--									currentstate<=WAITSPIR;
+--
+--								when X"CC" => -- SPI read (blocking)
+--									spi_wide<='1';
+--									spi_trigger<='1';
+--									host_to_spi<=X"FF";
+--									currentstate<=WAITSPIR;
+--
+--								when X"F8" => -- Filename 1
+--									mem_read(31 downto 0)<=X"534c4944"; -- "SLID"
+--									mem_busy<='0';
+--
+--								when X"FC" => -- Filename 2
+--									mem_read(31 downto 0)<=X"45534857"; -- "ESHW"
+--									mem_busy<='0';
 
 								when others =>
 									mem_busy<='0'; -- FIXME - shouldn't need this
@@ -522,7 +523,8 @@ begin
 							end case;
 
 						when others => -- SDRAM
-							sdram_state<=read1;
+							null;
+--							sdram_state<=read1;
 					end case;
 				end if;
 
@@ -571,53 +573,53 @@ begin
 	
 	-- SDRAM state machine
 	
-		case sdram_state is
-			when read1 => -- read first word from RAM
-				sdram_addr<=mem_Addr;
-				sdram_wr<='1';
-				sdram_req<='1';
-				if sdram_ack='0' then
-					mem_read<=sdram_read;
-					sdram_req<='0';
-					sdram_state<=idle;
-					mem_busy<='0';
-				end if;
-			when write1 => -- write 32-bit word to SDRAM
-				sdram_addr<=mem_Addr;
-				sdram_wr<='0';
-				sdram_req<='1';
-				sdram_write<=mem_write; -- 32-bits now
-				if sdram_ack='0' then -- done?
-					sdram_req<='0';
-					sdram_state<=idle;
-					mem_busy<='0';
-				end if;
-			when writeb => -- write 8-bit value to SDRAM
-				sdram_addr<=mem_Addr;
-				sdram_wr<='0';
-				sdram_req<='1';
-				sdram_write<=mem_write; -- 32-bits now
-				sdram_write(15 downto 8)<=mem_write(7 downto 0); -- 32-bits now
-				if sdram_ack='0' then -- done?
-					sdram_req<='0';
-					sdram_state<=idle;
-					mem_busy<='0';
-				end if;
-			when write2 =>	-- Prepare for second word...
---				sdram_addr(1)<='1';
+--		case sdram_state is
+--			when read1 => -- read first word from RAM
+--				sdram_addr<=mem_Addr;
+--				sdram_wr<='1';
 --				sdram_req<='1';
---				sdram_write<=mem_write(15 downto 0);
---				sdram_state<=write3;
-			when write3 =>  -- Wait for second word...
-				if sdram_ack='0' then -- is first word ready?
-					sdram_req<='0';
-					sdram_state<=idle;
-					mem_busy<='0';
-				end if;
-			when others =>
-				null;
-
-		end case;
+--				if sdram_ack='0' then
+--					mem_read<=sdram_read;
+--					sdram_req<='0';
+--					sdram_state<=idle;
+--					mem_busy<='0';
+--				end if;
+--			when write1 => -- write 32-bit word to SDRAM
+--				sdram_addr<=mem_Addr;
+--				sdram_wr<='0';
+--				sdram_req<='1';
+--				sdram_write<=mem_write; -- 32-bits now
+--				if sdram_ack='0' then -- done?
+--					sdram_req<='0';
+--					sdram_state<=idle;
+--					mem_busy<='0';
+--				end if;
+--			when writeb => -- write 8-bit value to SDRAM
+--				sdram_addr<=mem_Addr;
+--				sdram_wr<='0';
+--				sdram_req<='1';
+--				sdram_write<=mem_write; -- 32-bits now
+--				sdram_write(15 downto 8)<=mem_write(7 downto 0); -- 32-bits now
+--				if sdram_ack='0' then -- done?
+--					sdram_req<='0';
+--					sdram_state<=idle;
+--					mem_busy<='0';
+--				end if;
+--			when write2 =>	-- Prepare for second word...
+----				sdram_addr(1)<='1';
+----				sdram_req<='1';
+----				sdram_write<=mem_write(15 downto 0);
+----				sdram_state<=write3;
+--			when write3 =>  -- Wait for second word...
+--				if sdram_ack='0' then -- is first word ready?
+--					sdram_req<='0';
+--					sdram_state<=idle;
+--					mem_busy<='0';
+--				end if;
+--			when others =>
+--				null;
+--
+--		end case;
 
 	end if; -- rising-edge(clk)
 

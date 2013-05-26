@@ -655,8 +655,8 @@ begin
             when Decoded_Load =>
               if (REMAP_STACK=true and
 						memARead(maxAddrBitIncIO)='0' and memARead(stackBit) = '1')
---						or (REMAP_STACK=false and memARead(maxAddrBitIncIO)='0') then
-						or (REMAP_STACK=false and memARead(maxAddrBitIncIO downto maxAddrBitBRAM+1)=to_unsigned(0,maxAddrBitIncIO-maxAddrBitBRAM)) then -- Access is bound for stack RAM
+						or (REMAP_STACK=false and memARead(maxAddrBitIncIO)='0') then
+--						or (REMAP_STACK=false and memARead(maxAddrBitIncIO downto maxAddrBitBRAM+1)=to_unsigned(0,maxAddrBitIncIO-maxAddrBitBRAM)) then -- Access is bound for stack RAM
 							memAAddr <= memARead(maxAddrBitBRAM downto minAddrBit);
 				  else
 					 out_mem_addr(1 downto 0) <="00";
@@ -685,8 +685,8 @@ begin
               memBAddr <= sp + 1;
               sp       <= sp + 1;
               if (REMAP_STACK=true and memARead(maxAddrBitIncIO)='0'	and memARead(stackBit) = '1')
---						or (REMAP_STACK=false and memARead(maxAddrBitIncIO)='0') then
-						or (REMAP_STACK=false and memARead(maxAddrBitIncIO downto maxAddrBitBRAM+1)=to_unsigned(0,maxAddrBitIncIO-maxAddrBitBRAM)) then -- Access is bound for stack RAM
+						or (REMAP_STACK=false and memARead(maxAddrBitIncIO)='0') then
+--						or (REMAP_STACK=false and memARead(maxAddrBitIncIO downto maxAddrBitBRAM+1)=to_unsigned(0,maxAddrBitIncIO-maxAddrBitBRAM)) then -- Access is bound for stack RAM
                 state <= State_Store;
 				  else
                 state <= State_WriteIO;
