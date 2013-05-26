@@ -31,7 +31,7 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
 LFLAGS  = -Wl,--relax -nostdlib -Os
 CP_HEXFLAGS = -Oihex

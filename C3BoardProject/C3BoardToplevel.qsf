@@ -833,7 +833,7 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=00
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=735" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=128" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=39783" -section_id auto_signaltap_0
-set_global_assignment -name QIP_FILE ../Generated/BootROM.qip
+set_global_assignment -name QIP_FILE ../Generated/ZPU_StackRAM.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/PLL2.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/PLL.qip
 set_global_assignment -name QIP_FILE ../CIII_Generated/DMACacheRAM.qip
