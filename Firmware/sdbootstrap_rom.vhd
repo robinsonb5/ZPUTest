@@ -1,3 +1,37 @@
+-- ZPU
+--
+-- Copyright 2004-2008 oharboe - �yvind Harboe - oyvind.harboe@zylin.com
+-- 
+-- The FreeBSD license
+-- 
+-- Redistribution and use in source and binary forms, with or without
+-- modification, are permitted provided that the following conditions
+-- are met:
+-- 
+-- 1. Redistributions of source code must retain the above copyright
+--    notice, this list of conditions and the following disclaimer.
+-- 2. Redistributions in binary form must reproduce the above
+--    copyright notice, this list of conditions and the following
+--    disclaimer in the documentation and/or other materials
+--    provided with the distribution.
+-- 
+-- THIS SOFTWARE IS PROVIDED BY THE ZPU PROJECT ``AS IS'' AND ANY
+-- EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+-- THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+-- PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+-- ZPU PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+-- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+-- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+-- OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+-- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+-- STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+-- ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+-- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-- 
+-- The views and conclusions contained in the software and documentation
+-- are those of the authors and should not be interpreted as representing
+-- official policies, either expressed or implied, of the ZPU Project.
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -7,22 +41,22 @@ library work;
 use work.zpu_config.all;
 use work.zpupkg.all;
 
-entity dram is
+entity sdbootstrap_rom is
 port (clk : in std_logic;
-areset : std_logic;
-		mem_writeEnable : in std_logic;
-		mem_readEnable : in std_logic;
-		mem_addr : in std_logic_vector(maxAddrBit downto 0);
-		mem_write : in std_logic_vector(wordSize-1 downto 0);
-		mem_read : out std_logic_vector(wordSize-1 downto 0);
-		mem_busy : out std_logic;
-		mem_writeMask : in std_logic_vector(wordBytes-1 downto 0));
-end dram;
+	memAWriteEnable : in std_logic;
+	memAAddr : in std_logic_vector(maxAddrBitBRAM downto minAddrBit);
+	memAWrite : in std_logic_vector(wordSize-1 downto 0);
+	memARead : out std_logic_vector(wordSize-1 downto 0);
+	memBWriteEnable : in std_logic;
+	memBAddr : in std_logic_vector(maxAddrBitBRAM downto minAddrBit);
+	memBWrite : in std_logic_vector(wordSize-1 downto 0);
+	memBRead : out std_logic_vector(wordSize-1 downto 0));
+end sdbootstrap_rom;
 
-architecture dram_arch of dram is
+architecture arch of sdbootstrap_rom is
+begin
 
-
-type ram_type is array(natural range 0 to ((2**(maxAddrBitDRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
+type ram_type is array(natural range 0 to ((2**(maxAddrBitStackBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
 
 shared variable ram : ram_type :=
 (
@@ -947,28 +981,3 @@ shared variable ram : ram_type :=
    917 => x"46415433",
    918 => x"32202020",
    919 => x"00000000",
-	others => x"00000000"
-);
-
-begin
-
-mem_busy<=mem_readEnable; -- we're done on the cycle after we serve the read request
-
-process (clk, areset)
-begin
-		if areset = '1' then
-		elsif (clk'event and clk = '1') then
-			if (mem_writeEnable = '1') then
-				ram(to_integer(unsigned(mem_addr(maxAddrBit downto minAddrBit)))) := mem_write;
-			end if;
-		if (mem_readEnable = '1') then
-			mem_read <= ram(to_integer(unsigned(mem_addr(maxAddrBit downto minAddrBit))));
-		end if;
-	end if;
-end process;
-
-
-
-
-end dram_arch;
-
