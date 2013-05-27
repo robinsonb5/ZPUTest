@@ -1,0 +1,29 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+
+library work;
+use work.zpu_config.all;
+use work.zpupkg.all;
+
+entity dram is
+port (clk : in std_logic;
+areset : std_logic;
+		mem_writeEnable : in std_logic;
+		mem_readEnable : in std_logic;
+		mem_addr : in std_logic_vector(maxAddrBit downto 0);
+		mem_write : in std_logic_vector(wordSize-1 downto 0);
+		mem_read : out std_logic_vector(wordSize-1 downto 0);
+		mem_busy : out std_logic;
+		mem_writeMask : in std_logic_vector(wordBytes-1 downto 0));
+end dram;
+
+architecture dram_arch of dram is
+
+
+type ram_type is array(natural range 0 to ((2**(maxAddrBitDRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
+
+shared variable ram : ram_type :=
+(
+
