@@ -13,19 +13,21 @@ With these instructions enabled, the ZPU takes just under 1,000 LEs, but in
 combination with various GCC switches, can make do without emulation code; thus
 how you set these switches will depend on whether you're short of LEs or Block RAM.
 
-* IMPL_MULTIPLY - hardware mult
-* IMPL_COMPARISON_SUB - hardware sub, lessthan, lessthanorequal, ulessthan, ulessthanorequal.
-* IMPL_EQBRANCH - hardware eqbranch and neqbranch
-* IMPL_STOREBH - hardware storeb and storeh (but *not* loadb or loadh)
-* IMPL_CALL - hardware call
-* IMPL_SHIFT - hardware lshiftright, ashiftright and ashiftleft
-* IMPL_XOR - hardware xor
+*	IMPL_MULTIPLY - hardware mult
+*	IMPL_COMPARISON_SUB - hardware sub, lessthan, lessthanorequal,
+	ulessthan, ulessthanorequal.
+*	IMPL_EQBRANCH - hardware eqbranch and neqbranch
+*	IMPL_STOREBH - hardware storeb and storeh (but *not* loadb or loadh)
+*	IMPL_CALL - hardware call
+*	IMPL_SHIFT - hardware lshiftright, ashiftright and ashiftleft
+*	IMPL_XOR - hardware xor
 
 There are a couple of other switches too:
-* EXECUTE_RAM - include support for executing code from outside the Boot ROM.
-* REMAP_STACK - maps the stack / Boot ROM to 0x04000000.
-  This is useful in combination with the EXECUTE_RAM switch.  With REMAP_STACK set to FALSE,
-  the ROM / Stack RAM appears in low memory, with any accesses above the ROM's size going to
-  the host.  If REMAP_STACK is set to true, the ROM / Stack is moved, allowing access to 
-  low memory.  Useful if you want to bootstrap a larger program than will fit in the
-  BlockRAM-based Boot ROM.
+*	EXECUTE_RAM - include support for executing code from outside the Boot ROM.
+*	REMAP_STACK - maps the stack / Boot ROM to 0x04000000.
+	This is useful in combination with the EXECUTE_RAM switch.  With REMAP_STACK
+	set to FALSE, the ROM / Stack RAM appears in low memory, with any accesses
+	above the ROM's size going to the host.  If REMAP_STACK is set to true,
+	the ROM / Stack is moved, allowing access to low memory.  Useful if you want
+	to bootstrap a larger program than will fit in the BlockRAM-based Boot ROM.
+
