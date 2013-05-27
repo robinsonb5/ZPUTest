@@ -6,6 +6,8 @@
 -- to allow the core to run from external RAM, and to balance performance and area.
 -- The goal is to make the ZPU a useful support CPU for such tasks as loading
 -- ROMs from SD Card, while keeping the area under 1,000 logic cells.
+-- To this end, there are a number of generics which can be used to adjust the
+-- speed / area balance.
 --
 -- The FreeBSD license
 -- 
@@ -60,31 +62,32 @@ entity zpu_core is
 	 EXECUTE_RAM : boolean := true -- include support for executing code from outside the Boot ROM
   );
   port ( 
-    clk                 : in std_logic;
-    -- asynchronous reset signal
-    reset               : in std_logic;
-    -- this particular implementation of the ZPU does not
-    -- have a clocked enable signal
-    enable              : in  std_logic;
-    in_mem_busy         : in  std_logic;
-    mem_read            : in  std_logic_vector(wordSize-1 downto 0);
-    mem_write           : out std_logic_vector(wordSize-1 downto 0);
-    out_mem_addr        : out std_logic_vector(maxAddrBitIncIO downto 0);
-    out_mem_writeEnable : out std_logic;
-    out_mem_writeEnableb : out std_logic;  -- Enable byte write
-    out_mem_writeEnableh : out std_logic;  -- Enable halfword write
-    out_mem_readEnable  : out std_logic;
-    -- Set to one to jump to interrupt vector
-    -- The ZPU will communicate with the hardware that caused the
-    -- interrupt via memory mapped IO or the interrupt flag can
-    -- be cleared automatically
-    interrupt           : in  std_logic;
-    -- Signal that the break instruction is executed, normally only used
-    -- in simulation to stop simulation
-    break               : out std_logic
-    );
+		clk                 : in std_logic;
+		-- asynchronous reset signal
+		reset               : in std_logic;
+		-- this particular implementation of the ZPU does not
+		-- have a clocked enable signal
+		enable              : in  std_logic;
+		in_mem_busy         : in  std_logic;
+		mem_read            : in  std_logic_vector(wordSize-1 downto 0);
+		mem_write           : out std_logic_vector(wordSize-1 downto 0);
+		out_mem_addr        : out std_logic_vector(maxAddrBitIncIO downto 0);
+		out_mem_writeEnable : out std_logic;
+		out_mem_writeEnableb : out std_logic;  -- Enable byte write
+		out_mem_writeEnableh : out std_logic;  -- Enable halfword write
+		out_mem_readEnable  : out std_logic;
+		-- Set to one to jump to interrupt vector
+		-- The ZPU will communicate with the hardware that caused the
+		-- interrupt via memory mapped IO or the interrupt flag can
+		-- be cleared automatically
+		interrupt           : in  std_logic;
+		-- Signal that the break instruction is executed, normally only used
+		-- in simulation to stop simulation
+		break               : out std_logic;
+		from_rom : in ZPU_FromROM;
+		to_rom : out ZPU_ToROM
+	);
 end zpu_core;
-
 
 
 architecture behave of zpu_core is
@@ -97,8 +100,6 @@ architecture behave of zpu_core is
   signal memBAddr        : unsigned(maxAddrBitBRAM downto minAddrBit);
   signal memBWrite       : unsigned(wordSize-1 downto 0);
   signal memBRead        : unsigned(wordSize-1 downto 0);
-
-
 
   signal pc : unsigned(maxAddrBit downto 0);
   signal sp : unsigned(maxAddrBitBRAM downto minAddrBit);
@@ -244,47 +245,27 @@ begin
 
 
 
-  memAAddr_stdlogic  <= std_logic_vector(memAAddr(AddrBitBRAM_range));
-  memAWrite_stdlogic <= std_logic_vector(memAWrite);
-  memBAddr_stdlogic  <= std_logic_vector(memBAddr(AddrBitBRAM_range));
-  memBWrite_stdlogic <= std_logic_vector(memBWrite);
+	memAAddr_stdlogic  <= std_logic_vector(memAAddr(AddrBitBRAM_range));
+	memAWrite_stdlogic <= std_logic_vector(memAWrite);
+	memBAddr_stdlogic  <= std_logic_vector(memBAddr(AddrBitBRAM_range));
+	memBWrite_stdlogic <= std_logic_vector(memBWrite);
 
+	-- Wire up the ROM
+	
+	memARead_stdlogic <= from_rom.memARead;
+	memBRead_stdlogic <= from_rom.memBRead;
 
-  -- dualport_ram must be defined by the application. 
-  -- 
-  -- How this can be implemented is highly dependent on the FPGA
-  -- and synthesis technology used. 
-  --
-  -- sometimes it can be instantiated as in the 
-  -- zpu/example/helloworld.vhd, using inference,
-  -- but oftentimes it must be instantiated directly
-  -- portmapping to part specific FPGA resources
-  -- 
-  --
-  -- DANGER!!!!!! If inference fails, then synthesis will try
-  -- to implement the memory using basic logic resources. This
-  -- will almost certainly cause the compiler to get "stuck"
-  -- since synthesising such a huge number of basic logic resources
-  -- will take more or less forever.
-  --
-  -- So: if your compiler gets "stuck" then inference is not
-  -- the way to go.
-  memory : stackram port map (
-    clk             => clk,
-    memAWriteEnable => memAWriteEnable,
-    memAAddr        => memAAddr_stdlogic,
-    memAWrite       => memAWrite_stdlogic,
-    memARead        => memARead_stdlogic,
-    memBWriteEnable => memBWriteEnable,
-    memBAddr        => memBAddr_stdlogic,
-    memBWrite       => memBWrite_stdlogic,
-    memBRead        => memBRead_stdlogic
-    );
-  memARead <= unsigned(memARead_stdlogic);
-  memBRead <= unsigned(memBRead_stdlogic);
+	to_rom.memAWriteEnable <= memAWriteEnable;
+	to_rom.memAAddr <= memAAddr_stdlogic;
+	to_rom.memAWrite       <= memAWrite_stdlogic;
+	to_rom.memBWriteEnable <= memBWriteEnable;
+	to_rom.memBAddr        <= memBAddr_stdlogic;
+	to_rom.memBWrite       <= memBWrite_stdlogic;
 
+	memARead <= unsigned(memARead_stdlogic);
+	memBRead <= unsigned(memBRead_stdlogic);
 
-
+	
   tOpcode_sel <= to_integer(pc(minAddrBit-1 downto 0));
 
 	CodeFromRAM: if EXECUTE_RAM=true generate

@@ -18,14 +18,13 @@
 #
 # Quartus II 32-bit
 # Version 12.0 Build 232 07/05/2012 Service Pack 1 SJ Web Edition
-# Date created = 12:37:14  May 26, 2013
+# Date created = 11:44:47  May 27, 2013
 #
 # -------------------------------------------------------------------------- #
 
 QUARTUS_VERSION = "12.0"
-DATE = "12:37:14  May 26, 2013"
+DATE = "11:44:47  May 27, 2013"
 
 # Revisions
 
 PROJECT_REVISION = "ZPUTest_DE2"
-PROJECT_REVISION = "ZPUTest"

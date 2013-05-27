@@ -100,7 +100,8 @@ signal zpu_enable               : std_logic;
 signal zpu_interrupt            : std_logic;
 signal zpu_break                : std_logic;
 
-signal bootrom_overlay	: std_logic;
+signal zpu_to_rom : ZPU_ToROM;
+signal zpu_from_rom : ZPU_FromROM;
 
 signal cpu_uds	: std_logic;
 signal cpu_lds : std_logic;
@@ -325,37 +326,48 @@ spi : entity work.spi_interface
 
 	);
 
+-- Boot ROM
+
+	myrom : entity work.sdbootstrap_rom
+	port map (
+	clk => clk,
+	from_zpu => zpu_to_rom,
+	to_zpu => zpu_from_rom
+	);
+	
 
 -- Main CPU
 
-	 zpu: zpu_core 
-	 generic map (
-		 IMPL_MULTIPLY => true,
-		 IMPL_COMPARISON_SUB => true,
-		 IMPL_EQBRANCH => true,
-		 IMPL_STOREBH => false,
-		 IMPL_CALL => true,
-		 IMPL_SHIFT => true,
-		 IMPL_XOR => true,
-		 REMAP_STACK => true,
-		 EXECUTE_RAM => false -- Save some LEs by omitting Execute from RAM support
-		)
-    port map (
-        clk                 => clk,
-        reset               => not reset,
-        enable              => zpu_enable,
-        in_mem_busy         => mem_busy, 
-        mem_read            => mem_read,
-        mem_write           => mem_write, 
-        out_mem_addr        => mem_addr, 
-        out_mem_writeEnable => mem_writeEnable,  
-        out_mem_writeEnableh => mem_writeEnableh,  
-        out_mem_writeEnableb => mem_writeEnableb,  
-        out_mem_readEnable  => mem_readEnable,
---        mem_writeMask       => mem_writeMask, 
-        interrupt           => zpu_interrupt,
-        break               => zpu_break
-    );
+	zpu: zpu_core 
+	generic map (
+		IMPL_MULTIPLY => true,
+		IMPL_COMPARISON_SUB => true,
+		IMPL_EQBRANCH => true,
+		IMPL_STOREBH => false,
+		IMPL_CALL => true,
+		IMPL_SHIFT => true,
+		IMPL_XOR => true,
+		REMAP_STACK => true,
+		EXECUTE_RAM => false -- Save some LEs by omitting Execute from RAM support
+	)
+	port map (
+		clk                 => clk,
+		reset               => not reset,
+		enable              => zpu_enable,
+		in_mem_busy         => mem_busy, 
+		mem_read            => mem_read,
+		mem_write           => mem_write, 
+		out_mem_addr        => mem_addr, 
+		out_mem_writeEnable => mem_writeEnable,  
+		out_mem_writeEnableh => mem_writeEnableh,  
+		out_mem_writeEnableb => mem_writeEnableb,  
+		out_mem_readEnable  => mem_readEnable,
+--		mem_writeMask       => mem_writeMask, 
+		interrupt           => zpu_interrupt,
+		break               => zpu_break,
+		from_rom => zpu_from_rom,
+		to_rom => zpu_to_rom
+	);
 
 
 --	externram_wren <= mem_writeEnable when mem_addr(31 downto 16)=X"0000" else '0';
@@ -385,7 +397,6 @@ begin
 		currentstate<=WAITING;
 		sdram_state<=idle;
 		spi_cs<='1';
-		bootrom_overlay<='0';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 
@@ -424,7 +435,7 @@ begin
 									mem_busy<='0';
 
 								when X"8C" => -- Flags (switches) register
---									bootrom_overlay<=mem_write(0);
+									-- Set external signals here
 									mem_busy<='0';
 									
 								when X"90" => -- HEX display
@@ -465,17 +476,6 @@ begin
 
 				elsif mem_readEnable='1' then
 					case mem_addr(31 downto 28) is
---						when X"020" =>	-- Boot BlockRAM
---							if bootrom_overlay='0' then
---								currentstate<=READ1;
---							else
---								sdram_state<=read1;
---							end if;
-
---						when X"FEF" =>	-- VGA controller
---							vga_reg_req<='1';
---							mem_read<="XXXXXXXXXXXXXXXX"&vga_reg_dataout;
---							currentstate<=VGAREAD;
 
 						when X"F" =>	-- Peripherals
 							case mem_addr(7 downto 0) is
@@ -526,21 +526,6 @@ begin
 					end case;
 				end if;
 
---			when READ1 =>
---				mem_read<=externram_data;
---				mem_busy<='0';
---				currentstate<=WAITING;
-
---			when WRITE1 =>
---				mem_busy<='0';
---				currentstate<=PAUSE;
-
---			when VGAREAD =>
---				if vga_reg_dtack='0' then
---					mem_busy<='0';
---					currentstate<=WAITING;
---				end if;
-
 			when VGAWRITE =>
 				if vga_reg_dtack='0' then
 					mem_busy<='0';
@@ -554,7 +539,6 @@ begin
 				end if;
 
 			when WAITSPIR =>
---				mem_read(31 downto 16)<=(others => 'X');
 				mem_read<=spi_to_host;
 				if spi_busy='0' then
 					mem_busy<='0';
@@ -599,17 +583,6 @@ begin
 				sdram_write<=mem_write; -- 32-bits now
 				sdram_write(15 downto 8)<=mem_write(7 downto 0); -- 32-bits now
 				if sdram_ack='0' then -- done?
-					sdram_req<='0';
-					sdram_state<=idle;
-					mem_busy<='0';
-				end if;
-			when write2 =>	-- Prepare for second word...
---				sdram_addr(1)<='1';
---				sdram_req<='1';
---				sdram_write<=mem_write(15 downto 0);
---				sdram_state<=write3;
-			when write3 =>  -- Wait for second word...
-				if sdram_ack='0' then -- is first word ready?
 					sdram_req<='0';
 					sdram_state<=idle;
 					mem_busy<='0';

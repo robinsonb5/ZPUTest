@@ -42,22 +42,17 @@ use work.zpu_config.all;
 use work.zpupkg.all;
 
 entity dualportram is
-port (clk : in std_logic;
-	memAWriteEnable : in std_logic;
-	memAAddr : in std_logic_vector(maxAddrBitBRAM downto minAddrBit);
-	memAWrite : in std_logic_vector(wordSize-1 downto 0);
-	memARead : out std_logic_vector(wordSize-1 downto 0);
-	memBWriteEnable : in std_logic;
-	memBAddr : in std_logic_vector(maxAddrBitBRAM downto minAddrBit);
-	memBWrite : in std_logic_vector(wordSize-1 downto 0);
-	memBRead : out std_logic_vector(wordSize-1 downto 0));
+port (
+	clk : in std_logic;
+	areset : in std_logic := '0';
+	from_zpu : in ZPU_ToROM;
+	to_zpu : out ZPU_FromROM
+);
 end dualportram;
 
 architecture arch of dualportram is
-begin
 
-type ram_type is array(natural range 0 to ((2**(maxAddrBitStackBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
+type ram_type is array(natural range 0 to ((2**(maxAddrBitBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
 
 shared variable ram : ram_type :=
 (
-

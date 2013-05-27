@@ -42,21 +42,17 @@ use work.zpu_config.all;
 use work.zpupkg.all;
 
 entity sdbootstrap_rom is
-port (clk : in std_logic;
-	memAWriteEnable : in std_logic;
-	memAAddr : in std_logic_vector(maxAddrBitBRAM downto minAddrBit);
-	memAWrite : in std_logic_vector(wordSize-1 downto 0);
-	memARead : out std_logic_vector(wordSize-1 downto 0);
-	memBWriteEnable : in std_logic;
-	memBAddr : in std_logic_vector(maxAddrBitBRAM downto minAddrBit);
-	memBWrite : in std_logic_vector(wordSize-1 downto 0);
-	memBRead : out std_logic_vector(wordSize-1 downto 0));
+port (
+	clk : in std_logic;
+	areset : in std_logic := '0';
+	from_zpu : in ZPU_ToROM;
+	to_zpu : out ZPU_FromROM
+);
 end sdbootstrap_rom;
 
 architecture arch of sdbootstrap_rom is
-begin
 
-type ram_type is array(natural range 0 to ((2**(maxAddrBitStackBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
+type ram_type is array(natural range 0 to ((2**(maxAddrBitBRAM+1))/4)-1) of std_logic_vector(wordSize-1 downto 0);
 
 shared variable ram : ram_type :=
 (
@@ -986,22 +982,33 @@ shared variable ram : ram_type :=
 
 begin
 
-mem_busy<=mem_readEnable; -- we're done on the cycle after we serve the read request
-
-process (clk, areset)
+process (clk)
 begin
-		if areset = '1' then
-		elsif (clk'event and clk = '1') then
-			if (mem_writeEnable = '1') then
-				ram(to_integer(unsigned(mem_addr(maxAddrBit downto minAddrBit)))) := mem_write;
-			end if;
-		if (mem_readEnable = '1') then
-			mem_read <= ram(to_integer(unsigned(mem_addr(maxAddrBit downto minAddrBit))));
+	if (clk'event and clk = '1') then
+		if (from_zpu.memAWriteEnable = '1') and (from_zpu.memBWriteEnable = '1') and (from_zpu.memAAddr=from_zpu.memBAddr) and (from_zpu.memAWrite/=from_zpu.memBWrite) then
+			report "write collision" severity failure;
+		end if;
+	
+		if (from_zpu.memAWriteEnable = '1') then
+			ram(to_integer(unsigned(from_zpu.memAAddr))) := from_zpu.memAWrite;
+			to_zpu.memARead <= from_zpu.memAWrite;
+		else
+			to_zpu.memARead <= ram(to_integer(unsigned(from_zpu.memAAddr)));
 		end if;
 	end if;
 end process;
 
-
+process (clk)
+begin
+	if (clk'event and clk = '1') then
+		if (from_zpu.memBWriteEnable = '1') then
+			ram(to_integer(unsigned(from_zpu.memBAddr))) := from_zpu.memBWrite;
+			to_zpu.memBRead <= from_zpu.memBWrite;
+		else
+			to_zpu.memBRead <= ram(to_integer(unsigned(from_zpu.memBAddr)));
+		end if;
+	end if;
+end process;
 
 
 end arch;

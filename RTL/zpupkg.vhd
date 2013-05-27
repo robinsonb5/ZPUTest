@@ -77,19 +77,19 @@ package zpupkg is
       );
   end component dualport_ram;
 
-  component stackram is
-    port (
-      clk             : in  std_logic;
-      memAWriteEnable : in  std_logic;
-      memAAddr        : in  std_logic_vector(maxAddrBitBRAM downto minAddrBit);
-      memAWrite       : in  std_logic_vector(wordSize-1 downto 0);
-      memARead        : out std_logic_vector(wordSize-1 downto 0);
-      memBWriteEnable : in  std_logic;
-      memBAddr        : in  std_logic_vector(maxAddrBitBRAM downto minAddrBit);
-      memBWrite       : in  std_logic_vector(wordSize-1 downto 0);
-      memBRead        : out std_logic_vector(wordSize-1 downto 0)
-      );
-  end component stackram;
+	type ZPU_ToROM is record
+		memAWriteEnable : std_logic;
+		memAAddr : std_logic_vector(maxAddrBitBRAM downto minAddrBit);
+		memAWrite : std_logic_vector(wordSize-1 downto 0);
+		memBWriteEnable : std_logic;
+		memBAddr : std_logic_vector(maxAddrBitBRAM downto minAddrBit);
+		memBWrite : std_logic_vector(wordSize-1 downto 0);
+	end record;
+	type ZPU_FromROM is record
+		memARead : std_logic_vector(wordSize-1 downto 0);
+		memBRead : std_logic_vector(wordSize-1 downto 0);
+	end record;
+
 
   component dram is
     port (
@@ -147,7 +147,9 @@ package zpupkg is
       out_mem_readEnable  : out std_logic;
 --      mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
       interrupt           : in  std_logic;
-      break               : out std_logic
+      break               : out std_logic;
+		from_rom : in ZPU_FromROM;
+		to_rom : out ZPU_ToROM
       );
   end component zpu_core;
 
