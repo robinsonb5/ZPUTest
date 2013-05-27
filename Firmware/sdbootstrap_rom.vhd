@@ -56,7 +56,6 @@ type ram_type is array(natural range 0 to ((2**(maxAddrBitBRAM+1))/4)-1) of std_
 
 shared variable ram : ram_type :=
 (
-
      0 => x"a08080f4",
      1 => x"04000000",
      2 => x"800b810b",

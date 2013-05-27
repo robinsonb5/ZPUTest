@@ -524,7 +524,6 @@ set_global_assignment -name VHDL_FILE ../RTL/ZPUTest.vhd
 set_global_assignment -name VHDL_FILE ../RTL/zpupkg.vhd
 set_global_assignment -name VHDL_FILE ../RTL/zpu_config.vhd
 set_global_assignment -name VHDL_FILE ../RTL/zpu_core_small_bramstack.vhd
-set_global_assignment -name VHDL_FILE ../RTL/stackram.vhd
 set_global_assignment -name SIGNALTAP_FILE stp1.stp
 set_global_assignment -name SDC_FILE ZPUTest.sdc
 set_global_assignment -name VHDL_FILE ../RTL/simple_uart.vhd
@@ -533,14 +532,9 @@ set_global_assignment -name VHDL_FILE ../RTL/chargen.vhd
 set_global_assignment -name VHDL_FILE ../RTL/vga_controller.vhd
 set_global_assignment -name VHDL_FILE ../RTL/video_vga_dither.vhd
 set_global_assignment -name VHDL_FILE ../RTL/video_vga_master.vhd
-set_global_assignment -name QIP_FILE ../Generated/CharRAM.qip
-set_global_assignment -name QIP_FILE ../Generated/CharRom.qip
 set_global_assignment -name QIP_FILE ../Generated/DMACacheRAM.qip
 set_global_assignment -name VHDL_FILE ../RTL/spi.vhd
 set_global_assignment -name VHDL_FILE ../RTL/sdram.vhd
-set_global_assignment -name VERILOG_FILE ../RTL/TwoWayCache.v
-set_global_assignment -name QIP_FILE ../Generated/CacheBlockRAM.qip
-set_global_assignment -name QIP_FILE ../Generated/Cache_DataRAM.qip
 set_location_assignment PIN_AD25 -to SD_CLK
 set_location_assignment PIN_Y21 -to SD_CMD
 set_location_assignment PIN_AD24 -to SD_DAT
@@ -634,7 +628,6 @@ set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[29] -t
 set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[30] -to "ZPUTest:myZPUTest|mem_read[7]" -section_id auto_signaltap_0
 set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[31] -to "ZPUTest:myZPUTest|mem_read[8]" -section_id auto_signaltap_0
 set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[32] -to "ZPUTest:myZPUTest|mem_read[9]" -section_id auto_signaltap_0
-set_global_assignment -name QIP_FILE ../Generated/ZPU_StackRAM.qip
 set_location_assignment PIN_N1 -to SW[10]
 set_location_assignment PIN_P1 -to SW[11]
 set_location_assignment PIN_P2 -to SW[12]

@@ -9,7 +9,9 @@ entity ZPUTest is
 		sdram_rows : integer := 12;
 		sdram_cols : integer := 8;
 		sysclk_frequency : integer := 1000; -- Sysclk frequency * 10
-		spi_maxspeed : integer := 4	-- lowest acceptable timer DIV7 value
+		spi_maxspeed : integer := 4;	-- lowest acceptable timer DIV7 value
+		manifest_file1 : std_logic_vector(31 downto 0) := X"534c4944"; -- "SLID"
+		manifest_file2 : std_logic_vector(31 downto 0) := X"45534857" -- "ESHW"
 	);
 	port (
 		clk 			: in std_logic;
@@ -509,11 +511,11 @@ begin
 									currentstate<=WAITSPIR;
 
 								when X"F8" => -- Filename 1
-									mem_read(31 downto 0)<=X"534c4944"; -- "SLID"
+									mem_read(31 downto 0)<=manifest_file1; -- "SLID"
 									mem_busy<='0';
 
 								when X"FC" => -- Filename 2
-									mem_read(31 downto 0)<=X"45534857"; -- "ESHW"
+									mem_read(31 downto 0)<=manifest_file2; -- "ESHW"
 									mem_busy<='0';
 
 								when others =>

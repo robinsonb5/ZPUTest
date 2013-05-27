@@ -43,8 +43,10 @@ ROMGEN = zpuromgen
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(BOOT_PRJ).mif $(BOOT_PRJ).bin $(BOOT_PRJ).srec $(BOOT_PRJ).rpt \
-		$(FBTEST_PRJ).bin $(FBTEST_PRJ).rpt
+all: $(BUILD_DIR) $(BOOT_PRJ).bin $(BOOT_PRJ).rpt
+
+mif: $(BOOT_PRJ).mif
+
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(BOOT_PRJ).mif $(BOOT_PRJ).rom *~ */*.o $(ROMGEN) *.bin
 
