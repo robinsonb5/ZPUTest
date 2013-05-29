@@ -8,6 +8,9 @@
 #define STACKSIZE 1024
 #define STACKOFFSET 0x04000000
 
+// FIXME - make memory-mapped stack optional.
+// FIXME - replicate core generic options.
+
 class ZPUStack
 {
 	public:
@@ -55,11 +58,14 @@ class ZPUStack
 class ZPUMemory
 {
 	public:
-	ZPUMemory() : uartbusyctr(0)
+	ZPUMemory(int ramsize) : uartbusyctr(0), ram(0), ramsize(ramsize)
 	{
+		ram=new int[ramsize/4];
 	}
 	virtual ~ZPUMemory()
 	{
+		if(ram)
+			delete[] ram;
 	}
 	virtual int Read(unsigned int addr)
 	{
@@ -87,6 +93,9 @@ class ZPUMemory
 					return(0x100);
 				}
 				break;
+			default:
+				if(addr<ramsize)
+					return(ram[addr/4]);
 		}
 		return(0);
 	}
@@ -96,6 +105,7 @@ class ZPUMemory
 		{
 			case 0xffffff84:
 				Debug[TRACE] << std::endl << "Writing " << char(v) << " to UART" << std::endl << std::endl;
+				std::cout << char(v);
 				break;
 
 			case 0xffffff88:
@@ -117,18 +127,23 @@ class ZPUMemory
 			case 0xffffffcc:
 				Debug[TRACE] << std::endl << "Writing " << v << " to SPI_pump" << std::endl << std::endl;
 				break;
+			default:
+				if(addr<ramsize)
+					ram[addr/4]=v;
 		}
 	}
 	virtual unsigned char &operator[](const int idx)=0;
 	protected:
 	int uartbusyctr;
+	int *ram;
+	int ramsize;
 };
 
 
 class ZPUProgram : public BinaryBlob, public ZPUMemory
 {
 	public:
-	ZPUProgram(const char *filename) : BinaryBlob(filename), ZPUMemory()
+	ZPUProgram(const char *filename, int ramsize=8*1024*1024) : BinaryBlob(filename), ZPUMemory(ramsize)
 	{
 	}
 	~ZPUProgram()
@@ -422,7 +437,7 @@ int main(int argc, char **argv)
 	{
 		ZPUProgram prg(argv[1]);
 		ZPUSim sim(prg);
-		sim.Run(50000);
+		sim.Run();
 	}
 	return(0);
 }
