@@ -10,6 +10,7 @@ entity ZPUTest is
 		sdram_cols : integer := 8;
 		sysclk_frequency : integer := 1000; -- Sysclk frequency * 10
 		spi_maxspeed : integer := 4;	-- lowest acceptable timer DIV7 value
+		run_from_ram : boolean := true; -- Do we need to run code from SDRAM
 		manifest_file1 : std_logic_vector(31 downto 0) := X"534c4944"; -- "SLID"
 		manifest_file2 : std_logic_vector(31 downto 0) := X"45534857" -- "ESHW"
 	);
@@ -350,7 +351,7 @@ spi : entity work.spi_interface
 		IMPL_SHIFT => true,
 		IMPL_XOR => true,
 		REMAP_STACK => true,
-		EXECUTE_RAM => false -- Save some LEs by omitting Execute from RAM support
+		EXECUTE_RAM => run_from_ram -- We can save some LEs by omitting Execute from RAM support
 	)
 	port map (
 		clk                 => clk,

@@ -5,6 +5,9 @@
 #include "binaryblob.h"
 #include "debug.h"
 
+#define STACKSIZE 1024
+#define STACKOFFSET 0x04000000
+
 class ZPUStack
 {
 	public:
@@ -21,7 +24,9 @@ class ZPUStack
 	}
 	int &operator[](const int idx)
 	{
-		int i=idx/4;
+		int i=(idx-STACKOFFSET)/4;
+		if(idx<STACKOFFSET)
+			Debug[ERROR] << "Stack pointer missing offset!";
 		if(i<0)
 			Debug[WARN] << "Stack underflow!";
 		if(i>=size)
@@ -169,7 +174,7 @@ class ZPUProgram : public BinaryBlob, public ZPUMemory
 class ZPUSim 
 {
 	public:
-	ZPUSim(ZPUMemory &prg,int stacksize=64) : prg(prg), stack(stacksize)
+	ZPUSim(ZPUMemory &prg,int stacksize=STACKSIZE) : prg(prg), stack(stacksize)
 	{		
 	}
 	~ZPUSim()
@@ -180,7 +185,7 @@ class ZPUSim
 		Debug[TRACE] << "Starting simulation" << std::endl;
 		Debug[TRACE] << std::hex << std::endl;
 		pc=0;
-		sp=stack.GetSize()*4-8;
+		sp=STACKOFFSET+stack.GetSize()*4-8;
 		bool run=true;
 
 		bool immediate_continuation=false;
@@ -237,7 +242,11 @@ class ZPUSim
 						case 0x8: // load
 							{
 								int addr=Pop();
-								Push(prg.Read(addr));
+								// FIXME - tidy up address decoding
+								if((addr<0xf0000000) && (addr>STACKOFFSET))
+									Push(stack[addr]);
+								else
+									Push(prg.Read(addr));
 								mnem<<("load");
 							}
 							break;
@@ -245,7 +254,10 @@ class ZPUSim
 							{
 								int addr=Pop();
 								int v=Pop();
-								prg.Write(addr,v);
+								if((addr<0xf0000000) && (addr>STACKOFFSET))
+									stack[addr]=v;
+								else
+									prg.Write(addr,v);
 								mnem<<"store";
 							}
 							break;
