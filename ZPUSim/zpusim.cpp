@@ -345,6 +345,7 @@ class ZPUSim
 				}
 				else if((opcode&0xe0)==0x20) // emulate
 				{
+					int a,b;
 					switch(opcode)
 					{
 						case 55:	// eqbranch
@@ -379,14 +380,35 @@ class ZPUSim
 
 						case 49:	// sub
 							mnem<<"sub ";
-							Push(-(Pop()-Pop()));
+							a=Pop(); b=Pop();
+							Push(b-a);
 							break;
 
 						case 61: // pushspadd
 							mnem<<"pushspadd ";
 							Push(sp+Pop()*4);
 							break;
+#if 0
+						case 36: // lessthan
+							a=Pop(); b=Pop();
+							Push(a<b ? 1 : 0);
+							break;
 
+						case 37: // lessthanorequal
+							a=Pop(); b=Pop();
+							Push(a<=b ? 1 : 0);
+							break;
+
+						case 38: // ulessthan
+							a=Pop(); b=Pop();
+							Push(((unsigned int)a)<((unsigned int)b) ? 1 : 0);
+							break;
+
+						case 39: // ulessthanorequal
+							a=Pop(); b=Pop();
+							Push(((unsigned int)a)<=((unsigned int)b) ? 1 : 0);
+							break;
+#endif
 						default:
 							{
 								int op=opcode&0x1f;
