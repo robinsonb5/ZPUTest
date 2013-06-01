@@ -7,15 +7,15 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
-MINSTARTUP_SRC = mincrt0.s
-MINSTARTUP_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(MINSTARTUP_SRC))
+MINSTARTUP_SRC = ../Common/mincrt0.s
+MINSTARTUP_OBJ = $(patsubst ../Common/%.s,$(BUILD_DIR)/%.o,$(MINSTARTUP_SRC))
 
-STARTUP_SRC = crt0.s
-STARTUP_OBJ = $(patsubst %.s,$(BUILD_DIR)/%.o,$(STARTUP_SRC))
+COMMON_SRC = ../Common/minisoc_hardware.c ../Common/small_printf.c
+COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
 BOOT_PRJ = boot
-BOOT_SRC = boot.c spi.c sdboot.c spi.h fat.c fat.h minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h swap.c # spi.c
-BOOT_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
+BOOT_SRC = boot.c spi.c spi.h fat.c fat.h minisoc_hardware.c swap.c # spi.c
+BOOT_OBJ = $(COMMON_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
 
 FBTEST_PRJ = fbtest
 FBTEST_SRC = fbtest.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
@@ -31,13 +31,11 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
-CFLAGS  = -I. -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -I../Common/ -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
 LFLAGS  = -Wl,--relax -nostdlib -Os
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
-
-ROMGEN = zpuromgen
 
 # Libraries.
 LIBS       =
@@ -48,14 +46,11 @@ all: $(BUILD_DIR) $(BOOT_PRJ).bin $(BOOT_PRJ).rpt
 mif: $(BOOT_PRJ).mif
 
 clean:
-	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(BOOT_PRJ).mif $(BOOT_PRJ).rom *~ */*.o $(ROMGEN) *.bin
+	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(BOOT_PRJ).mif $(BOOT_PRJ).rom *~ */*.o *.bin
 
 link:
 	rm -f $(BOOT_PRJ).mif $(BOOT_PRJ).elf
 	make
-
-$(ROMGEN): $(ROMGEN).c
-	gcc  -o $@ $<
 
 # Convert ELF binary to bin file.
 %.bin: %.elf
@@ -80,19 +75,22 @@ $(ROMGEN): $(ROMGEN).c
 
 # Link - this produces an ELF binary.
 
-$(BOOT_PRJ).elf: $(MINSTARTUP_OBJ) $(BOOT_OBJ)
+$(BOOT_PRJ).elf: $(MINSTARTUP_OBJ) $(BOOT_OBJ) $(COMMON_OBJ)
 	$(LD) $(LFLAGS) -T boot.ld -o $@ $+ $(LIBS)
 
 $(FBTEST_PRJ).elf: $(STARTUP_OBJ) $(FBTEST_OBJ)
 	$(LD) $(LFLAGS) -T fbtest.ld -o $@ $+ $(LIBS)
 
-%.rom: %.bin $(ROMGEN)
-	./$(ROMGEN) $< >$@
-
 $(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS)  -o $@ -c $<
 
+$(BUILD_DIR)/%.o: ../Common/%.c
+	$(CC) $(CFLAGS)  -o $@ -c $<
+
 $(BUILD_DIR)/%.o: %.s
+	$(AS) -o $@ $<
+
+$(BUILD_DIR)/%.o: ../Common/%.s
 	$(AS) -o $@ $<
 
 $(BUILD_DIR):

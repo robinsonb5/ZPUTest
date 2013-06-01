@@ -8,11 +8,12 @@ DUMP    = $(BASE)-objdump
 BUILD_DIR=zpu_obj
 
 DHRY_PRJ = dhry
-DHRY_SRC_C = dhry_1.c dhry_2.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
-DHRY_SRC_S = crt0.s
+COMMON_SRC = ../Common/minisoc_hardware.c ../Common/minisoc_hardware.h ../Common/small_printf.c ../Common/small_printf.h
+COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
+
+DHRY_SRC_C = dhry_1.c dhry_2.c 
 DHRY_OBJ_C = $(patsubst %.c,$(BUILD_DIR)/%.o,$(DHRY_SRC_C))
-DHRY_OBJ_S = $(patsubst %.s,$(BUILD_DIR)/%.o,$(DHRY_SRC_S))
-DHRY_OBJ = $(DHRY_OBJ_C)
+DHRY_OBJ = $(DHRY_OBJ_C) $(COMMON_OBJ)
 
 LINKMAP  = dhry.ld
 LIBDIR   = 
@@ -22,29 +23,24 @@ LIBDIR   =
 #  -mno-call -mno-neqbranch -mno-pushspadd \
 #  -mno-neg -mno-mod -mno-div
 
-ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-mult -mno-div # -mno-neg
+ZPUOPTS= # -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-mult -mno-div # -mno-neg
 
-CFLAGS  = -I. -c -O6 $(ZPUOPTS) -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -I../Common/ -c -O6 $(ZPUOPTS) -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
 LFLAGS  = -mboard=abel -O6 -Wl,--relax
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 
-ROMGEN = zpuromgen
-
 # Libraries.
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(DHRY_PRJ).bin $(DHRY_PRJ).rpt
+all: $(BUILD_DIR) $(DHRY_PRJ).bin
 
 mif: $(DHRY_PRJ).mif
 
 clean:
-	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif $(PRJ).rom *~ */*.o $(ROMGEN) *.bin
-
-$(ROMGEN): $(ROMGEN).c
-	gcc  -o $@ $<
+	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif *~ */*.o *.bin
 
 # Convert ELF binary to bin file.
 %.bin: %.elf
@@ -62,25 +58,16 @@ $(ROMGEN): $(ROMGEN).c
 %.mif: %.srec
 	srec_cat $< -o $@ -mif 32
 
-%.rpt: %.elf
-#	$(DUMP) -x $< | grep _romend   #  End of Boot ROM
-#	$(DUMP) -x $< | grep __bss_start__   #  Start of BSS data in SDRAM
-#	$(DUMP) -x $< | grep __bss_end__   #  End of BSS data in SDRAM
-	echo done
-
 # Link - this produces an ELF binary.
 
 $(DHRY_PRJ).elf: $(DHRY_OBJ)
 	$(LD) $(LFLAGS) -o $@ $+ $(LIBS)
 
-%.rom: %.bin $(ROMGEN)
-	./$(ROMGEN) $< >$@
+$(BUILD_DIR)/%.o: ../Common/%.c
+	$(CC) $(CFLAGS)  -o $@ -c $<
 
 $(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS)  -o $@ -c $<
-
-$(BUILD_DIR)/%.o: %.s
-	$(AS) -o $@ $<
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
