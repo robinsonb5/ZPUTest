@@ -2,6 +2,8 @@
 #include <string>
 #include <sstream>
 
+#include <getopt.h>
+
 #include "binaryblob.h"
 #include "debug.h"
 
@@ -58,7 +60,7 @@ class ZPUStack
 class ZPUMemory
 {
 	public:
-	ZPUMemory(int ramsize) : uartbusyctr(0), ram(0), ramsize(ramsize)
+	ZPUMemory(int ramsize) : uartbusyctr(0), ram(0), ramsize(ramsize), uartin(0)
 	{
 		ram=new int[ramsize/4];
 	}
@@ -66,6 +68,10 @@ class ZPUMemory
 	{
 		if(ram)
 			delete[] ram;
+	}
+	virtual void SetUARTIn(const char *c)
+	{
+		uartin=c;
 	}
 	virtual int Read(unsigned int addr)
 	{
@@ -89,8 +95,15 @@ class ZPUMemory
 				}
 				else
 				{
+					int result;
 					uartbusyctr=1;	// Make the UART pretend to be busy for the next n cycles
-					return(0x100);
+					if(uartin)
+						result=0x300 | (unsigned char)*uartin++;	// Received byte ready...
+
+					if(result==0x300)	// End of string?
+						uartin=0;
+
+					return(result);
 				}
 				break;
 			default:
@@ -137,6 +150,7 @@ class ZPUMemory
 	int uartbusyctr;
 	int *ram;
 	int ramsize;
+	const char *uartin;
 };
 
 
@@ -189,18 +203,90 @@ class ZPUProgram : public BinaryBlob, public ZPUMemory
 class ZPUSim 
 {
 	public:
-	ZPUSim(ZPUMemory &prg,int stacksize=STACKSIZE) : prg(prg), stack(stacksize)
+	ZPUSim(int stacksize=STACKSIZE) : stack(stacksize), initpc(0), steps(-1)
 	{		
 	}
+
 	~ZPUSim()
 	{
 	}
-	void Run(int steps=-1)
+
+	int ParseOptions(int argc,char *argv[])
+	{
+		static struct option long_options[] =
+		{
+			{"help",no_argument,NULL,'h'},
+			{"steps",required_argument,NULL,'s'},
+			{"boot",no_argument,NULL,'b'},
+			{"report",required_argument,NULL,'r'},
+			{0, 0, 0, 0}
+		};
+
+		while(1)
+		{
+			int c;
+			c = getopt_long(argc,argv,"hs:r:b",long_options,NULL);
+			if(c==-1)
+				break;
+			switch (c)
+			{
+				case 'h':
+					printf("Usage: %s [options] <UART input text>\n",argv[0]);
+					printf("\t -h --help\t\tdisplay this message\n");
+					printf("\t -s --steps\t\tSimulate a specific number of steps (default: indefinite)\n");
+					printf("\t -r --report\t\tset reporting level - 0 for silent, 4 for verbose");
+					printf("\t -b --boot\t\tset initial PC to boot ROM");
+					throw 0;
+					break;
+				case 'b':
+					initpc=0x04000000;
+					break;
+				case 's':
+					steps=atoi(optarg);
+					break;
+				case 'r':
+					Debug.SetLevel(DebugLevel(atoi(optarg)));
+					break;
+			}
+		}
+		return(optind);
+	}
+
+	
+
+	int GetOpcode(ZPUMemory &prg, int pc)
+	{
+		if((pc<0xf0000000) && (pc&STACKOFFSET))
+		{
+			int t=stack[pc&~3];
+			int opcode=t>>((3-(pc&3))<<3);
+			return(opcode&0xff);
+		}
+		else
+			return((unsigned char)prg[pc]);
+	}
+
+	void CopyProgramToStack(ZPUProgram &prg)
+	{
+		int s=prg.GetSize()*4;
+		int i=0;
+		while(i<s)
+		{
+			int t=(prg[i]<<24)|(prg[i+1]<<16)|(prg[i+2]<<8)|(prg[i+3]);
+			stack[STACKOFFSET+i]=t;
+			i+=4;
+		}
+	}
+
+	void Run(ZPUProgram &prg)
 	{
 		Debug[TRACE] << "Starting simulation" << std::endl;
 		Debug[TRACE] << std::hex << std::endl;
-		pc=0;
+		pc=initpc;
+		if(initpc==STACKOFFSET)
+			CopyProgramToStack(prg);
 		sp=STACKOFFSET+stack.GetSize()*4-8;
+
 		bool run=true;
 
 		bool immediate_continuation=false;
@@ -208,7 +294,7 @@ class ZPUSim
 		while(run)
 		{
 			int nextpc;
-			int opcode=(unsigned char)prg[pc];
+			int opcode=GetOpcode(prg,pc);
 			std::stringstream mnem;
 			mnem << std::hex;
 
@@ -368,6 +454,41 @@ class ZPUSim
 							}
 							break;
 
+						case 42:	// lshiftright
+							mnem<<"lshiftright ";
+							{
+								int sh=Pop()&0x3f;
+								unsigned int v=(unsigned int)Pop();
+								Push(v>>sh);
+							}
+							break;
+
+						case 43:	// ashiftleft
+							mnem<<"ashiftleft ";
+							{
+								int sh=Pop()&0x3f;
+								int v=(int)Pop();
+								Push(v<<sh);
+							}
+							break;
+
+						case 44:	// ashiftright
+							mnem<<"ashiftright ";
+							{
+								int sh=Pop()&0x3f;
+								int v=(int)Pop();
+								Push(v>>sh);
+							}
+							break;
+
+						case 45:	// call
+							mnem<<"call ";
+							{
+								nextpc=Pop();
+								Push(pc+1);
+							}
+							break;
+
 						case 46:	// eq
 							mnem<<"eq ";
 							Push(Pop()==Pop() ? 1 : 0);
@@ -445,21 +566,41 @@ class ZPUSim
 		stack[sp]=v;
 	}
 	protected:
-	ZPUMemory &prg;
 	ZPUStack stack;
 	int pc;
 	int sp;
+	int initpc;
+	int steps;
 };
 
 
 int main(int argc, char **argv)
 {
-	Debug.SetLevel(TRACE);
-	if(argc>1)
+	try
 	{
-		ZPUProgram prg(argv[1]);
-		ZPUSim sim(prg);
-		sim.Run();
+		Debug.SetLevel(TRACE);
+		if(argc>1)
+		{
+			int i;
+			char *uartin=0;
+			ZPUSim sim;
+			i=sim.ParseOptions(argc,argv);
+			ZPUProgram prg(argv[i++]);
+			if(i<argc)
+			{
+				Debug[TRACE] << "Setting uartin to " << argv[i] << std::endl;
+				prg.SetUARTIn(argv[i++]);
+			}
+			else
+			{
+				Debug[TRACE] << "All arguments used: " << i << ", " << argc << std::endl;
+			}
+			sim.Run(prg);
+		}
+	}
+	catch(const char *err)
+	{
+		std::cerr << "Error: " << err << std::endl;
 	}
 	return(0);
 }

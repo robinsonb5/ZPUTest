@@ -12,9 +12,9 @@ zpuromgen: zpuromgen.c
 
 %.gen: 
 	make -C $*/
-	sed 's/dualportram/$*_rom/' >$*_rom.vhd <rom_prologue
-	./zpuromgen $*/$*.bin >>$*_rom.vhd
-	cat >>$*_rom.vhd rom_epilogue
+	sed 's/dualportram/$*_ROM/' >$*_ROM.vhd <rom_prologue
+	./zpuromgen $*/$*.bin >>$*_ROM.vhd
+	cat >>$*_ROM.vhd rom_epilogue
 
 #boot.gen:
 #	make -C SDBootstrap/

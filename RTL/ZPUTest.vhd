@@ -292,7 +292,7 @@ end process;
 	myuart : entity work.simple_uart
 		generic map(
 			enable_tx=>true,
-			enable_rx=>false
+			enable_rx=>true
 		)
 		port map(
 			clk => clk,
@@ -331,7 +331,7 @@ spi : entity work.spi_interface
 
 -- Boot ROM
 
-	myrom : entity work.sdbootstrap_rom
+	myrom : entity work.RS232Bootstrap_ROM
 	port map (
 	clk => clk,
 	from_zpu => zpu_to_rom,
@@ -372,24 +372,6 @@ spi : entity work.spi_interface
 		to_rom => zpu_to_rom
 	);
 
-
---	externram_wren <= mem_writeEnable when mem_addr(31 downto 16)=X"0000" else '0';
-
---	ram : entity work.ExternalRAM
---	port map (
---		address => mem_addr(12 downto 2),
---		clock	=> clk,
---		data => X"00000000", -- mem_write,
---		wren => '0', -- externram_wren,
---		q => externram_data
---	);
-
---	rom : entity work.BootROM
---	port map (
---		address => mem_addr(12 downto 2),
---		clock	=> clk,
---		q => externram_data
---	);
 
 process(clk)
 begin
