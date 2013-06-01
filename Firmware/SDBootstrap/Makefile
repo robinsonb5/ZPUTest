@@ -13,13 +13,9 @@ MINSTARTUP_OBJ = $(patsubst ../Common/%.s,$(BUILD_DIR)/%.o,$(MINSTARTUP_SRC))
 COMMON_SRC = ../Common/minisoc_hardware.c ../Common/small_printf.c
 COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
-BOOT_PRJ = boot
-BOOT_SRC = boot.c spi.c spi.h fat.c fat.h minisoc_hardware.c swap.c # spi.c
+BOOT_PRJ = SDBootstrap
+BOOT_SRC = boot.c spi.c spi.h fat.c fat.h swap.c
 BOOT_OBJ = $(COMMON_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
-
-FBTEST_PRJ = fbtest
-FBTEST_SRC = fbtest.c minisoc_hardware.c minisoc_hardware.h small_printf.c small_printf.h
-FBTEST_OBJ = $(patsubst %.c,$(BUILD_DIR)/%.o,$(FBTEST_SRC))
 
 LINKMAP  = boot.ld
 LIBDIR   = 
@@ -31,7 +27,7 @@ LIBDIR   =
 
 ZPUOPTS= -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-byteop -mno-shortop -mno-neg # No-neg requires bugfixed toolchain
 
-CFLAGS  = -I. -I../Common/ -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY -DDISABLE_PRINTF -DDISABLE_UART
+CFLAGS  = -I. -I../Common/ -c -Os $(ZPUOPTS) -DPRINTF_HEX_ONLY -DDISABLE_PRINTF -DDISABLE_UART_TX -DDISABLE_UART_RX
 AFLAGS  = 
 LFLAGS  = -Wl,--relax -nostdlib -Os
 CP_HEXFLAGS = -Oihex
@@ -75,11 +71,8 @@ link:
 
 # Link - this produces an ELF binary.
 
-$(BOOT_PRJ).elf: $(MINSTARTUP_OBJ) $(BOOT_OBJ) $(COMMON_OBJ)
+$(BOOT_PRJ).elf: $(MINSTARTUP_OBJ) $(BOOT_OBJ)
 	$(LD) $(LFLAGS) -T boot.ld -o $@ $+ $(LIBS)
-
-$(FBTEST_PRJ).elf: $(STARTUP_OBJ) $(FBTEST_OBJ)
-	$(LD) $(LFLAGS) -T fbtest.ld -o $@ $+ $(LIBS)
 
 $(BUILD_DIR)/%.o: %.c
 	$(CC) $(CFLAGS)  -o $@ -c $<

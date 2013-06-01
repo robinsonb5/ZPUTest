@@ -7,7 +7,7 @@ DUMP    = $(BASE)-objdump
 
 BUILD_DIR=zpu_obj
 
-DHRY_PRJ = dhry
+DHRY_PRJ = Dhrystone
 COMMON_SRC = ../Common/minisoc_hardware.c ../Common/minisoc_hardware.h ../Common/small_printf.c ../Common/small_printf.h
 COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
