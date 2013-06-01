@@ -388,7 +388,7 @@ class ZPUSim
 							mnem<<"pushspadd ";
 							Push(sp+Pop()*4);
 							break;
-#if 0
+
 						case 36: // lessthan
 							a=Pop(); b=Pop();
 							Push(a<b ? 1 : 0);
@@ -408,7 +408,7 @@ class ZPUSim
 							a=Pop(); b=Pop();
 							Push(((unsigned int)a)<=((unsigned int)b) ? 1 : 0);
 							break;
-#endif
+
 						default:
 							{
 								int op=opcode&0x1f;

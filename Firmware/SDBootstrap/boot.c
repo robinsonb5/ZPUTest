@@ -1,23 +1,24 @@
-/* Firmware for loading files from SD card.
-   Part of the ZPUTest project by Alastair M. Robinson.
-   SPI and FAT code borrowed from the Minimig project.
+/*	Firmware for loading files from SD card.
+	Part of the ZPUTest project by Alastair M. Robinson.
+	SPI and FAT code borrowed from the Minimig project.
 
-   The low 64k of RAM currently goes to BlockRAM
-   (smaller ROMs are aliased to fill the 64k)
-   and halfword and byte writes to BlockRAM aren't
-   currently supported.
-   For this reason, initialised global variables should be
-   declared as int, not short or char.
-   Uninitialised globals will automatically end up
-   in SDRAM thanks to the linker script, which in most
-   cases solves the problem.
+	This boot ROM ends up stored in the ZPU stack RAM
+	which in the current incarnation of the project is
+	memory-mapped to 0x04000000
+	Halfword and byte writes to the stack RAM aren't
+	currently supported in hardware, so if you use
+    hardware storeh/storeb, and initialised global
+    variables in the boot ROM should be declared as
+    int, not short or char.
+	Uninitialised globals will automatically end up
+	in SDRAM thanks to the linker script, which in most
+	cases solves the problem.
 */
 
 
 #include "minisoc_hardware.h"
 #include "stdarg.h"
 
-#include "sdboot.h"
 #include "spi.h"
 #include "fat.h"
 #include "small_printf.h"
