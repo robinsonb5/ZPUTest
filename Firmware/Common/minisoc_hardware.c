@@ -18,9 +18,10 @@ void putserial(char *msg)
 #ifndef DISABLE_UART_RX
 char getserial()
 {
-	while(!(HW_PER(PER_UART)&(1<<PER_UART_RXINT)))
-		;
-	return(HW_PER(PER_UART));
+	int r=0;
+	while(!(r&(1<<PER_UART_RXINT)))
+		r=HW_PER(PER_UART);
+	return(r);
 }
 #endif
 

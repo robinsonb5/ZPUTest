@@ -117,8 +117,16 @@ class ZPUMemory
 		switch(addr)
 		{
 			case 0xffffff84:
-				Debug[TRACE] << std::endl << "Writing " << char(v) << " to UART" << std::endl << std::endl;
-				std::cout << char(v);
+				if(v)
+				{
+					Debug[TRACE] << std::endl << "Writing " << char(v) << " to UART" << std::endl << std::endl;
+					std::cout << char(v);
+				}
+				else
+				{
+					Debug[TRACE] << std::endl << "Writing (nul) to UART" << std::endl << std::endl;
+					std::cout << "(nul)";
+				}
 				break;
 
 			case 0xffffff88:
