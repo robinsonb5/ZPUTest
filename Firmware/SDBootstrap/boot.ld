@@ -3,9 +3,9 @@
 
 MEMORY
 {
-  BOOT (rx) : ORIGIN = 0x04000000, LENGTH = 0x00000008 /* 8192 bytes */
+  BOOT (rx) : ORIGIN = 0x04000000, LENGTH = 0x00000008 /* Boot section contains just the initial jump */
   TRAP (rx) : ORIGIN = 0x04000008, LENGTH = 0x00000000 /* Dummy region to ensure we don't have any Initialized writable data */
-  CODE (rx) : ORIGIN = 0x04000008, LENGTH = 0x00001ff8 /* 8192 bytes */
+  CODE (rx) : ORIGIN = 0x04000008, LENGTH = 0x00000ff8 /* Up to the end of the first 4K */
   SDRAM (rw)  : ORIGIN = 0x007ff000, LENGTH = 0x00001000 /* 4k at top end of DE1's SDRAM */
   STACK (rw) : ORIGIN = 0x04000000, LENGTH = 0x00000400 /* 1024 bytes */
 }

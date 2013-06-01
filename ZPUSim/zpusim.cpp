@@ -78,16 +78,16 @@ class ZPUMemory
 		switch(addr)
 		{
 			case 0xffffffc4:
-				Debug[TRACE] << std::endl << "Reading from SPI_CS" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Reading from SPI_CS" << std::endl << std::endl;
 				break;
 			case 0xffffffc8:
-				Debug[TRACE] << std::endl << "Reading from SPI" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Reading from SPI" << std::endl << std::endl;
 				break;
 			case 0xffffffcc:
-				Debug[TRACE] << std::endl << "Reading from SPI_PUMP" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Reading from SPI_PUMP" << std::endl << std::endl;
 				break;
 			case 0xffffff84:
-				Debug[TRACE] << std::endl << "Reading from UART" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Reading from UART" << std::endl << std::endl;
 				if(uartbusyctr)
 				{
 					--uartbusyctr;
@@ -119,34 +119,34 @@ class ZPUMemory
 			case 0xffffff84:
 				if(v)
 				{
-					Debug[TRACE] << std::endl << "Writing " << char(v) << " to UART" << std::endl << std::endl;
+					Debug[WARN] << std::endl << "Writing " << char(v) << " to UART" << std::endl << std::endl;
 					std::cout << char(v);
 				}
 				else
 				{
-					Debug[TRACE] << std::endl << "Writing (nul) to UART" << std::endl << std::endl;
+					Debug[WARN] << std::endl << "Writing (nul) to UART" << std::endl << std::endl;
 					std::cout << "(nul)";
 				}
 				break;
 
 			case 0xffffff88:
-				Debug[TRACE] << std::endl << "Setting UART divisor to " << v << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Setting UART divisor to " << v << std::endl << std::endl;
 				break;
 
 			case 0xffffff90:
-				Debug[TRACE] << std::endl << "Writing " << v << " to HEX display" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Writing " << v << " to HEX display" << std::endl << std::endl;
 				break;
 
 			case 0xffffffc4:
-				Debug[TRACE] << std::endl << "Setting spi_cs line " << (v&1 ? "low" : "high" ) << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Setting spi_cs line " << (v&1 ? "low" : "high" ) << std::endl << std::endl;
 				break;
 
 			case 0xffffffc8:
-				Debug[TRACE] << std::endl << "Writing " << v << " to SPI" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Writing " << v << " to SPI" << std::endl << std::endl;
 				break;
 
 			case 0xffffffcc:
-				Debug[TRACE] << std::endl << "Writing " << v << " to SPI_pump" << std::endl << std::endl;
+				Debug[WARN] << std::endl << "Writing " << v << " to SPI_pump" << std::endl << std::endl;
 				break;
 			default:
 				if(addr<ramsize)
@@ -240,11 +240,10 @@ class ZPUSim
 			{
 				case 'h':
 					printf("Usage: %s [options] <UART input text>\n",argv[0]);
-					printf("\t -h --help\t\tdisplay this message\n");
-					printf("\t -s --steps\t\tSimulate a specific number of steps (default: indefinite)\n");
-					printf("\t -r --report\t\tset reporting level - 0 for silent, 4 for verbose");
-					printf("\t -b --boot\t\tset initial PC to boot ROM");
-					throw 0;
+					printf("    -h --help\t  display this message\n");
+					printf("    -s --steps\t  Simulate a specific number of steps (default: indefinite)\n");
+					printf("    -r --report\t  set reporting level - 0 for silent, 4 for verbose\n");
+					printf("    -b --boot\t  set initial PC to boot ROM\n");
 					break;
 				case 'b':
 					initpc=0x04000000;
@@ -288,8 +287,8 @@ class ZPUSim
 
 	void Run(ZPUProgram &prg)
 	{
-		Debug[TRACE] << "Starting simulation" << std::endl;
-		Debug[TRACE] << std::hex << std::endl;
+		Debug[WARN] << "Starting simulation" << std::endl;
+		Debug[ERROR] << std::hex << std::endl;
 		pc=initpc;
 		if(initpc==STACKOFFSET)
 			CopyProgramToStack(prg);
@@ -593,17 +592,20 @@ int main(int argc, char **argv)
 			char *uartin=0;
 			ZPUSim sim;
 			i=sim.ParseOptions(argc,argv);
-			ZPUProgram prg(argv[i++]);
 			if(i<argc)
 			{
-				Debug[TRACE] << "Setting uartin to " << argv[i] << std::endl;
-				prg.SetUARTIn(argv[i++]);
+				ZPUProgram prg(argv[i++]);
+				if(i<argc)
+				{
+					Debug[TRACE] << "Setting uartin to " << argv[i] << std::endl;
+					prg.SetUARTIn(argv[i++]);
+				}
+				else
+				{
+					Debug[TRACE] << "All arguments used: " << i << ", " << argc << std::endl;
+				}
+				sim.Run(prg);
 			}
-			else
-			{
-				Debug[TRACE] << "All arguments used: " << i << ", " << argc << std::endl;
-			}
-			sim.Run(prg);
 		}
 	}
 	catch(const char *err)
