@@ -99,9 +99,14 @@ class ZPUMemory
 					uartbusyctr=1;	// Make the UART pretend to be busy for the next n cycles
 					if(uartin)
 						result=0x300 | (unsigned char)*uartin++;	// Received byte ready...
+					else
+						result=0x300 | (std::cin.get()&0xff);
 
 					if(result==0x300)	// End of string?
 						uartin=0;
+
+					if(std::cin.eof())
+						throw "End of input data";
 
 					return(result);
 				}
@@ -131,6 +136,10 @@ class ZPUMemory
 
 			case 0xffffff88:
 				Debug[WARN] << std::endl << "Setting UART divisor to " << v << std::endl << std::endl;
+				break;
+
+			case 0xffffff8C:
+				Debug[WARN] << std::endl << "Writing to overlay register: " << v << std::endl << std::endl;
 				break;
 
 			case 0xffffff90:
@@ -518,21 +527,25 @@ class ZPUSim
 							break;
 
 						case 36: // lessthan
+							mnem<<"lessthan ";
 							a=Pop(); b=Pop();
 							Push(a<b ? 1 : 0);
 							break;
 
 						case 37: // lessthanorequal
+							mnem<<"lessthanorequal ";
 							a=Pop(); b=Pop();
 							Push(a<=b ? 1 : 0);
 							break;
 
 						case 38: // ulessthan
+							mnem<<"ulessthan ";
 							a=Pop(); b=Pop();
 							Push(((unsigned int)a)<((unsigned int)b) ? 1 : 0);
 							break;
 
 						case 39: // ulessthanorequal
+							mnem<<"ulessthanorequal ";
 							a=Pop(); b=Pop();
 							Push(((unsigned int)a)<=((unsigned int)b) ? 1 : 0);
 							break;
