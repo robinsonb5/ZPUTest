@@ -20,7 +20,7 @@ int SREC_ADDRSIZE;
 int SREC_BYTECOUNT;
 int SREC_TYPE;
 int SREC_COUNTER;
-unsigned char SREC_TEMP;
+int SREC_TEMP;
 
 __inline int DoDecode(int a0,int d0)
 {
@@ -65,44 +65,49 @@ void HandleByte(char d0)
 			{
 				SREC_BYTECOUNT=DoDecode(SREC_BYTECOUNT,d0);
 				printf("Bytecount: %x\n",SREC_BYTECOUNT);
-				Breadcrumb('b');
 			}
 			else if(SREC_COLUMN<=(SREC_ADDRSIZE+3)) // Columns 4 to ... contain the address.
 			{
 				SREC_ADDR=DoDecode(SREC_ADDR,d0); // Called 2, 3 or 4 times, depending on the number of address bits.
 				SREC_COUNTER=1;
 				printf("SREC_ADDR: %x\n",SREC_ADDR);
-				Breadcrumb('a');
 			}
 			else if(SREC_TYPE>0 && SREC_TYPE<=3) // Only types 1, 2 and 3 have data
 			{
 				if(SREC_COLUMN<=((SREC_BYTECOUNT<<1)+1))	// Two characters for each output byte
 				{
 #ifdef DEBUG
-					unsigned char *p=&SREC_TEMP;
+//					unsigned char *p=&SREC_TEMP;
 #else
-					unsigned char *p=(unsigned char *)SREC_ADDR;
+//					unsigned char *p=(unsigned char *)SREC_ADDR;
 #endif
-					*p=DoDecode(*p,d0);
+					SREC_TEMP=DoDecode(SREC_TEMP,d0);
 					--SREC_COUNTER;
 					if(SREC_COUNTER<0)
 					{
-						printf("%x: %x\n",SREC_ADDR,SREC_TEMP);
+						printf("%x: %x\n",SREC_ADDR,SREC_TEMP&0xff);
+#ifndef DEBUG
+						*(unsigned char *)SREC_ADDR=SREC_TEMP;
+#endif
 						++SREC_ADDR;
 						SREC_COUNTER=1;
-						Breadcrumb('w');
 					}
 				}
 				else
 				{
 #ifdef DEBUG
-					unsigned char *p=&SREC_TEMP;
+//					unsigned char *p=&SREC_TEMP;
 #else
-					unsigned char *p=(unsigned char *)SREC_ADDR;
+//					unsigned char *p=(unsigned char *)SREC_ADDR;
 #endif
 					if(SREC_COUNTER==0)
-						*p<<=4;
-					Breadcrumb('f');
+					{
+						SREC_TEMP<<=4;
+#ifndef DEBUG
+						*(unsigned char *)SREC_ADDR=SREC_TEMP;
+#endif
+//						*p<<=4;
+					}
 				}
 			}
 			else if(SREC_TYPE>=7)

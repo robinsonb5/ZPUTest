@@ -105,8 +105,8 @@ class ZPUMemory
 					if(result==0x300)	// End of string?
 						uartin=0;
 
-					if(std::cin.eof())
-						throw "End of input data";
+//					if(std::cin.eof())
+//						throw "End of input data";
 
 					return(result);
 				}
@@ -159,7 +159,10 @@ class ZPUMemory
 				break;
 			default:
 				if(addr<ramsize)
+				{
+					Debug[WARN] << std::endl << "Writing " << v << " to RAM " << addr << std::endl;
 					ram[addr/4]=v;
+				}
 		}
 	}
 	virtual unsigned char &operator[](const int idx)=0;
@@ -174,7 +177,7 @@ class ZPUMemory
 class ZPUProgram : public BinaryBlob, public ZPUMemory
 {
 	public:
-	ZPUProgram(const char *filename, int ramsize=8*1024*1024) : BinaryBlob(filename), ZPUMemory(ramsize)
+	ZPUProgram(const char *filename, int ramsize=8*1024*1024) : BinaryBlob(filename), ZPUMemory(ramsize), base(0)
 	{
 	}
 	~ZPUProgram()
@@ -182,7 +185,7 @@ class ZPUProgram : public BinaryBlob, public ZPUMemory
 	}
 	virtual int Read(unsigned int addr)
 	{
-		if(addr<(size-3))
+		if(((addr-base)>0) && ((addr-base)<(size-3)))
 		{
 			int r=(*this)[addr]<<24;
 			r|=(*this)[addr+1]<<16;
@@ -195,22 +198,27 @@ class ZPUProgram : public BinaryBlob, public ZPUMemory
 	}
 	virtual void Write(unsigned int addr,int v)
 	{
-		if(addr<(size-3))
+		if(((addr-base)>0) && ((addr-base)<(size-3)))
 		{
 			(*this)[addr]=(v>>24)&255;
 			(*this)[addr+1]=(v>>16)&255;
 			(*this)[addr+2]=(v>>8)&255;
 			(*this)[addr+3]=v&255;
-			Debug[WARN] << std::endl << "Writing to " << addr << std::endl;
+			Debug[WARN] << std::endl << "Writing " << v << " to PRG " << addr << std::endl;
 		}
 		else
 			ZPUMemory::Write(addr,v);
+	}
+	void SetBase(int base)
+	{
+		this->base=base;
 	}
 	unsigned char &operator[](int idx)
 	{
 		return(BinaryBlob::operator[](idx));
 	}
 	protected:
+	int base;
 };
 
 
@@ -272,14 +280,19 @@ class ZPUSim
 
 	int GetOpcode(ZPUMemory &prg, int pc)
 	{
-		if((pc<0xf0000000) && (pc&STACKOFFSET))
+		if((pc<0x80000000) && (pc&STACKOFFSET))
 		{
 			int t=stack[pc&~3];
 			int opcode=t>>((3-(pc&3))<<3);
 			return(opcode&0xff);
 		}
 		else
-			return((unsigned char)prg[pc]);
+		{
+			int t=prg.Read(pc&~3);
+			int opcode=t>>((3-(pc&3))<<3);
+			return(opcode&0xff);
+		}
+//			return((unsigned char)prg[pc]);
 	}
 
 	void CopyProgramToStack(ZPUProgram &prg)
@@ -300,7 +313,10 @@ class ZPUSim
 		Debug[ERROR] << std::hex << std::endl;
 		pc=initpc;
 		if(initpc==STACKOFFSET)
+		{
+			prg.SetBase(STACKOFFSET); // We don't want the program appearing in the low page.
 			CopyProgramToStack(prg);
+		}
 		sp=STACKOFFSET+stack.GetSize()*4-8;
 
 		bool run=true;
