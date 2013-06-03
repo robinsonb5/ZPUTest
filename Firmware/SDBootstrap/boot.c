@@ -20,7 +20,7 @@
 #include "stdarg.h"
 
 #include "spi.h"
-#include "fat.h"
+#include "minfat.h"
 #include "small_printf.h"
 
 

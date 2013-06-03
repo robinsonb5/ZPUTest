@@ -44,7 +44,7 @@ JB:
 
 #include "spi.h"
 
-#include "fat.h"
+#include "minfat.h"
 #include "swap.h"
 #include "small_printf.h"
 

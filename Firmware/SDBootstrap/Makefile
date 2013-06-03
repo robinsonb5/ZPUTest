@@ -10,11 +10,11 @@ BUILD_DIR=zpu_obj
 MINSTARTUP_SRC = ../Common/mincrt0.s
 MINSTARTUP_OBJ = $(patsubst ../Common/%.s,$(BUILD_DIR)/%.o,$(MINSTARTUP_SRC))
 
-COMMON_SRC = ../Common/minisoc_hardware.c ../Common/small_printf.c
+COMMON_SRC = ../Common/minisoc_hardware.c ../Common/small_printf.c ../Common/spi.c ../Common/spi.h ../Common/swap.c ../Common/swap.h
 COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
 BOOT_PRJ = SDBootstrap
-BOOT_SRC = boot.c spi.c spi.h fat.c fat.h swap.c
+BOOT_SRC = boot.c minfat.c minfat.h
 BOOT_OBJ = $(COMMON_OBJ) $(patsubst %.c,$(BUILD_DIR)/%.o,$(BOOT_SRC))
 
 LINKMAP  = boot.ld
