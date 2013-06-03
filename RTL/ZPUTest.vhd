@@ -386,9 +386,6 @@ begin
 		mem_busy<='1';
 
 		ser_txgo<='0';
-		if ser_rxint='1' then
-			ser_rxrecv<='1';
-		end if;
 
 		vga_reg_rw<='1';
 		vga_reg_req<='0';
@@ -576,6 +573,11 @@ begin
 				null;
 
 		end case;
+
+		-- Set this after the read operation has potentially cleared it.
+		if ser_rxint='1' then
+			ser_rxrecv<='1';
+		end if;
 
 	end if; -- rising-edge(clk)
 
