@@ -13,7 +13,7 @@ COMMON_SRC = ../Common/minisoc_hardware.c ../Common/minisoc_hardware.h ../Common
 
 COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
-JPEGTEST_SRC_C = main.c syscalls.c malloc.c malloc.h fat.c fat.h
+JPEGTEST_SRC_C = main.c syscalls.c malloc.c malloc.h fat.c fat.h rafile.c rafile.h
 JPEGTEST_OBJ_C = $(patsubst %.c,$(BUILD_DIR)/%.o,$(JPEGTEST_SRC_C))
 JPEGTEST_OBJ = $(JPEGTEST_OBJ_C) $(COMMON_OBJ)
 

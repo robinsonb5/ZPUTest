@@ -76,10 +76,10 @@ void spi_spin()
 }
 
 
-short wait_initV2()
+int wait_initV2()
 {
 	int i=20000;
-	short r;
+	int r;
 	spi_spin();
 	while(--i)
 	{
@@ -104,10 +104,10 @@ short wait_initV2()
 }
 
 
-short wait_init()
+int wait_init()
 {
 	int i=20;
-	short r;
+	int r;
 	SPI(0xff);
 //	puts("Cmd_init\n");
 	while(--i)
@@ -126,7 +126,7 @@ short wait_init()
 }
 
 
-short is_sdhc()
+int is_sdhc()
 {
 	int i,r;
 
@@ -216,7 +216,7 @@ short is_sdhc()
 }
 
 
-short spi_init()
+int spi_init()
 {
 	int i;
 	int r;
@@ -255,7 +255,7 @@ short spi_init()
 }
 
 
-short sd_write_sector(unsigned long lba,unsigned char *buf) // FIXME - Stub
+int sd_write_sector(unsigned long lba,unsigned char *buf) // FIXME - Stub
 {
 	return(0);
 }
@@ -264,9 +264,9 @@ short sd_write_sector(unsigned long lba,unsigned char *buf) // FIXME - Stub
 extern void spi_readsector(long *buf);
 
 
-short sd_read_sector(unsigned long lba,unsigned char *buf)
+int sd_read_sector(unsigned long lba,unsigned char *buf)
 {
-	short result=0;
+	int result=0;
 	int i;
 	int r;
 //	printf("sd_read_sector %d, %d\n",lba,buf);
@@ -283,7 +283,7 @@ short sd_read_sector(unsigned long lba,unsigned char *buf)
 	i=1500000;
 	while(--i)
 	{
-		short v;
+		int v;
 		SPI(0xff);
 //		SPI_WAIT();
 		v=SPI_READ();

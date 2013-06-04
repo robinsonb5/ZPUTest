@@ -5,6 +5,11 @@
 #include "malloc.h"
 #include "fileio.h"
 
+#include "minisoc_hardware.h"
+#include "spi.h"
+#include "fat.h"
+#include "rafile.h"
+
 #include "small_printf.h"
 
 
@@ -29,7 +34,29 @@ static char *args[]={"dummy.exe"};
 
 // FIXME - bring these in.
 extern void _init(void);
-void _initIO(void);
+
+// Hardware initialisation
+// Sets up RS232 baud rate and attempts to initialise the SD card, if present.
+
+static int sdcard_present;
+static int filesystem_present;
+
+static int _init_sd()
+{
+	filesystem_present=0;
+	if((sdcard_present=spi_init()))
+	{
+		filesystem_present=FindDrive();
+	}
+	return(filesystem_present);
+}
+
+static void _initIO(void)
+{
+	HW_PER(PER_UART_CLKDIV)=1250000/1152;
+	_init_sd();
+}
+
 
 extern char _end; // Defined by the linker script
 char *heap_ptr;
@@ -67,6 +94,7 @@ char *_sbrk(int nbytes)
 	return base;
 }
 
+
 /* NOTE!!!! compiled with -fomit-frame-pointer to make sure that 'status' has the
  * correct value when breakpointing at _exit
  */
@@ -85,13 +113,42 @@ void __attribute__ ((weak)) _zpu_interrupt(void)
 }
 
 
+// Rudimentary filesystem support
+
+#define MAX_FILES 8
+static RAFile *Files[MAX_FILES];
+#define File(x) Files[(x)-2]
+
 int __attribute__ ((weak))
 _DEFUN (write, (fd, buf, nbytes),
        int fd _AND
        char *buf _AND
        int nbytes)  
 {
-	// FIXME write to UART
+	if((fd==1) || (fd==2)) // stdout/stderr
+	{
+		int c=nbytes;
+		// Write to UART
+		// FIXME - need to save any received bytes in a ring buffer.
+		// FIXME - ultimately need to use interrupts here.
+
+		while(nbytes--)
+		{
+			while(!(HW_PER(PER_UART)&(1<<PER_UART_TXREADY)))
+				;
+			HW_PER(PER_UART)=*buf++;
+		}
+		return(nbytes);
+	}
+	else
+	{
+		if(File(fd))
+		{
+			// We have a file - but we don't yet support writing.
+			errno=EACCES;
+		}
+		errno=EBADF;
+	}
 	return (nbytes);
 }
 
@@ -106,7 +163,35 @@ _DEFUN (read, (fd, buf, nbytes),
        char *buf _AND
        int nbytes)  
 {
-	// FIXME - read from UART if present
+	if(fd==0) // stdin
+	{
+		// Read from UART
+		while(nbytes--)
+		{
+			int in;
+			while(!((in=HW_PER(PER_UART))&(1<<PER_UART_RXINT)))
+				;
+			*buf++=in&0xff;
+		}
+		return(nbytes);
+	}
+	else
+	{
+		// Handle reading from SD card
+		if(File(fd))
+		{
+			if(RARead(File(fd),buf,nbytes))
+				return(nbytes);
+			else
+			{
+				errno=EIO;
+				return(0);
+			}
+		}
+		else
+			errno=EBADF;
+	}
+	return(0);
 }
 
 
@@ -120,7 +205,29 @@ int __attribute__ ((weak)) open(const char *buf,
        int mode,
        ...)  
 {
-	errno = EIO;
+	// FIXME - open a file here.
+	if(filesystem_present)
+	{
+		// Find a free FD
+		int fd=3;
+		while((fd-2)<MAX_FILES)
+		{
+			if(!File(fd))
+			{
+				File(fd)=malloc(sizeof(RAFile));
+				if(File(fd))
+				{
+					if(RAOpen(File(fd),buf))
+						return(fd);
+					else
+						free(File(fd));
+				}
+			}
+			++fd;
+		}
+	}
+	else
+		errno = EBUSY;
 	return (-1);
 }
 
@@ -133,6 +240,8 @@ int __attribute__ ((weak))
 _DEFUN (close ,(fd),
        int fd)  
 {
+	if(fd>2 && File(fd))
+		free(File(fd));
 	return (0);
 }
 
@@ -230,7 +339,7 @@ _DEFUN (isatty, (fd),
 	/*
 	 * isatty -- returns 1 if connected to a terminal device,
 	 *           returns 0 if not. Since we're hooked up to a
-	 *           serial port, we'll say yes _AND return a 1.
+	 *           serial port, we'll say yes and return a 1.
 	 */
 	return (1);
 }
