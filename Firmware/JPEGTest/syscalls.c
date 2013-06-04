@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include "malloc.h"
 #include "fileio.h"
@@ -31,6 +32,14 @@ extern int _cpu_config;
 extern int main(int argc, char **argv);
 
 static char *args[]={"dummy.exe"};
+
+// File table
+
+#define MAX_FILES 8
+static RAFile *Files[MAX_FILES];
+#define File(x) Files[(x)-2]
+
+
 
 // FIXME - bring these in.
 extern void _init(void);
@@ -64,7 +73,9 @@ char *heap_ptr;
 void __attribute__ ((weak)) _premain()  
 {
 	int t;
-//	_initIO();
+	_initIO();
+	for(t=0;t<MAX_FILES;++t)
+		Files[t]=0;
 	printf("_end is %d, RAMTOP is %d\n",&_end,RAMTOP);
 	malloc_add(&_end,(char *)RAMTOP-&_end);	// Add the entire RAM to the free memory pool
 	_init();
@@ -115,10 +126,6 @@ void __attribute__ ((weak)) _zpu_interrupt(void)
 
 // Rudimentary filesystem support
 
-#define MAX_FILES 8
-static RAFile *Files[MAX_FILES];
-#define File(x) Files[(x)-2]
-
 int __attribute__ ((weak))
 _DEFUN (write, (fd, buf, nbytes),
        int fd _AND
@@ -154,9 +161,9 @@ _DEFUN (write, (fd, buf, nbytes),
 
 
 /*
- * read  -- read bytes from the serial port. Ignore fd, since
- *          we only have stdin.
+ * read  -- read bytes from the serial port if fd==0, otherwise try and read from SD card
  */
+
 int __attribute__ ((weak))
 _DEFUN (read, (fd, buf, nbytes),
        int fd _AND
@@ -197,16 +204,14 @@ _DEFUN (read, (fd, buf, nbytes),
 
 
 /*
- * open -- open a file descriptor. We don't have a filesystem, so
- *         we return an error.
+ * open -- open a file descriptor.
  */
 int __attribute__ ((weak)) open(const char *buf,
        int flags,
-       int mode,
        ...)  
 {
-	// FIXME - open a file here.
-	if(filesystem_present)
+	// FIXME - Take mode from the first varargs argument
+	if(filesystem_present) // Only support reads at present.
 	{
 		// Find a free FD
 		int fd=3;
@@ -214,6 +219,7 @@ int __attribute__ ((weak)) open(const char *buf,
 		{
 			if(!File(fd))
 			{
+				printf("Found spare fd: %d\n",fd);
 				File(fd)=malloc(sizeof(RAFile));
 				if(File(fd))
 				{
@@ -221,20 +227,25 @@ int __attribute__ ((weak)) open(const char *buf,
 						return(fd);
 					else
 						free(File(fd));
+					errno = ENOENT;
+					return(-1);
 				}
 			}
 			++fd;
 		}
 	}
 	else
-		errno = EBUSY;
+	{
+		printf("open() - no filesystem present\n");
+		errno = ENOMEDIUM;
+	}
 	return (-1);
 }
 
 
 
 /*
- * close -- We don't need to do anything, but pretend we did.
+ * close
  */
 int __attribute__ ((weak))
 _DEFUN (close ,(fd),
@@ -256,8 +267,7 @@ ftruncate (int file, off_t length)
 
 
 /*
- * unlink -- since we have no file system, 
- *           we just return an error.
+ * unlink -- we just return an error since we don't support writes yet.
  */
 int __attribute__ ((weak))
 _DEFUN (unlink, (path),
@@ -314,9 +324,16 @@ _DEFUN (fstat, (fd, buf),
 /*
  * fstat -- Since we have no file system, we just return an error.
  */
-	buf->st_mode = S_IFCHR;	/* Always pretend to be a tty */
-	buf->st_blksize = 0;
-
+	memset(buf,0,sizeof(struct stat));
+	if(fd<3)
+	{
+		buf->st_mode = S_IFCHR;	/* Always pretend to be a tty */
+		buf->st_blksize = 0;
+	}
+	else if(File(fd))
+	{
+		buf->st_size = File(fd)->size;
+	}
 	return (0);
 }
 
