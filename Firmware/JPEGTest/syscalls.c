@@ -170,6 +170,7 @@ _DEFUN (read, (fd, buf, nbytes),
        char *buf _AND
        int nbytes)  
 {
+	printf("Reading %d bytes from fd %d\n",nbytes,fd);
 	if(fd==0) // stdin
 	{
 		// Read from UART
@@ -211,6 +212,7 @@ int __attribute__ ((weak)) open(const char *buf,
        ...)  
 {
 	// FIXME - Take mode from the first varargs argument
+	printf("in open()\n");
 	if(filesystem_present) // Only support reads at present.
 	{
 		// Find a free FD
