@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
@@ -78,7 +80,7 @@ void __attribute__ ((weak)) _premain()
 		Files[t]=0;
 	printf("_end is %d, RAMTOP is %d\n",&_end,RAMTOP);
 	malloc_add(&_end,(char *)RAMTOP-&_end);	// Add the entire RAM to the free memory pool
-	_init();
+//	_init();
 	t=main(1, args);
 	exit(t);
 	for (;;);
@@ -105,6 +107,10 @@ char *_sbrk(int nbytes)
 	return base;
 }
 
+//char *sbrk(int nbytes)
+//{
+//	return(_sbrk(nbytes));
+//}
 
 /* NOTE!!!! compiled with -fomit-frame-pointer to make sure that 'status' has the
  * correct value when breakpointing at _exit
@@ -112,14 +118,14 @@ char *_sbrk(int nbytes)
 void __attribute__ ((weak)) _exit (int status)  
 {
 	/* end of the universe, cause memory fault */
-	__asm("breakpoint");
+//	__asm("breakpoint");
 	for (;;);
 }
 
 void __attribute__ ((weak)) _zpu_interrupt(void)  
 {
 	/* not implemented in libgloss */
-	__asm("breakpoint");
+//	__asm("breakpoint");
 	for (;;);
 }
 
@@ -239,7 +245,7 @@ int __attribute__ ((weak)) open(const char *buf,
 	else
 	{
 		printf("open() - no filesystem present\n");
-		errno = ENOMEDIUM;
+		errno = EIO;
 	}
 	return (-1);
 }
@@ -289,8 +295,29 @@ _DEFUN (lseek, (fd,  offset, whence),
        off_t offset _AND
        int whence)  
 {
-	errno = ESPIPE;
-	return ((off_t)-1);
+	if(fd<3)
+	{
+		errno = ESPIPE;
+		return ((off_t)-1);
+	}
+	else if(File(fd))
+	{
+		switch(whence)
+		{
+			case SEEK_SET:
+			case SEEK_CUR:
+				RASeek(File(fd),offset,whence);
+				return((off_t)File(fd)->ptr);
+				break;
+			case SEEK_END:
+				errno = EINVAL;
+				printf("SEEK_END not yet supported\n");
+				return((off_t)-1);
+				break;
+			default:
+				break;
+		}
+	}
 }
 
 /* we convert from bigendian to smallendian*/

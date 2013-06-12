@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	int fd=open("SPLASH  RAW",0,O_RDONLY);
+	int fd=open("80SDIVE JPG",0,O_RDONLY);
 	printf("open() returned %d\n",fd);
 	if((fd>0)&&!fstat(fd,&statbuf))
 	{

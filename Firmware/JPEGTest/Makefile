@@ -1,11 +1,13 @@
 BASE	= zpu-elf
+BUILD_DIR=zpu_obj
+ARCH = board=phi
+
 CC      = $(BASE)-gcc
 LD      = $(BASE)-gcc
 AS      = $(BASE)-as
 CP      = $(BASE)-objcopy
 DUMP    = $(BASE)-objdump
 
-BUILD_DIR=zpu_obj
 
 JPEGTEST_PRJ = JPEGTest
 COMMON_SRC = ../Common/minisoc_hardware.c ../Common/minisoc_hardware.h ../Common/small_printf.c ../Common/small_printf.h \
@@ -13,11 +15,14 @@ COMMON_SRC = ../Common/minisoc_hardware.c ../Common/minisoc_hardware.h ../Common
 
 COMMON_OBJ = $(patsubst ../Common/%.c,$(BUILD_DIR)/%.o,$(COMMON_SRC))
 
-JPEGTEST_SRC_C = main.c syscalls.c malloc.c malloc.h fat.c fat.h rafile.c rafile.h
-JPEGTEST_OBJ_C = $(patsubst %.c,$(BUILD_DIR)/%.o,$(JPEGTEST_SRC_C))
-JPEGTEST_OBJ = $(JPEGTEST_OBJ_C) $(COMMON_OBJ)
+JPEGDIR = jpeg-6b
 
-LINKMAP  = JPEGTest.ld
+JPEGTEST_SRC_C = main.c syscalls.c malloc.c malloc.h fat.c fat.h rafile.c rafile.h junixio.c
+JPEGTEST_OBJ_C = $(patsubst %.c,$(BUILD_DIR)/%.o,$(JPEGTEST_SRC_C))
+JPEGLIB_OBJ = jpeg-6b/libjpeg.a
+JPEGTEST_OBJ = $(JPEGTEST_OBJ_C) $(COMMON_OBJ) $(JPEGLIB_OBJ)
+
+LINKMAP  = JPEGTest-$(BASE).ld
 LIBDIR   = 
 
 # Commandline options for each tool.
@@ -27,9 +32,10 @@ LIBDIR   =
 
 ZPUOPTS= # -mno-poppcrel -mno-pushspadd -mno-callpcrel -mno-mult -mno-div # -mno-neg
 
-CFLAGS  = -I. -I../Common/ -c -O6 $(ZPUOPTS) -DRAMTOP=0x7FFFFF -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
+INCLUDE = -I. -I../Common/ -Ijpeg-6b/
+CFLAGS  = -m$(ARCH) $(INCLUDE) -c -O6 $(ZPUOPTS) -DRAMTOP=0x7FFFFF -DPRINTF_HEX_ONLY # -DDISABLE_PRINTF -DDISABLE_UART
 AFLAGS  = 
-LFLAGS  = -mboard=phi -O6 -Wl,--relax
+LFLAGS  = -T$(LINKMAP) -m$(ARCH) -O6 -Wl,--relax
 CP_HEXFLAGS = -Oihex
 CP_SRECFLAGS = -Osrec --gap-fill 0
 
@@ -39,10 +45,14 @@ LIBS       =
 # Our target.
 all: $(BUILD_DIR) $(JPEGTEST_PRJ).bin $(JPEGTEST_PRJ).srec
 
+$(JPEGDIR)/libjpeg.a:
+	make -C $(JPEGDIR) libjpeg.a
+
 mif: $(JPEGTEST_PRJ).mif
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif *~ */*.o *.bin
+	make -C $(JPEGDIR) clean
 
 # Convert ELF binary to bin file.
 %.bin: %.elf
@@ -73,4 +83,5 @@ $(BUILD_DIR)/%.o: %.c
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
+
 
