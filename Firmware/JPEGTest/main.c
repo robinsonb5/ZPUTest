@@ -43,12 +43,15 @@ int main(int argc, char **argv)
 		printf("File size: %d\n",statbuf.st_size);
 		jpeg_unixio_src(&jc->cinfo,jc->fd);
 		printf("Added unixio source\n");
-		if((imagebuf=malloc(640*480*2)))
+		if((imagebuf=malloc(640*480*2+7)))
 		{
 			int row;
 			JOCTET *rowbuffer;
-			int *imagep=(int *)imagebuf;
-			HW_VGA(FRAMEBUFFERPTR)=imagebuf;
+			int *imagep;
+			imagebuf+=7;
+			imagebuf=(char *)((int)imagebuf&0xfffffff8);
+			imagep=(int *)imagebuf;
+			HW_VGA(FRAMEBUFFERPTR)=(int)imagebuf;
 
 			jpeg_read_header(&jc->cinfo, TRUE);
 			printf("Read JPEG header - dimensions %d x %d\n",jc->cinfo.output_width,jc->cinfo.output_height);

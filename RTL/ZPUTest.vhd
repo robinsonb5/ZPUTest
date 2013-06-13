@@ -329,13 +329,21 @@ spi : entity work.spi_interface
 
 	);
 
--- Boot ROM
+-- Boot ROM - RS232
 
-	myrom : entity work.RS232Bootstrap_ROM
+--	myrom : entity work.RS232Bootstrap_ROM
+--	port map (
+--		clk => clk,
+--		from_zpu => zpu_to_rom,
+--		to_zpu => zpu_from_rom
+--	);
+
+-- Boot ROM - SD Card
+	myrom : entity work.SDBootstrap_ROM
 	port map (
-	clk => clk,
-	from_zpu => zpu_to_rom,
-	to_zpu => zpu_from_rom
+		clk => clk,
+		from_zpu => zpu_to_rom,
+		to_zpu => zpu_from_rom
 	);
 	
 
