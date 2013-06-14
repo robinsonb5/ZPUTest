@@ -2,6 +2,7 @@ all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen
 
 clean:
 	make -C SDBootstrap clean
+	make -C RS232Bootstrap clean
 	make -C Dhrystone clean
 	rm *.vhd
 
