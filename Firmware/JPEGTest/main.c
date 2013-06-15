@@ -26,10 +26,14 @@ struct JPEGContext
 
 void jpeg_unixio_src (j_decompress_ptr cinfo, int infile);
 
+int timestamp;
+
 int main(int argc, char **argv)
 {
 	file=malloc(sizeof(fileTYPE));
 	struct JPEGContext *jc=malloc(sizeof(struct JPEGContext));
+
+	timestamp=HW_PER(PER_MILLISECONDS);
 
 	jc->cinfo.err = jpeg_std_error(&jc->jerr);
 	jpeg_create_decompress(&jc->cinfo);
@@ -89,6 +93,9 @@ int main(int argc, char **argv)
 //			read(fd,imagebuf,statbuf.st_size);
 		}
 	}
+	timestamp=HW_PER(PER_MILLISECONDS)-timestamp;
+
+	printf("%d milliseconds elapsed\n",timestamp);
 
 	return(0);
 }

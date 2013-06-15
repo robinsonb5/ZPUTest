@@ -230,6 +230,9 @@ defparam myZPUTest.sdram_rows = 12;
 defparam myZPUTest.sdram_cols = 8;
 defparam myZPUTest.sysclk_frequency = 1250;
 defparam myZPUTest.spi_maxspeed = 4;
+defparam myZPUTest.run_from_ram = "true";
+defparam myZPUTest.manifest_file1 = 32'h5a505554; // ZPUT
+defparam myZPUTest.manifest_file2 = 32'h45535420; // EST 
 
 ZPUTest myZPUTest
 (	
