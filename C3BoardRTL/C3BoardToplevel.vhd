@@ -322,8 +322,11 @@ begin
 		generic map(
 			sdram_rows => 12,
 			sdram_cols => 10,
-			sysclk_frequency => 1330,
-			spi_maxspeed => 4
+			sysclk_frequency => 1250,
+			spi_maxspeed => 4,
+			run_from_ram => true,
+			manifest_file1 => X"5a505554", -- ZPUT
+			manifest_file2 => X"45535420"  -- EST 
 		)
 		port map(
 			clk => clk,
