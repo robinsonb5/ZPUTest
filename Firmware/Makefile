@@ -1,4 +1,4 @@
-all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen
+all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen VampireDiag.gen
 
 clean:
 	make -C SDBootstrap clean
