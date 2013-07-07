@@ -1,9 +1,11 @@
-all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen VampireDiag.gen
+all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen VampireDiag.gen SDRAMTest.gen
 
 clean:
 	make -C SDBootstrap clean
 	make -C RS232Bootstrap clean
 	make -C Dhrystone clean
+	make -C VampireDiag clean
+	make -C SDRAMTest clean
 	rm *.vhd
 
 zpuromgen: zpuromgen.c

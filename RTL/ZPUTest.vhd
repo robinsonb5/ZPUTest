@@ -339,7 +339,7 @@ spi : entity work.spi_interface
 --	);
 
 -- Boot ROM - SD Card
-	myrom : entity work.SDBootstrap_ROM
+	myrom : entity work.SDRAMTest_ROM
 	port map (
 		clk => clk,
 		from_zpu => zpu_to_rom,
@@ -355,6 +355,7 @@ spi : entity work.spi_interface
 		IMPL_COMPARISON_SUB => true,
 		IMPL_EQBRANCH => true,
 		IMPL_STOREBH => false,
+		IMPL_LOADBH => false,
 		IMPL_CALL => true,
 		IMPL_SHIFT => true,
 		IMPL_XOR => true,
@@ -365,15 +366,15 @@ spi : entity work.spi_interface
 		clk                 => clk,
 		reset               => not reset,
 		enable              => zpu_enable,
-		in_mem_busy         => mem_busy, 
+		in_mem_busy         => mem_busy,
 		mem_read            => mem_read,
-		mem_write           => mem_write, 
-		out_mem_addr        => mem_addr, 
-		out_mem_writeEnable => mem_writeEnable,  
-		out_mem_writeEnableh => mem_writeEnableh,  
-		out_mem_writeEnableb => mem_writeEnableb,  
+		mem_write           => mem_write,
+		out_mem_addr        => mem_addr,
+		out_mem_writeEnable => mem_writeEnable,
+		out_mem_hEnable     => mem_writeEnableh,
+		out_mem_bEnable     => mem_writeEnableb,
 		out_mem_readEnable  => mem_readEnable,
---		mem_writeMask       => mem_writeMask, 
+--		mem_writeMask       => mem_writeMask,
 		interrupt           => zpu_interrupt,
 		break               => zpu_break,
 		from_rom => zpu_from_rom,
@@ -404,7 +405,7 @@ begin
 			when WAITING =>
 			
 				-- Write from CPU
-				if mem_writeEnable='1' or mem_WriteEnableh='1' or mem_WriteEnableb='1' then
+				if mem_writeEnable='1' then
 					case mem_addr(31 downto 28) is
 --						when X"0000" =>	-- Boot BlockRAM
 --							currentstate<=WRITE1;

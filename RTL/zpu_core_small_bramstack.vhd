@@ -55,6 +55,7 @@ entity zpu_core is
 	 IMPL_COMPARISON_SUB : boolean := true; -- Include sub and (U)lessthan(orequal)
 	 IMPL_EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
 	 IMPL_STOREBH : boolean := true; -- Include halfword and byte writes
+	 IMPL_LOADBH : boolean := true; -- Include halfword and byte reads
 	 IMPL_CALL : boolean := true; -- Include call
 	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
 	 IMPL_XOR : boolean := true; -- include xor instruction
@@ -73,8 +74,8 @@ entity zpu_core is
 		mem_write           : out std_logic_vector(wordSize-1 downto 0);
 		out_mem_addr        : out std_logic_vector(maxAddrBitIncIO downto 0);
 		out_mem_writeEnable : out std_logic;
-		out_mem_writeEnableb : out std_logic;  -- Enable byte write
-		out_mem_writeEnableh : out std_logic;  -- Enable halfword write
+		out_mem_bEnable : out std_logic;  -- Enable byte write
+		out_mem_hEnable : out std_logic;  -- Enable halfword write
 		out_mem_readEnable  : out std_logic;
 		-- Set to one to jump to interrupt vector
 		-- The ZPU will communicate with the hardware that caused the
@@ -133,6 +134,7 @@ architecture behave of zpu_core is
     State_Xor,
     State_Store,
     State_ReadIO,
+    State_ReadIOBH,
     State_WriteIO,
     State_WriteIOBH,
     State_Load,
@@ -165,6 +167,7 @@ architecture behave of zpu_core is
     Decoded_Or,
     Decoded_And,
     Decoded_Load,
+    Decoded_LoadBH,
     Decoded_Not,
     Decoded_Xor,
     Decoded_Flip,
@@ -342,6 +345,12 @@ begin
 				sampledDecodedOpcode <= Decoded_StoreBH;
 			end if;
 		end if;
+		if IMPL_LOADBH=true then
+			if tOpcode(5 downto 0) = OpCode_LoadB
+				or tOpcode(5 downto 0) = OpCode_LoadH then
+				sampledDecodedOpcode <= Decoded_LoadBH;
+			end if;
+		end if;
 		if IMPL_SHIFT=true then
 			if tOpcode(5 downto 0) = OpCode_Lshiftright
 				or tOpcode(5 downto 0) = OpCode_Ashiftright
@@ -424,6 +433,8 @@ begin
       memBWriteEnable     <= '0';
       out_mem_writeEnable <= '0';
       out_mem_readEnable  <= '0';
+      out_mem_bEnable <= '0';
+      out_mem_hEnable <= '0';
       memAWrite           <= (others => '0');
       memBWrite           <= (others => '0');
       inInterrupt         <= '0';
@@ -448,8 +459,8 @@ begin
 		opcode_saved<=opcode;
 		
       out_mem_writeEnable <= '0';
-      out_mem_writeEnableb <= '0';
-      out_mem_writeEnableh <= '0';
+--      out_mem_bEnable <= '0';
+--      out_mem_hEnable <= '0';
       out_mem_readEnable  <= '0';
       begin_inst          <= '0';
 --      out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
@@ -645,6 +656,14 @@ begin
                 out_mem_readEnable <= '1';
                 state              <= State_ReadIO;
              end if;
+				 
+				 when Decoded_LoadBH =>
+					-- We don't try and cope with half or byte reads from Stack RAM
+					 out_mem_addr(maxAddrBitIncIO downto 0)<= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
+                out_mem_bEnable <= opcode(0); -- Loadb is opcode 51, %00110011
+                out_mem_hEnable <= not opcode(0); -- Loadh is copde 34, %00100010
+                out_mem_readEnable <= '1';
+                state              <= State_ReadIOBH;
 
 				when Decoded_EqNeq =>
 					sp <= sp + 1;
@@ -716,15 +735,31 @@ begin
 		  -- From this point on opcode is not guaranteed to be valid if using BlockRAM.
 
         when State_ReadIO =>
-          memAAddr <= sp;
-          if (in_mem_busy = '0') then
-            state           <= State_Fetch;
-            memAWriteEnable <= '1';
-            memAWrite       <= unsigned(mem_read);
-          end if;
-			 fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
+				memAAddr <= sp;
+				if (in_mem_busy = '0') then
+					state           <= State_Fetch;
+					memAWriteEnable <= '1';
+					memAWrite       <= unsigned(mem_read);
+				end if;
+				fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
 
-        when State_WriteIO =>
+				
+        when State_ReadIOBH =>
+				if IMPL_LOADBH=true then
+					memAAddr <= sp;
+					out_mem_bEnable <= opcode_saved(0); -- Loadb is opcode 51, %00110011
+					out_mem_hEnable <= not opcode_saved(0); -- Loadh is copde 34, %00100010
+					if (in_mem_busy = '0') then
+						state           <= State_Fetch;
+						memAWriteEnable <= '1';
+						memAWrite       <= unsigned(mem_read);
+						out_mem_bEnable	<=	'0';
+						out_mem_hEnable	<=	'0';
+					end if;
+					fetchneeded<='1'; -- Need to set this any time out_mem_addr changes.
+				end if;
+
+		 when State_WriteIO =>
 --			 mem_writeMask <= (others => '1');
           sp                  <= sp + 1;
           out_mem_writeEnable <= '1';
@@ -738,8 +773,9 @@ begin
 				if IMPL_STOREBH=true then
 --					mem_writeMask <= (others => '1');
 					sp                  <= sp + 1;
-					out_mem_writeEnableb <= not opcode_saved(0); -- storeb is opcode 52
-					out_mem_writeEnableh <= opcode_saved(1); -- storeh is opcode 35
+					out_mem_writeEnable <= '1';
+					out_mem_bEnable <= not opcode_saved(0); -- storeb is opcode 52
+					out_mem_hEnable <= opcode_saved(0); -- storeh is opcode 35
 					out_mem_addr        <= std_logic_vector(memARead(maxAddrBitIncIO downto 0));
 					mem_write           <= std_logic_vector(memBRead);
 					state               <= State_WriteIODone;
@@ -750,6 +786,8 @@ begin
         when State_WriteIODone =>
           if (in_mem_busy = '0') then
             state <= State_Resync;
+				out_mem_bEnable	<=	'0';
+				out_mem_hEnable	<=	'0';
           end if;
 
         when State_Fetch =>

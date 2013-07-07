@@ -127,6 +127,7 @@ package zpupkg is
 	 IMPL_COMPARISON_SUB : boolean := true; -- Include sub and (U)lessthan(orequal)
 	 IMPL_EQBRANCH : boolean := true; -- Include eqbranch and neqbranch
 	 IMPL_STOREBH : boolean := true; -- Include halfword and byte writes
+	 IMPL_LOADBH : boolean := true; -- Include halfword and byte reads
 	 IMPL_CALL : boolean := true; -- Include call
 	 IMPL_SHIFT : boolean := true; -- Include lshiftright, ashiftright and ashiftleft
 	 IMPL_XOR : boolean := true; -- include xor instruction
@@ -142,8 +143,8 @@ package zpupkg is
       mem_write           : out std_logic_vector(wordSize-1 downto 0);
       out_mem_addr        : out std_logic_vector(maxAddrBitIncIO downto 0);
       out_mem_writeEnable : out std_logic;
-      out_mem_writeEnableb : out std_logic;
-      out_mem_writeEnableh : out std_logic;
+      out_mem_bEnable : out std_logic;
+      out_mem_hEnable : out std_logic;
       out_mem_readEnable  : out std_logic;
 --      mem_writeMask       : out std_logic_vector(wordBytes-1 downto 0);
       interrupt           : in  std_logic;
