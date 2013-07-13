@@ -40,18 +40,60 @@ int sanitycheck(volatile int *base,int cachesize)
 		*base=sanitycheck_bitpatterns[i];
 		if (*base!=sanitycheck_bitpatterns[i])
 		{
-			printf("Sanity check failed (before cache refresh) on %d\n",sanitycheck_bitpatterns[i]);
+			printf("Sanity check failed (before cache refresh) on 0x%d (got 0x%d)\n",sanitycheck_bitpatterns[i],*base);
 			result=0;
 		}
 		refreshcache(base,cachesize);
 		if (*base!=sanitycheck_bitpatterns[i])
 		{
-			printf("Sanity check failed (after cache refresh) on %d\n",sanitycheck_bitpatterns[i]);
+			printf("Sanity check failed (after cache refresh) on 0x%d (got 0x%d)\n",sanitycheck_bitpatterns[i],*base);
 			result=0;
 		}
 	}
 	return(result);
 }
+
+
+int bytecheck(volatile int *base,int cachesize)
+{
+	int result=1;
+	volatile char *b2=(volatile char *)base;
+
+	base[0]=0x55555555;
+	base[3]=0xaaaaaaaa;
+
+	b2[0]=0xcc;	// Write high byte
+	b2[15]=0x33; // Write low byte
+
+	if(base[0]!=0xcc555555)
+	{
+		printf("Byte check failed (before cache refresh) at 0 (got 0x%d)\n",base[0]);
+		result=0;
+	}
+
+	if(base[3]!=0xaaaaaa33)
+	{
+		printf("Byte check failed (before cache refresh) at 3 (got 0x%d)\n",base[3]);
+		result=0;
+	}
+
+	refreshcache(base,cachesize);
+
+	if(base[0]!=0xcc555555)
+	{
+		printf("Byte check failed (after cache refresh) at 0 (got 0x%d)\n",base[0]);
+		result=0;
+	}
+
+	if(base[3]!=0xaaaaaa33)
+	{
+		printf("Byte check failed (after cache refresh) at 3 (got 0x%d)\n",base[3]);
+		result=0;
+	}
+
+	return(result);
+}
+
 
 #define LFSRSEED 12467
 
@@ -59,6 +101,7 @@ int lfsrcheck(volatile int *base)
 {
 	int result;
 	int cycles=15;
+	int goodreads=0;
 
 	printf("Checking memory...\n");
 
@@ -89,15 +132,21 @@ int lfsrcheck(volatile int *base)
 			if(base[j]!=w)
 			{
 				result=0;
-				printf("Error at %x\n",w);
-				printf("expected %x, got %x\n",w,base[j]);
+				printf("0x%d good reads, ",goodreads);
+				printf("Error at 0x%d, expected 0x%d, got 0x%d\n",j, w,base[j]);
+				goodreads=0;
 			}
+			else
+				++goodreads;
 			if(base[k]!=x)
 			{
 				result=0;
-				printf("Error at %x\n",w);
-				printf("expected %x, got %x\n",w,base[k]);
+				printf("0x%d good reads, ",goodreads);
+				printf("Error at 0x%d, expected 0x%d, got 0x%d\n",k, x,base[k]);
+				goodreads=0;
 			}
+			else
+				++goodreads;
 			CYCLE_LFSR;
 		}
 	}
@@ -106,6 +155,9 @@ int lfsrcheck(volatile int *base)
 
 
 // Check for bad address bits and aliases.
+
+#define ADDRCHECKWORD 0x55aa44bb
+#define ADDRCHECKWORD2 0xf0e1d2c3
 
 int addresscheck(volatile int *base,int cachesize)
 {
@@ -116,13 +168,13 @@ int addresscheck(volatile int *base,int cachesize)
 	int size=64;
 	// Seed the RAM;
 	a1=1;
-	*base=0x5555aaaa;
+	*base=ADDRCHECKWORD;
 	for(j=1;j<25;++j)
 	{
 		a2=1;
 		for(i=1;i<25;++i)
 		{
-			base[a1|a2]=0x5555aaaa;
+			base[a1|a2]=ADDRCHECKWORD;
 			a2<<=1;
 		}
 		a1<<=1;
@@ -131,36 +183,40 @@ int addresscheck(volatile int *base,int cachesize)
 
 	// Now check for aliases
 	a1=1;
-	*base=0xf0f0f0f0;
+	*base=ADDRCHECKWORD2;
 	for(j=1;j<25;++j)
 	{
 		a2=0;
 //		a2=1;
 //		for(i=1;i<25;++i)
 //		{
-			if(base[a1|a2]==0xf0f0f0f0)
+			if(base[a1|a2]==ADDRCHECKWORD2)
 			{
-				result=0;
+				// An alias isn't necessarily a failure.
 				aliases|=a1|a2;
 			}
-			else if(base[a1|a2]!=0x5555aaaa)
+			else if(base[a1|a2]!=ADDRCHECKWORD)
 			{
 				result=0;
-				printf("Bad data found at %d (%d)\n",(a1|a2)<<2, base[a1|a2]);
+				printf("Bad data found at 0x%d (0x%d)\n",(a1|a2)<<2, base[a1|a2]);
 			}
 			a2<<=1;
 //		}
 		a1<<=1;
 	}
 	if(aliases)
-		printf("Aliases found at %d\n",aliases<<2);
+		printf("Aliases found at 0x%d\n",aliases<<2);
 
 	while(aliases)
 	{
+		if((aliases&0x2000000)==0)	// If the alias bits aren't contiguously the high bits, then it indicates a bad address.
+			result=0;
 		aliases=(aliases<<1)&0xffffff;	// Test currently supports up to 16m longwords = 64 megabytes.
 		size>>=1;
 	}
-	printf("SDRAM size (assuming no address faults) is %d megabytes\n",size);
+	if(result && (size<64))
+		printf("(Aliases probably simply indicate that RAM is smaller than 64 megabytes)");
+	printf("SDRAM size (assuming no address faults) is 0x%d megabytes\n",size);
 	
 	return(result);
 }
@@ -177,13 +233,17 @@ int main(int argc, char **argv)
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;	// Running on the ZPU
 #endif
 
-	if(sanitycheck(base,CACHESIZE))
-		printf("First stage sanity check passed.\n");
-	if(addresscheck(base,CACHESIZE))
-		printf("Address check passed.\n");
-	if(lfsrcheck(base))
-		printf("LFSR check passed.\n");
-
+	while(1)
+	{
+		if(sanitycheck(base,CACHESIZE))
+			printf("First stage sanity check passed.\n");
+		if(bytecheck(base,CACHESIZE))
+			printf("Byte (dqm) check passed");
+		if(addresscheck(base,CACHESIZE))
+			printf("Address check passed.\n");
+		if(lfsrcheck(base))
+			printf("LFSR check passed.\n");
+	}
 	return(0);
 }
 
