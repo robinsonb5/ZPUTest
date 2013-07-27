@@ -31,7 +31,7 @@ entity ZPUTest is
 
 		-- SDRAM
 		sdr_data		: inout std_logic_vector(15 downto 0);
-		sdr_addr		: out std_logic_vector(11 downto 0);
+		sdr_addr		: out std_logic_vector((sdram_rows-1) downto 0);
 		sdr_dqm 		: out std_logic_vector(1 downto 0);
 		sdr_we 		: out std_logic;
 		sdr_cas 		: out std_logic;
@@ -42,7 +42,7 @@ entity ZPUTest is
 		sdr_cke		: out std_logic;
 
 		-- SPI signals
-		spi_miso		: in std_logic;
+		spi_miso		: in std_logic := '1'; -- Allow the SPI interface not to be plumbed in.
 		spi_mosi		: out std_logic;
 		spi_clk		: out std_logic;
 		spi_cs 		: out std_logic;
@@ -331,7 +331,14 @@ spi : entity work.spi_interface
 
 -- Boot ROM - RS232
 
---	myrom : entity work.RS232Bootstrap_ROM
+	myrom : entity work.RS232Bootstrap_ROM
+	port map (
+		clk => clk,
+		from_zpu => zpu_to_rom,
+		to_zpu => zpu_from_rom
+	);
+
+--	myrom : entity work.SDRAMTest_ROM
 --	port map (
 --		clk => clk,
 --		from_zpu => zpu_to_rom,
@@ -339,12 +346,12 @@ spi : entity work.spi_interface
 --	);
 
 -- Boot ROM - SD Card
-	myrom : entity work.SDRAMTest_ROM
-	port map (
-		clk => clk,
-		from_zpu => zpu_to_rom,
-		to_zpu => zpu_from_rom
-	);
+--	myrom : entity work.SDBootstrap_ROM
+--	port map (
+--		clk => clk,
+--		from_zpu => zpu_to_rom,
+--		to_zpu => zpu_from_rom
+--	);
 	
 
 -- Main CPU

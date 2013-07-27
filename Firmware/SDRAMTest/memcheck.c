@@ -186,26 +186,21 @@ int addresscheck(volatile int *base,int cachesize)
 	*base=ADDRCHECKWORD2;
 	for(j=1;j<25;++j)
 	{
-		a2=0;
-//		a2=1;
-//		for(i=1;i<25;++i)
-//		{
-			if(base[a1|a2]==ADDRCHECKWORD2)
-			{
-				// An alias isn't necessarily a failure.
-				aliases|=a1|a2;
-			}
-			else if(base[a1|a2]!=ADDRCHECKWORD)
-			{
-				result=0;
-				printf("Bad data found at 0x%d (0x%d)\n",(a1|a2)<<2, base[a1|a2]);
-			}
-			a2<<=1;
-//		}
+		if(base[a1]==ADDRCHECKWORD2)
+		{
+			// An alias isn't necessarily a failure.
+			aliases|=a1;
+		}
+		else if(base[a1]!=ADDRCHECKWORD)
+		{
+			result=0;
+			printf("Bad data found at 0x%d (0x%d)\n",a1<<2, base[a1]);
+		}
 		a1<<=1;
 	}
+	aliases<<=2;
 	if(aliases)
-		printf("Aliases found at 0x%d\n",aliases<<2);
+		printf("Aliases found at 0x%d\n",aliases);
 
 	while(aliases)
 	{
@@ -215,7 +210,7 @@ int addresscheck(volatile int *base,int cachesize)
 		size>>=1;
 	}
 	if(result && (size<64))
-		printf("(Aliases probably simply indicate that RAM is smaller than 64 megabytes)");
+		printf("(Aliases probably simply indicate that RAM\nis smaller than 64 megabytes)\n");
 	printf("SDRAM size (assuming no address faults) is 0x%d megabytes\n",size);
 	
 	return(result);
@@ -238,7 +233,7 @@ int main(int argc, char **argv)
 		if(sanitycheck(base,CACHESIZE))
 			printf("First stage sanity check passed.\n");
 		if(bytecheck(base,CACHESIZE))
-			printf("Byte (dqm) check passed");
+			printf("Byte (dqm) check passed\n");
 		if(addresscheck(base,CACHESIZE))
 			printf("Address check passed.\n");
 		if(lfsrcheck(base))

@@ -278,7 +278,7 @@ end process;
 			sd_ras <= '1';
 			sd_cas <= '1';
 			sd_we <= '1';
-			sdaddr <= "XXXXXXXXXXXX";
+			sdaddr <= (others => 'X');
 			ba <= "00";
 			dqm <= "00";  -- safe defaults for everything...
 
@@ -309,7 +309,8 @@ end process;
 	--						sdaddr <= "001000100010"; --BURST=4 LATENCY=2
 --							sdaddr <= "001000110010"; --BURST=4 LATENCY=3
 --							sdaddr <= "001000110000"; --noBURST LATENCY=3
-							sdaddr <= "000000110010"; --BURST=4 LATENCY=3, BURST WRITES
+							sdaddr <= (others => '0');
+							sdaddr(10 downto 0) <= "00000110010"; --BURST=4 LATENCY=3, BURST WRITES
 						when others =>	null;	--NOP
 					end case;
 				END IF;
@@ -326,8 +327,38 @@ end process;
 -- as they are, but try making the next two the bank select bits
 
 -- Bank select will thus be addr(4 downto 3),
--- Column will be addr(10 downto 5) & addr(2 downto 1) instead of addr(8 downto 1)
--- Row will be addr(22 downto 11) instead of (20 downto 9)
+-- Column will be ((cols+2) downto 5) & addr(2 downto 1) - so cols-1 bits in total
+-- instead of addr(8 downto 1)
+-- Row will be (rows+cols+2 downto cols+3) instead of (20 downto 9)
+
+-- Address bit (Based on 13 row bits, 9 col bits.
+-- 0	n/a (16 bits)
+-- 1	col 0
+-- 2  col 1
+-- 3  bank 0
+-- 4	bank 1
+-- 5	col 2
+-- 6	col 3
+-- 7	col 4
+-- 8	col 5
+-- 9	col 6
+-- 10	col 7
+-- 11	col 8 (cols + 2)
+-- 12	row 0 
+-- 13 row 1
+-- 14 row 2
+-- 15 row 3
+-- 16 row 4
+-- 17 row 5
+-- 18 row 6
+-- 19 row 7
+-- 20 row 8
+-- 21 row 9
+-- 22 row 10
+-- 23 row 11
+-- 24 row 12
+-- 25 (not mapped)
+
 
 --  ph0				(drive data)
 --
@@ -384,7 +415,7 @@ end process;
 						elsif vga_req='1' then
 							if vga_addr(4 downto 3)/=slot2_bank or sdram_slot2=idle then
 								sdram_slot1<=port0;
-								sdaddr <= vga_addr(22 downto 11);
+								sdaddr <= vga_addr((rows+cols+2) downto (cols+3));
 								ba <= vga_addr(4 downto 3);
 								slot1_bank <= vga_addr(4 downto 3);
 								casaddr <= vga_addr(31 downto 3) & "000"; -- read whole cache line in burst mode.
@@ -399,7 +430,7 @@ end process;
 								and (writecache_addr(4 downto 3)/=slot2_bank or sdram_slot2=idle)
 									then
 							sdram_slot1<=writecache;
-							sdaddr <= writecache_addr(22 downto 11);
+							sdaddr <= writecache_addr((rows+cols+2) downto (cols+3));
 							ba <= writecache_addr(4 downto 3);
 							slot1_bank <= writecache_addr(4 downto 3);
 							cas_dqm <= wrU1&wrL1;
@@ -413,7 +444,7 @@ end process;
 								and sdram_slot2/=zpu
 								and (Addr1(4 downto 3)/=slot2_bank or sdram_slot2=idle) then
 							sdram_slot1<=zpu;
-							sdaddr <= Addr1(22 downto 11);
+							sdaddr <= Addr1((rows+cols+2) downto (cols+3));
 							ba <= Addr1(4 downto 3);
 							slot1_bank <= Addr1(4 downto 3); -- slot1 bank
 							casaddr <= Addr1(31 downto 1) & "0";
@@ -437,8 +468,10 @@ end process;
 
 					when ph4 =>
 						
-					when ph5 => -- Read or Write command			
-						sdaddr <=  "0100" & casaddr(10 downto 5) & casaddr(2 downto 1) ;--auto precharge
+					when ph5 => -- Read or Write command
+						sdaddr <= (others=>'0');
+						sdaddr((cols-1) downto 0) <= casaddr((cols+2) downto 5) & casaddr(2 downto 1) ;--auto precharge
+						sdaddr(10) <= '1'; -- Auto precharge.
 						ba <= casaddr(4 downto 3);
 						sd_cs <= cas_sd_cs; 
 						sd_ras <= cas_sd_ras;
@@ -483,7 +516,7 @@ end process;
 								and (writecache_addr(4 downto 3)/=vga_reserveaddr(4 downto 3)
 									or vga_reservebank='0') then  -- Safe to use this slot with this bank?
 							sdram_slot2<=writecache;
-							sdaddr <= writecache_addr(22 downto 11);
+							sdaddr <= writecache_addr((rows+cols+2) downto (cols+3));
 							ba <= writecache_addr(4 downto 3);
 							slot2_bank <= writecache_addr(4 downto 3);
 							cas_dqm <= wrU1&wrL1;
@@ -499,7 +532,7 @@ end process;
 								and (Addr1(4 downto 3)/=vga_reserveaddr(4 downto 3)
 									or vga_reservebank='0') then  -- Safe to use this slot with this bank?
 							sdram_slot2<=zpu;
-							sdaddr <= Addr1(22 downto 11);
+							sdaddr <= Addr1((rows+cols+2) downto (cols+3));
 							ba <= Addr1(4 downto 3);
 							slot2_bank <= Addr1(4 downto 3); -- slot1 bank
 							casaddr <= Addr1(31 downto 1) & "0";
@@ -525,8 +558,10 @@ end process;
 						
 					-- Phase 13 - CAS for second window...
 					when ph13 =>
-						if sdram_slot2/=idle then
-							sdaddr <=  "0100" & casaddr(10 downto 5) & casaddr(2 downto 1) ;--auto precharge
+							if sdram_slot2/=idle then
+							sdaddr <= (others=>'0');
+							sdaddr((cols-1) downto 0) <= casaddr((cols+2) downto 5) & casaddr(2 downto 1) ;--auto precharge
+							sdaddr(10) <= '1'; -- Auto precharge.
 							ba <= casaddr(4 downto 3);
 							sd_cs <= cas_sd_cs; 
 

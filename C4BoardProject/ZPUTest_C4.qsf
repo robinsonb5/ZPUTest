@@ -1,0 +1,766 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2011 Altera Corporation
+# Your use of Altera Corporation's design tools, logic functions
+# and other software and tools, and its AMPP partner logic
+# functions, and any output files from any of the foregoing
+# (including device programming or simulation files), and any
+# associated documentation or information are expressly subject
+# to the terms and conditions of the Altera Program License
+# Subscription Agreement, Altera MegaCore Function License
+# Agreement, or other applicable license agreement, including,
+# without limitation, that your use is for the sole purpose of
+# programming logic devices manufactured by Altera and sold by
+# Altera or its authorized distributors.  Please refer to the
+# applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus II 32-bit
+# Version 11.1 Build 216 11/23/2011 Service Pack 1 SJ Web Edition
+# Date created = 08:47:41  April 09, 2012
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		ZPUTest_C4_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus II software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE6E22C8
+set_global_assignment -name TOP_LEVEL_ENTITY C4Toplevel
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION "12.0 SP1"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "15:30:44  JULY 27, 2013"
+set_global_assignment -name LAST_QUARTUS_VERSION "12.0 SP1"
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name DEVICE_FILTER_PIN_COUNT 144
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name ENABLE_SIGNALTAP ON
+set_global_assignment -name USE_SIGNALTAP_FILE stp1.stp
+set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS OFF
+set_global_assignment -name TIMEQUEST_DO_CCPP_REMOVAL ON
+set_global_assignment -name ADV_NETLIST_OPT_SYNTH_WYSIWYG_REMAP ON
+set_global_assignment -name AUTO_SHIFT_REGISTER_RECOGNITION ALWAYS
+set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "NO HEAT SINK WITH STILL AIR"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name USE_CONFIGURATION_DEVICE ON
+
+set_global_assignment -name SMART_RECOMPILE ON
+set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name RESERVE_ASDO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE AREA
+set_global_assignment -name SYNTH_TIMING_DRIVEN_SYNTHESIS OFF
+set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON
+set_global_assignment -name MUX_RESTRUCTURE ON
+set_global_assignment -name ALLOW_SHIFT_REGISTER_MERGING_ACROSS_HIERARCHIES ALWAYS
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC_FOR_AREA ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_MAP_LOGIC_TO_MEMORY_FOR_AREA ON
+set_global_assignment -name SLD_NODE_CREATOR_ID 110 -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_ENTITY_NAME sld_signaltap -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to "ZPUTest:myZPUTest|clk" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_INFO=805334528" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_POWER_UP_TRIGGER=0" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER_INVERSION_MASK_LENGTH=0" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SEGMENT_SIZE=256" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ATTRIBUTE_MEM_MODE=OFF" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_FLOW_USE_GENERATED=0" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STATE_BITS=11" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_BUFFER_FULL_STOP=1" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_CURRENT_RESOURCE_WIDTH=1" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL=1" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_SAMPLE_DEPTH=256" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLED=0" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id auto_signaltap_0
+set_global_assignment -name VHDL_FILE ../Firmware/SDBootstrap_ROM.vhd
+set_global_assignment -name VHDL_FILE ../Firmware/RS232Bootstrap_ROM.vhd
+set_global_assignment -name VHDL_FILE ../RTL/ZPUTest.vhd
+set_global_assignment -name VHDL_FILE ../RTL/zpupkg.vhd
+set_global_assignment -name VHDL_FILE ../RTL/zpu_config.vhd
+set_global_assignment -name VHDL_FILE ../RTL/zpu_core_small_bramstack.vhd
+set_global_assignment -name SIGNALTAP_FILE stp1.stp
+set_global_assignment -name SDC_FILE ZPUTest.sdc
+set_global_assignment -name VHDL_FILE ../RTL/simple_uart.vhd
+set_global_assignment -name VHDL_FILE ../RTL/DMACache.vhd
+set_global_assignment -name VHDL_FILE ../RTL/vga_controller.vhd
+set_global_assignment -name VHDL_FILE ../RTL/video_vga_dither.vhd
+set_global_assignment -name VHDL_FILE ../RTL/video_vga_master.vhd
+set_global_assignment -name QIP_FILE ../Generated/DMACacheRAM.qip
+set_global_assignment -name VHDL_FILE ../RTL/spi.vhd
+set_global_assignment -name VHDL_FILE ../RTL/sdram.vhd
+set_global_assignment -name VHDL_FILE ../Firmware/SDRAMTest_ROM.vhd
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name RESERVE_DATA0_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name RESERVE_DATA1_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name RESERVE_FLASH_NCE_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name RESERVE_DCLK_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name QIP_FILE ../C4BoardRTL/Generated/PLL.qip
+set_location_assignment PIN_23 -to CLK50M
+set_location_assignment PIN_25 -to KEY0
+set_location_assignment PIN_24 -to KEY1
+set_location_assignment PIN_85 -to LED[1]
+set_location_assignment PIN_86 -to LED[0]
+set_location_assignment PIN_88 -to CK[3]
+set_location_assignment PIN_89 -to CK[2]
+set_location_assignment PIN_90 -to CK[1]
+set_location_assignment PIN_91 -to CK[0]
+set_location_assignment PIN_68 -to SDRAM_Addr[12]
+set_location_assignment PIN_67 -to SDRAM_Addr[11]
+set_location_assignment PIN_32 -to SDRAM_Addr[10]
+set_location_assignment PIN_66 -to SDRAM_Addr[9]
+set_location_assignment PIN_65 -to SDRAM_Addr[8]
+set_location_assignment PIN_64 -to SDRAM_Addr[7]
+set_location_assignment PIN_60 -to SDRAM_Addr[6]
+set_location_assignment PIN_59 -to SDRAM_Addr[5]
+set_location_assignment PIN_58 -to SDRAM_Addr[4]
+set_location_assignment PIN_39 -to SDRAM_Addr[3]
+set_location_assignment PIN_38 -to SDRAM_Addr[2]
+set_location_assignment PIN_34 -to SDRAM_Addr[1]
+set_location_assignment PIN_33 -to SDRAM_Addr[0]
+set_location_assignment PIN_31 -to SDRAM_BA[1]
+set_location_assignment PIN_30 -to SDRAM_BA[0]
+set_location_assignment PIN_46 -to SDRAM_CAS_N
+set_location_assignment PIN_43 -to SDRAM_CKE
+set_location_assignment PIN_44 -to SDRAM_CLK
+set_location_assignment PIN_28 -to SDRAM_CS_N
+set_location_assignment PIN_84 -to SDRAM_DQ[15]
+set_location_assignment PIN_83 -to SDRAM_DQ[14]
+set_location_assignment PIN_80 -to SDRAM_DQ[13]
+set_location_assignment PIN_77 -to SDRAM_DQ[12]
+set_location_assignment PIN_76 -to SDRAM_DQ[11]
+set_location_assignment PIN_72 -to SDRAM_DQ[10]
+set_location_assignment PIN_71 -to SDRAM_DQ[9]
+set_location_assignment PIN_70 -to SDRAM_DQ[8]
+set_location_assignment PIN_51 -to SDRAM_DQ[7]
+set_location_assignment PIN_52 -to SDRAM_DQ[6]
+set_location_assignment PIN_53 -to SDRAM_DQ[5]
+set_location_assignment PIN_54 -to SDRAM_DQ[4]
+set_location_assignment PIN_55 -to SDRAM_DQ[3]
+set_location_assignment PIN_75 -to SDRAM_DQ[2]
+set_location_assignment PIN_74 -to SDRAM_DQ[1]
+set_location_assignment PIN_73 -to SDRAM_DQ[0]
+set_location_assignment PIN_69 -to SDRAM_DQM[1]
+set_location_assignment PIN_50 -to SDRAM_DQM[0]
+set_location_assignment PIN_42 -to SDRAM_RAS_N
+set_location_assignment PIN_49 -to SDRAM_WE_N
+set_location_assignment PIN_98 -to IO_D[1]
+set_location_assignment PIN_106 -to IO_D[10]
+set_location_assignment PIN_111 -to IO_D[11]
+set_location_assignment PIN_112 -to IO_D[12]
+set_location_assignment PIN_113 -to IO_D[13]
+set_location_assignment PIN_114 -to IO_D[14]
+set_location_assignment PIN_115 -to IO_D[15]
+set_location_assignment PIN_119 -to IO_D[16]
+set_location_assignment PIN_120 -to IO_D[17]
+set_location_assignment PIN_121 -to IO_D[18]
+set_location_assignment PIN_124 -to IO_D[19]
+set_location_assignment PIN_87 -to IO_D[2]
+set_location_assignment PIN_125 -to IO_D[20]
+set_location_assignment PIN_126 -to IO_D[21]
+set_location_assignment PIN_127 -to IO_D[22]
+set_location_assignment PIN_128 -to IO_D[23]
+set_location_assignment PIN_129 -to IO_D[24]
+set_location_assignment PIN_132 -to IO_D[25]
+set_location_assignment PIN_133 -to IO_D[26]
+set_location_assignment PIN_135 -to IO_D[27]
+set_location_assignment PIN_136 -to IO_D[28]
+set_location_assignment PIN_137 -to IO_D[29]
+set_location_assignment PIN_100 -to IO_D[3]
+set_location_assignment PIN_138 -to IO_D[30]
+set_location_assignment PIN_141 -to IO_D[31]
+set_location_assignment PIN_142 -to IO_D[32]
+set_location_assignment PIN_143 -to IO_D[33]
+set_location_assignment PIN_144 -to IO_D[34]
+set_location_assignment PIN_1 -to IO_D[35]
+set_location_assignment PIN_2 -to IO_D[36]
+set_location_assignment PIN_3 -to IO_D[37]
+set_location_assignment PIN_7 -to IO_D[38]
+set_location_assignment PIN_10 -to IO_D[39]
+set_location_assignment PIN_99 -to IO_D[4]
+set_location_assignment PIN_11 -to IO_D[40]
+set_location_assignment PIN_103 -to IO_D[5]
+set_location_assignment PIN_101 -to IO_D[6]
+set_location_assignment PIN_110 -to IO_D[7]
+set_location_assignment PIN_104 -to IO_D[8]
+set_location_assignment PIN_105 -to IO_D[9]
+set_global_assignment -name VHDL_FILE ../C4BoardRTL/C4Toplevel.vhd
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to DRAM_*
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to DRAM_DQ*
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[12]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[11]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[10]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[9]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[8]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[7]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[6]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[5]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[4]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[3]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[2]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[1]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_Addr[0]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_BA[1]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_BA[0]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_CAS_N
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_CKE
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_CLK
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_CS_N
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[15]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[14]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[13]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[12]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[11]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[10]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[9]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[8]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[7]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[6]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[5]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[4]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[3]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[2]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[1]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQ[0]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQM[1]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_DQM[0]
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_RAS_N
+set_instance_assignment -name FAST_OUTPUT_REGISTER ON -to SDRAM_WE_N
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[15]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[14]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[13]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[12]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[11]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[10]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[9]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[8]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[7]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[6]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[5]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[4]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[3]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[2]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[1]
+set_instance_assignment -name FAST_INPUT_REGISTER ON -to SDRAM_DQ[0]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[12]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[11]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[10]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[9]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[8]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[7]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[6]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[5]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[4]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[3]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[2]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[1]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_Addr[0]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_BA[1]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_BA[0]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_CAS_N
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_CKE
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_CLK
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_CS_N
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[15]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[14]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[13]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[12]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[11]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[10]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[9]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[8]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[7]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[6]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[5]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[4]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[3]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[2]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[1]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQ[0]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQM[1]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_DQM[0]
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_RAS_N
+set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to SDRAM_WE_N
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to UART_RXD -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[1] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[2] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[3] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[4] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[5] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[6] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[7] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[8] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[9] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[10] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[11] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWriteEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[12] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[13] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[14] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[15] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[16] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[17] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[18] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[19] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[20] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[21] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[22] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[23] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[24] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[25] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[26] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[27] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[28] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[29] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[30] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[31] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[32] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[33] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[34] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[35] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[36] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[37] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[38] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[39] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[40] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[41] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[42] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[43] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[44] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[45] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[46] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[47] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[48] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[49] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[50] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[51] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[52] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[53] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[54] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[55] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[56] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[57] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[58] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[59] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[60] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[61] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[62] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[63] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[64] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[65] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[66] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[67] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[68] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[69] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[70] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[71] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[72] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[73] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[74] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[75] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[76] -to "ZPUTest:myZPUTest|reset" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[77] -to "ZPUTest:myZPUTest|txd" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[78] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[79] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[80] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[81] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[82] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[83] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[84] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[85] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[86] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[87] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[88] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[89] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[90] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[91] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[92] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[93] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[94] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[95] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[96] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[97] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[98] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[99] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[100] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[101] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[102] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[103] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[104] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[105] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[106] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[107] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[108] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[109] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[110] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[111] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[112] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[113] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[114] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[115] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[116] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[117] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[118] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[119] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[120] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[121] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[122] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[123] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[124] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[125] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[126] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[127] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[128] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[129] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[130] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[131] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[132] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[133] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[134] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[135] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[136] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[137] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[138] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[139] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[140] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[141] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[142] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[143] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[144] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[145] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[146] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[147] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[148] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[149] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[150] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_readEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[151] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_writeEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[152] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[153] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[154] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[155] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[156] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[157] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[158] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[159] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[160] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[161] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[162] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[163] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[164] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[165] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[166] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[167] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[168] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[169] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[170] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[171] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[172] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[173] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[174] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[175] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[176] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[177] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[178] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[179] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[180] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[181] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[182] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[183] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[184] -to "ZPUTest:myZPUTest|zpu_core:zpu|state.State_Execute" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[185] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[186] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[187] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[188] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[189] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[190] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[191] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[192] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[193] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[194] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[195] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWriteEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[196] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[197] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[198] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[199] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[200] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[201] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[202] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[203] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[204] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[205] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[206] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[207] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[208] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[209] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[210] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[211] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[212] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[213] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[214] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[215] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[216] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[217] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[218] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[219] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[220] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[221] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[222] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[223] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[224] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[225] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[226] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[227] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to UART_RXD -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[1] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[2] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[3] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[4] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[5] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[6] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[7] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[8] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[9] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[10] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBAddr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[11] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWriteEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[12] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[13] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[14] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[15] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[16] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[17] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[18] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[19] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[20] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[21] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[22] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[23] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[24] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[25] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[26] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[27] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[28] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[29] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[30] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[31] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[32] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[33] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[34] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[35] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[36] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[37] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[38] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[39] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[40] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[41] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[42] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[43] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|from_zpu.memBWrite[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[44] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[45] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[46] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[47] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[48] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[49] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[50] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[51] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[52] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[53] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[54] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[55] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[56] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[57] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[58] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[59] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[60] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[61] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[62] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[63] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[64] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[65] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[66] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[67] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[68] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[69] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[70] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[71] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[72] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[73] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[74] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[75] -to "ZPUTest:myZPUTest|RS232Bootstrap_ROM:myrom|to_zpu.memBRead[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[76] -to "ZPUTest:myZPUTest|reset" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[77] -to "ZPUTest:myZPUTest|txd" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[78] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[79] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[80] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[81] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[82] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[83] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[84] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[85] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[86] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[87] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[88] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[89] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[90] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[91] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[92] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[93] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[94] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[95] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[96] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[97] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[98] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[99] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[100] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[101] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[102] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[103] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[104] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[105] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[106] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[107] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[108] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[109] -to "ZPUTest:myZPUTest|zpu_core:zpu|from_rom.memARead[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[110] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[111] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[112] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[113] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[114] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[115] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[116] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[117] -to "ZPUTest:myZPUTest|zpu_core:zpu|opcode[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[118] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[119] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[120] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[121] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[122] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[123] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[124] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[125] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[126] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[127] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[128] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[129] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[130] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[131] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[132] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[133] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[134] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[135] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[136] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[137] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[138] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[139] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[140] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[141] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[142] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[143] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[144] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[145] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[146] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[147] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[148] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[149] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_addr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[150] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_readEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[151] -to "ZPUTest:myZPUTest|zpu_core:zpu|out_mem_writeEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[152] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[153] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[154] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[155] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[156] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[157] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[158] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[159] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[160] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[161] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[162] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[163] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[164] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[165] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[166] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[167] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[168] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[169] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[170] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[171] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[172] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[173] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[174] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[175] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[176] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[177] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[178] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[179] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[180] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[181] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[182] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[183] -to "ZPUTest:myZPUTest|zpu_core:zpu|pc[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[184] -to "ZPUTest:myZPUTest|zpu_core:zpu|state.State_Execute" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[185] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[186] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[187] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[188] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[189] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[190] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[191] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[192] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[193] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[194] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAAddr[9]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[195] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWriteEnable" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[196] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[0]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[197] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[10]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[198] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[11]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[199] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[12]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[200] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[13]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[201] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[14]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[202] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[15]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[203] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[16]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[204] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[17]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[205] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[18]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[206] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[19]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[207] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[1]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[208] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[20]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[209] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[21]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[210] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[22]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[211] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[23]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[212] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[24]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[213] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[25]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[214] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[26]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[215] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[27]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[216] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[28]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[217] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[29]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[218] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[2]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[219] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[30]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[220] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[31]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[221] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[3]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[222] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[4]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[223] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[5]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[224] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[6]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[225] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[7]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[226] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[8]" -section_id auto_signaltap_0
+set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[227] -to "ZPUTest:myZPUTest|zpu_core:zpu|to_rom.memAWrite[9]" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=228" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_BITS=228" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=706" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_LOWORD=18344" -section_id auto_signaltap_0
+set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_NODE_CRC_HIWORD=52649" -section_id auto_signaltap_0
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
