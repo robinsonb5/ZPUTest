@@ -32,13 +32,39 @@ signal reset : std_logic;
 signal UART_TXD : std_logic;
 signal UART_RXD : std_logic;
 
+signal LCD_data_out : std_logic_vector(15 downto 0);
+signal LCD_data_in : std_logic_vector(15 downto 0);
+signal LCD_drive : std_logic; -- Select signal used to control tristate bus
+signal LCD_reset : std_logic;
+signal LCD_cs : std_logic;
+signal LCD_wr : std_logic;
+signal LCD_rd : std_logic;
+signal LCD_rs : std_logic;
+signal LCD_blcnt : std_logic;
+
 begin
 
 IO_D <= (others => 'Z');
+
+-- UART mapping
 IO_D(40) <= UART_TXD;
 UART_RXD <= IO_D(39);
 
+-- LCD signal mapping.
+IO_D(18 downto 3) <= LCD_data_out when LCD_drive='1' else (others => 'Z');
+LCD_data_in <= IO_D(18 downto 3);
+IO_D(19) <= LCD_rs;
+IO_D(20) <= LCD_cs;
+IO_D(21) <= LCD_rd;
+IO_D(22) <= LCD_wr;
+IO_D(23) <= LCD_blcnt;
+IO_D(24) <= LCD_reset;
+
+-- Other IO mappings
+
 reset <= KEY0;
+
+-- PLL
 
 MyPLL : entity work.PLL
 port map(
@@ -46,6 +72,8 @@ port map(
 	c0 => sysclk,
 	c1 => SDRAM_CLK
 );
+
+-- Main project instance.
 
 myZPUTest : entity work.ZPUTest
 		generic map(
@@ -86,7 +114,7 @@ myZPUTest : entity work.ZPUTest
 
 			-- UART
 			rxd => UART_RXD,
-			txd => UART_TXD
+			txd => UART_TXD,
 
 			-- SD Card interface
 --			spi_cs => sd_cs,
@@ -94,6 +122,16 @@ myZPUTest : entity work.ZPUTest
 --			spi_mosi => sd_mosi,
 --			spi_clk => sd_clk
 
+			-- LCD interface
+			lcd_data_out => LCD_data_out,
+			lcd_data_in => LCD_data_in,
+			lcd_drive => LCD_drive,
+			lcd_reset => LCD_reset,
+			lcd_cs => LCD_cs,
+			lcd_wr => LCD_wr,
+			lcd_rd => LCD_rd,
+			lcd_rs => LCD_rs,
+			lcd_blcnt => LCD_blcnt
 		);
 
 

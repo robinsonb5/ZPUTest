@@ -49,7 +49,18 @@ entity ZPUTest is
 		
 		-- UART
 		rxd	: in std_logic;
-		txd	: out std_logic
+		txd	: out std_logic;
+		
+		-- LCD
+		lcd_data_out : out std_logic_vector(15 downto 0);
+		lcd_data_in : in std_logic_vector(15 downto 0);
+		lcd_drive : out std_logic; -- Select signal used to control tristate bus
+		lcd_reset : out std_logic;
+		lcd_cs : out std_logic;
+		lcd_wr : out std_logic;
+		lcd_rd : out std_logic;
+		lcd_rs : out std_logic;
+		lcd_blcnt : out std_logic
 	);
 end entity;
 
