@@ -70,7 +70,7 @@ signal reset : std_logic := '0';
 signal reset_counter : unsigned(15 downto 0) := X"FFFF";
 
 -- State machine
-type SOCStates is (WAITING,READ1,WRITE1,PAUSE,WAITSPIR,WAITSPIW,VGAREAD,VGAWRITE);
+type SOCStates is (WAITING,READ1,WRITE1,PAUSE,WAITSPIR,WAITSPIW,VGAREAD,VGAWRITE,WAITLCD);
 signal currentstate : SOCStates;
 
 -- UART signals
@@ -166,7 +166,15 @@ signal sdram_wrU2 : std_logic;
 type sdram_states is (read1, read2, read3, write1, writeb, write2, write3, idle);
 signal sdram_state : sdram_states;
 
---
+-- LCD signals
+
+signal cpu_to_lcd : std_logic_vector(15 downto 0);
+signal cpu_to_lcd_cmd : std_logic;
+signal cpu_to_lcd_req : std_logic; 
+signal cpu_from_lcd_ack : std_logic;
+signal cpu_to_lcd_rw : std_logic;
+signal cpu_to_lcd_cs : std_logic;
+
 
 begin
 
@@ -363,7 +371,31 @@ spi : entity work.spi_interface
 --		from_zpu => zpu_to_rom,
 --		to_zpu => zpu_from_rom
 --	);
-	
+
+mylcd : entity work.lcd_bridge
+port map(
+	-- Housekeeping
+	clk => clk,
+	reset => reset,
+	-- CPU signals
+	from_cpu => cpu_to_lcd,
+	cmd => cpu_to_lcd_cmd,
+	req => cpu_to_lcd_req, 
+	ack => cpu_from_lcd_ack,
+	rw => cpu_to_lcd_rw,
+	cs_in => cpu_to_lcd_cs,
+	-- LCD signals
+	lcd_data_out => lcd_data_out,
+	lcd_data_in => lcd_data_in,
+	lcd_drive => lcd_drive,
+	lcd_reset => lcd_reset,
+	lcd_cs => lcd_cs,
+	lcd_wr => lcd_wr,
+	lcd_rd => lcd_rd,
+	lcd_rs => lcd_rs,
+	lcd_blcnt => lcd_blcnt
+);
+
 
 -- Main CPU
 
@@ -451,8 +483,9 @@ begin
 									counter<=unsigned(mem_write(15 downto 0));
 									mem_busy<='0';
 
-								when X"C4" => -- SPI CS
+								when X"C4" => -- Peripheral CS
 									spi_cs<=not mem_write(0);
+									cpu_to_lcd_cs<=not mem_write(15);
 									spi_fast<=mem_write(8);
 									mem_busy<='0';
 
@@ -467,6 +500,13 @@ begin
 									spi_trigger<='1';
 									host_to_spi<=mem_write(7 downto 0);
 									currentstate<=WAITSPIW;
+
+								when X"D0" => -- LCD command
+									cpu_to_lcd<=mem_write(15 downto 0);
+									cpu_to_lcd_cmd<=mem_write(31);	-- Would need to rethink this for TG68!
+									cpu_to_lcd_req<='1';
+									cpu_to_lcd_rw<='1';
+									currentstate<=WAITLCD;
 									
 								when others =>
 									mem_busy<='0'; -- FIXME - shouldn't need this
@@ -550,6 +590,12 @@ begin
 			when WAITSPIR =>
 				mem_read<=spi_to_host;
 				if spi_busy='0' then
+					mem_busy<='0';
+					currentstate<=WAITING;
+				end if;
+
+			when WAITLCD =>
+				if cpu_from_lcd_ack='1' then
 					mem_busy<='0';
 					currentstate<=WAITING;
 				end if;

@@ -44,23 +44,23 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 */
 
 
-#define PERIPHERALBASE 0xFFFFFF84
+#define PERIPHERALBASE 0xFFFFFF00
 #define HW_PER(x) *(volatile unsigned int *)(PERIPHERALBASE+x)
 #define HW_PER_L(x) *(volatile unsigned int *)(PERIPHERALBASE+x)
 
-#define PER_UART 0
-#define PER_UART_CLKDIV 4
+#define PER_UART 0x84
+#define PER_UART_CLKDIV 0x88
 
 #define PER_UART_RXINT 9
 #define PER_UART_TXREADY 8
 
-#define PER_FLAGS 0x8  /* Currently only contains ROM overlay */
+#define PER_FLAGS 0x8c  /* Currently only contains ROM overlay */
 #define PER_FLAGS_OVERLAY 0
 
-#define PER_HEX 0xc
+#define PER_HEX 0x90
 
-#define PER_PS2_KEYBOARD 0x10
-#define PER_PS2_MOUSE 0x14
+#define PER_PS2_KEYBOARD 0x94
+#define PER_PS2_MOUSE 0x98
 
 /* PS2 Status bits */
 #define PER_PS2_RECV 11
@@ -68,44 +68,27 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 
 /* Timers */
 
-#define PER_TIMER_CONTROL 0x18
-
-/* Control bits */
-#define PER_TIMER_TR5 5
-#define PER_TIMER_TR4 4
-#define PER_TIMER_TR3 3
-#define PER_TIMER_TR2 2
-#define PER_TIMER_TR1 1
-
-#define PER_TIMER_EN5 13
-#define PER_TIMER_EN4 12
-#define PER_TIMER_EN3 11
-#define PER_TIMER_EN2 10
-#define PER_TIMER_EN1 9
-
-/* Divisor registers */
-#define PER_TIMER_DIV0 0x1c
-#define PER_TIMER_DIV1 0x20
-#define PER_TIMER_DIV2 0x24
-#define PER_TIMER_DIV3 0x28
-#define PER_TIMER_DIV4 0x2c
-#define PER_TIMER_DIV5 0x30
-#define PER_TIMER_DIV6 0x34
-#define PER_TIMER_DIV7 0x38	/* SPI speed */
-
 /* Millisecond counter */
-#define PER_MILLISECONDS 0x3c
+#define PER_MILLISECONDS 0xc0
 
 /* SPI register */
-#define PER_SPI_CS 0x40	/* CS bits are write-only, but bit 15 reads as the SPI busy signal */
-#define PER_SPI 0x44 /* Blocks on both reads and writes, making BUSY signal redundant. */
-#define PER_SPI_PUMP 0x48 /* Push 16-bits through SPI in one instruction */
+#define PER_SPI_CS 0xc4	/* CS bits are write-only, but bit 15 reads as the SPI busy signal */
+#define PER_SPI 0xc8 /* Blocks on both reads and writes, making BUSY signal redundant. */
+#define PER_SPI_PUMP 0xcc /* Push 16-bits through SPI in one instruction */
 
+#define PER_CS_SD 0
+#define PER_CS_LCD 1
 #define PER_SPI_FAST 8
 #define PER_SPI_BUSY 15
 
-#define PER_MANIFEST1 0x74 /* First four characters of Manifest filename */
-#define PER_MANIFEST2 0x78 /* Second four characters of Manifest filename */
+#define PER_MANIFEST1 0xf8 /* First four characters of Manifest filename */
+#define PER_MANIFEST2 0xfc /* Second four characters of Manifest filename */
+
+/* LCD registers */
+
+#define PER_LCD_DATA 0xD0
+#define PER_LCD_CMD_B 31 /* High bit set indicates that this is a command. */
+#define PER_LCD_CMD (1<<PER_LCD_CMD_B)
 
 /* Interrupts */
 
