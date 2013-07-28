@@ -25,3 +25,17 @@ char getserial()
 }
 #endif
 
+#ifndef DISABLE_TIMER
+void mdelay(int msecs)
+{
+	int t=HW_PER(PER_MILLISECONDS);
+	while(msecs)
+	{
+		int t2=t;
+		while(t2==t)
+			t2=HW_PER(PER_MILLISECONDS);
+		t=t2;
+		--msecs;
+	}
+}
+#endif

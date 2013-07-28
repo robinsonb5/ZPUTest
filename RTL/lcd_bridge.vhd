@@ -6,7 +6,7 @@ entity lcd_bridge is
 port(
 	-- Housekeeping
 	clk : in std_logic;
-	reset : in std_logic;
+	reset : in std_logic; -- Active low
 	-- CPU signals
 	from_cpu : in std_logic_vector(15 downto 0);
 	cmd : in std_logic; -- '0' for command, '1' for data
@@ -36,6 +36,7 @@ signal nextstate : lcdstate;
 
 begin
 
+lcd_reset <= reset;
 lcd_cs <= cs_in; -- Routing CS explicitly through this entity ensures it's not forgotten.
 lcd_data_out <= from_cpu; -- Just parrot this blindly since we're making the CPU wait.
 
@@ -46,13 +47,15 @@ begin
 		nextstate<=idle;
 		currentstate<=waiting;
 		lcd_drive<='0';
+		lcd_rd<='1';
+		lcd_blcnt<='1';
 	elsif rising_edge(clk) then
 		-- Unless directed otherwise by the state machine, we'll land in the waiting state.
 		-- Provided delay remains at zero, this will be overridden by the idle state when idle.
 		currentstate<=waiting;
 
 		-- Change state after a certain number of cycles have elapsed.
-		if delay=(others=>'0') then
+		if delay="000000" then
 			currentstate<=nextstate;
 			delay<="000001";
 		else
@@ -90,6 +93,9 @@ begin
 				nextstate<=idle;
 
 			when waiting =>
+				null;
+
+			when others =>
 				null;
 		end case;
 

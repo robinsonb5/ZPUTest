@@ -96,6 +96,8 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 #define PER_INT_TIMER 3
 #define PER_INT_PS2 4
 
+void mdelay(int msecs);
+
 #ifndef DISABLE_UART_TX
 void putcserial(char c);
 void putserial(char *msg);
