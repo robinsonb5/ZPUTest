@@ -58,8 +58,6 @@ use IEEE.numeric_std.ALL;
 --		blue : std_logic_vector(4 downto 0);
 
 
--- FIXME - make address bus 32 bits wide.
-
 entity vga_controller is
   generic(
 		enable_sprite : boolean := true

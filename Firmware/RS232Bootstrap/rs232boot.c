@@ -136,12 +136,12 @@ int main(int argc,char **argv)
 #else
 	int i;
 	HW_PER(PER_UART_CLKDIV)=1250000/1152;
-	putcserial('R');
-	putcserial('e');
-	putcserial('a');
-	putcserial('d');
-	putcserial('y');
-	putcserial('\n');
+	putchar('R');
+	putchar('e');
+	putchar('a');
+	putchar('d');
+	putchar('y');
+	putchar('\n');
 	while(1)
 	{
 		int c=getserial();

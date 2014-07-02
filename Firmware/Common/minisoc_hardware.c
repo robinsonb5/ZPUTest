@@ -1,17 +1,23 @@
 #include "minisoc_hardware.h"
 
 #ifndef DISABLE_UART_TX
-__inline void putcserial(char c)
+__inline int putchar(int c)
 {
 	while(!(HW_PER(PER_UART)&(1<<PER_UART_TXREADY)))
 		;
 	HW_PER(PER_UART)=c;
+	return(c);
 }
 
-void putserial(char *msg)
+int puts(const char *msg)
 {
+	int r=0;
 	while(*msg)
-		putcserial(*msg++);
+	{
+		putchar(*msg++);
+		++r;
+	}
+	return(r);
 }
 #endif
 

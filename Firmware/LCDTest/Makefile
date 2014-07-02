@@ -35,9 +35,11 @@ CP_SRECFLAGS = -Osrec --gap-fill 0
 LIBS       =
 
 # Our target.
-all: $(BUILD_DIR) $(LCDTEST_PRJ).bin
+all: $(BUILD_DIR) $(LCDTEST_PRJ).srec
 
 mif: $(LCDTEST_PRJ).mif
+
+srec: $(LCDTEST_PRJ).srec
 
 clean:
 	rm -f $(BUILD_DIR)/*.o *.hex *.elf *.map *.lst *.srec $(PRJ).mif *~ */*.o *.bin

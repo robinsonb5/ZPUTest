@@ -3,9 +3,11 @@
 
 #include "minisoc_hardware.h"
 
-#define sel_lcd(x) HW_PER(PER_SPI_CS)=(x ? (1<<PER_CS_LCD) : 0)
-#define write_data(x)  HW_PER(PER_LCD_DATA)=(x)|PER_LCD_CMD
-#define write_cmd(x)  HW_PER(PER_LCD_DATA)=(x)
+#define lcd_sel(x) HW_PER(PER_SPI_CS)=(x ? (1<<PER_CS_LCD) : 0)
+#define lcd_reset(x) HW_PER(PER_SPI_CS)=(x ? (1<<PER_CS_LCD) | (1<<PER_CS_LCDRESET) : 0)
+#define lcd_write_data(x)  HW_PER(PER_LCD_DATA)=((x)&0xff)|PER_LCD_CMD
+#define lcd_write_cmd(x)  HW_PER(PER_LCD_DATA)=((x)&0xff)
+#define lcd_read() HW_PER(PER_LCD_DATA)
 
 #define MEM_Y   (7) //MY row address order
 #define MEM_X   (6) //MX column address order
@@ -15,6 +17,9 @@
 #define MEM_BGR (3) //RGB-BGR Order
 
 #define LCD_CMD_RESET                  0x01
+#define LCD_CMD_READ_DISPLAY_ID        0x04
+#define LCD_CMD_READ_DISPLAY_STATUS    0x09
+#define LCD_CMD_READ_DISPLAY_POWER_MODE 0x0a
 #define LCD_CMD_SLEEPOUT               0x11
 #define LCD_CMD_DISPLAY_OFF            0x28
 #define LCD_CMD_DISPLAY_ON             0x29
@@ -33,6 +38,17 @@
 #define LCD_CMD_DRV_TIMING_CTRLA       0xE8
 #define LCD_CMD_DRV_TIMING_CTRLB       0xEA
 #define LCD_CMD_PUMP_RATIO_CTRL        0xF7
+
+#define FBTFT_NOP 0x00
+#define FBTFT_SWRESET 0x01
+#define FBTFT_RDDID 0x04
+#define FBTFT_RDDST 0x09
+#define FBTFT_CASET 0x2A
+#define FBTFT_RASET 0x2B
+#define FBTFT_RAMWR 0x2C
+
+int init_display();
+void set_addr_win(int xs, int ys, int xe, int ye);
 
 #endif
 

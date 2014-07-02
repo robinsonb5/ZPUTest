@@ -8,7 +8,8 @@
 #include "debug.h"
 
 #define STACKSIZE 1024
-#define STACKOFFSET 0x04000000
+// #define STACKOFFSET 0x04000000
+ #define STACKOFFSET 0x00000000
 
 // FIXME - make memory-mapped stack optional.
 // FIXME - replicate core generic options.
@@ -87,6 +88,7 @@ class ZPUMemory
 				Debug[WARN] << std::endl << "Reading from SPI_PUMP" << std::endl << std::endl;
 				break;
 			case 0xffffff84:
+			case 0xffffffc0:
 				Debug[WARN] << std::endl << "Reading from UART" << std::endl << std::endl;
 				if(uartbusyctr)
 				{
@@ -122,6 +124,7 @@ class ZPUMemory
 		switch(addr)
 		{
 			case 0xffffff84:
+			case 0xffffffc0:
 				if(v)
 				{
 					Debug[WARN] << std::endl << "Writing " << char(v) << " to UART" << std::endl << std::endl;
@@ -228,7 +231,7 @@ class ZPUProgram : public BinaryBlob, public ZPUMemory
 class ZPUSim 
 {
 	public:
-	ZPUSim(int stacksize=STACKSIZE) : stack(stacksize), initpc(0), steps(-1)
+	ZPUSim(int stacksize=STACKSIZE) : stack(stacksize), initpc(0), steps(-1), minimal(false)
 	{		
 	}
 
@@ -244,13 +247,14 @@ class ZPUSim
 			{"steps",required_argument,NULL,'s'},
 			{"boot",no_argument,NULL,'b'},
 			{"report",required_argument,NULL,'r'},
+			{"minimal",no_argument,NULL,'m'},
 			{0, 0, 0, 0}
 		};
 
 		while(1)
 		{
 			int c;
-			c = getopt_long(argc,argv,"hs:r:b",long_options,NULL);
+			c = getopt_long(argc,argv,"hs:r:bm",long_options,NULL);
 			if(c==-1)
 				break;
 			switch (c)
@@ -261,12 +265,16 @@ class ZPUSim
 					printf("    -s --steps\t  Simulate a specific number of steps (default: indefinite)\n");
 					printf("    -r --report\t  set reporting level - 0 for silent, 4 for verbose\n");
 					printf("    -b --boot\t  set initial PC to boot ROM\n");
+					printf("    -m --minimal\t  Use emulation code for optional instructions\n");
 					break;
 				case 'b':
 					initpc=0x04000000;
 					break;
 				case 's':
 					steps=atoi(optarg);
+					break;
+				case 'm':
+					minimal=true;
 					break;
 				case 'r':
 					Debug.SetLevel(DebugLevel(atoi(optarg)));
@@ -280,7 +288,7 @@ class ZPUSim
 
 	int GetOpcode(ZPUMemory &prg, int pc)
 	{
-		if((pc<0x80000000) && (pc&STACKOFFSET))
+		if((pc<0x80000000) && ((pc&STACKOFFSET) || (STACKOFFSET==0)))
 		{
 			int t=stack[pc&~3];
 			int opcode=t>>((3-(pc&3))<<3);
@@ -358,6 +366,7 @@ class ZPUSim
 			}
 			else
 			{
+				bool emulate=false;
 				immediate_continuation=false;
 				if(opcode==0)	// breakpoint
 				{
@@ -464,118 +473,125 @@ class ZPUSim
 				else if((opcode&0xe0)==0x20) // emulate
 				{
 					int a,b;
-					switch(opcode)
+					if(minimal)
+						emulate=true;
+					else
 					{
-						case 55:	// eqbranch
-							{
-								mnem<<"eqbranch ";
-								int off=Pop();
-								int cmp=Pop();
-								if(!cmp)
-									nextpc=pc+off;
-							}
-							break;
+						switch(opcode)
+						{
+							case 55:	// eqbranch
+								{
+									mnem<<"eqbranch ";
+									int off=Pop();
+									int cmp=Pop();
+									if(!cmp)
+										nextpc=pc+off;
+								}
+								break;
 
-						case 56:	// neqbranch
-							{
-								mnem<<"neqbranch ";
-								int off=Pop();
-								int cmp=Pop();
-								if(cmp)
-									nextpc=pc+off;
-							}
-							break;
+							case 56:	// neqbranch
+								{
+									mnem<<"neqbranch ";
+									int off=Pop();
+									int cmp=Pop();
+									if(cmp)
+										nextpc=pc+off;
+								}
+								break;
 
-						case 42:	// lshiftright
-							mnem<<"lshiftright ";
-							{
-								int sh=Pop()&0x3f;
-								unsigned int v=(unsigned int)Pop();
-								Push(v>>sh);
-							}
-							break;
+							case 42:	// lshiftright
+								mnem<<"lshiftright ";
+								{
+									int sh=Pop()&0x3f;
+									unsigned int v=(unsigned int)Pop();
+									Push(v>>sh);
+								}
+								break;
 
-						case 43:	// ashiftleft
-							mnem<<"ashiftleft ";
-							{
-								int sh=Pop()&0x3f;
-								int v=(int)Pop();
-								Push(v<<sh);
-							}
-							break;
+							case 43:	// ashiftleft
+								mnem<<"ashiftleft ";
+								{
+									int sh=Pop()&0x3f;
+									int v=(int)Pop();
+									Push(v<<sh);
+								}
+								break;
 
-						case 44:	// ashiftright
-							mnem<<"ashiftright ";
-							{
-								int sh=Pop()&0x3f;
-								int v=(int)Pop();
-								Push(v>>sh);
-							}
-							break;
+							case 44:	// ashiftright
+								mnem<<"ashiftright ";
+								{
+									int sh=Pop()&0x3f;
+									int v=(int)Pop();
+									Push(v>>sh);
+								}
+								break;
 
-						case 45:	// call
-							mnem<<"call ";
-							{
-								nextpc=Pop();
-								Push(pc+1);
-							}
-							break;
+							case 45:	// call
+								mnem<<"call ";
+								{
+									nextpc=Pop();
+									Push(pc+1);
+								}
+								break;
 
-						case 46:	// eq
-							mnem<<"eq ";
-							Push(Pop()==Pop() ? 1 : 0);
-							break;
+							case 46:	// eq
+								mnem<<"eq ";
+								Push(Pop()==Pop() ? 1 : 0);
+								break;
 
-						case 47:	// neq
-							mnem<<"neq ";
-							Push(Pop()==Pop() ? 0 : 1);
-							break;
+							case 47:	// neq
+								mnem<<"neq ";
+								Push(Pop()==Pop() ? 0 : 1);
+								break;
 
-						case 49:	// sub
-							mnem<<"sub ";
-							a=Pop(); b=Pop();
-							Push(b-a);
-							break;
+							case 49:	// sub
+								mnem<<"sub ";
+								a=Pop(); b=Pop();
+								Push(b-a);
+								break;
 
-						case 61: // pushspadd
-							mnem<<"pushspadd ";
-							Push(sp+Pop()*4);
-							break;
+							case 61: // pushspadd
+								mnem<<"pushspadd ";
+								Push(sp+Pop()*4);
+								break;
 
-						case 36: // lessthan
-							mnem<<"lessthan ";
-							a=Pop(); b=Pop();
-							Push(a<b ? 1 : 0);
-							break;
+							case 36: // lessthan
+								mnem<<"lessthan ";
+								a=Pop(); b=Pop();
+								Push(a<b ? 1 : 0);
+								break;
 
-						case 37: // lessthanorequal
-							mnem<<"lessthanorequal ";
-							a=Pop(); b=Pop();
-							Push(a<=b ? 1 : 0);
-							break;
+							case 37: // lessthanorequal
+								mnem<<"lessthanorequal ";
+								a=Pop(); b=Pop();
+								Push(a<=b ? 1 : 0);
+								break;
 
-						case 38: // ulessthan
-							mnem<<"ulessthan ";
-							a=Pop(); b=Pop();
-							Push(((unsigned int)a)<((unsigned int)b) ? 1 : 0);
-							break;
+							case 38: // ulessthan
+								mnem<<"ulessthan ";
+								a=Pop(); b=Pop();
+								Push(((unsigned int)a)<((unsigned int)b) ? 1 : 0);
+								break;
 
-						case 39: // ulessthanorequal
-							mnem<<"ulessthanorequal ";
-							a=Pop(); b=Pop();
-							Push(((unsigned int)a)<=((unsigned int)b) ? 1 : 0);
-							break;
+							case 39: // ulessthanorequal
+								mnem<<"ulessthanorequal ";
+								a=Pop(); b=Pop();
+								Push(((unsigned int)a)<=((unsigned int)b) ? 1 : 0);
+								break;
 
-						default:
-							{
-								int op=opcode&0x1f;
-								Push(pc+1);
-								nextpc=op*32;
-								mnem<<"emulate ";
-								mnem<<op;
-							}
-							break;
+							default:
+								emulate=true;
+								break;
+						}
 					}
+				}
+				if(emulate)
+				{
+					int op=opcode&0x1f;
+					Push(pc+1);
+					nextpc=op*32;
+					mnem<<"emulate ";
+					mnem<<op;
 				}
 
 				if(steps>0)
@@ -607,6 +623,7 @@ class ZPUSim
 	int sp;
 	int initpc;
 	int steps;
+	bool minimal;
 };
 
 
@@ -619,7 +636,7 @@ int main(int argc, char **argv)
 		{
 			int i;
 			char *uartin=0;
-			ZPUSim sim;
+			ZPUSim sim(8192);
 			i=sim.ParseOptions(argc,argv);
 			if(i<argc)
 			{

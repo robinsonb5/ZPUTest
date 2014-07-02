@@ -78,6 +78,7 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 
 #define PER_CS_SD 0
 #define PER_CS_LCD 1
+#define PER_CS_LCDRESET 2
 #define PER_SPI_FAST 8
 #define PER_SPI_BUSY 15
 
@@ -99,10 +100,11 @@ E	Word	HBStop – end of the horizontal blanking period. (Not yet implemented)
 void mdelay(int msecs);
 
 #ifndef DISABLE_UART_TX
-void putcserial(char c);
-void putserial(char *msg);
+//int putchar(int c);
+int puts(const char *msg);
 #else
-#define putserial(x)
+#define putchar(x)
+#define puts(x)
 #endif
 
 #ifndef DISABLE_UART_RX

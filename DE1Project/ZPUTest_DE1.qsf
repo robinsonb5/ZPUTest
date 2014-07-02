@@ -41,7 +41,7 @@ set_global_assignment -name DEVICE EP2C20F484C7
 set_global_assignment -name TOP_LEVEL_ENTITY DE1_Toplevel
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "12.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "00:29:53  MAY 10, 2013"
-set_global_assignment -name LAST_QUARTUS_VERSION "12.0 SP1"
+set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
@@ -1162,6 +1162,9 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_IN_ENABLE
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ADVANCED_TRIGGER_ENTITY=basic,1," -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_TRIGGER_LEVEL_PIPELINE=1" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_ENABLE_ADVANCED_TRIGGER=0" -section_id auto_signaltap_0
+set_global_assignment -name VHDL_FILE ../ZPUFlex/RTL/zpupkg.vhd
+set_global_assignment -name VHDL_FILE ../ZPUFlex/RTL/zpu_core_flex.vhd
+set_global_assignment -name VHDL_FILE ../ZPUFlex/RTL/zpu_config.vhd
 set_global_assignment -name VHDL_FILE ../Firmware/SDBootstrap_ROM.vhd
 set_global_assignment -name VHDL_FILE ../Firmware/RS232Bootstrap_ROM.vhd
 set_global_assignment -name QIP_FILE ../DE1RTL/Generated/PLL.qip
@@ -1169,9 +1172,6 @@ set_global_assignment -name VERILOG_FILE ../DE1RTL/SEG7_LUT_4.v
 set_global_assignment -name VERILOG_FILE ../DE1RTL/SEG7_LUT.v
 set_global_assignment -name VERILOG_FILE ../DE1RTL/DE1_Toplevel.v
 set_global_assignment -name VHDL_FILE ../RTL/ZPUTest.vhd
-set_global_assignment -name VHDL_FILE ../RTL/zpupkg.vhd
-set_global_assignment -name VHDL_FILE ../RTL/zpu_config.vhd
-set_global_assignment -name VHDL_FILE ../RTL/zpu_core_small_bramstack.vhd
 set_global_assignment -name SIGNALTAP_FILE stp1.stp
 set_global_assignment -name SDC_FILE ZPUTest.sdc
 set_global_assignment -name VHDL_FILE ../RTL/simple_uart.vhd
@@ -1184,3 +1184,4 @@ set_global_assignment -name VHDL_FILE ../RTL/spi.vhd
 set_global_assignment -name VHDL_FILE ../RTL/sdram.vhd
 set_global_assignment -name VHDL_FILE ../Firmware/SDRAMTest_ROM.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SLD_FILE /home/amr/FPGA/ZPUTest/DE1Project/stp1_auto_stripped.stp

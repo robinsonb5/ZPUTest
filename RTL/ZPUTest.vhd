@@ -169,6 +169,7 @@ signal sdram_state : sdram_states;
 -- LCD signals
 
 signal cpu_to_lcd : std_logic_vector(15 downto 0);
+signal cpu_from_lcd : std_logic_vector(15 downto 0);
 signal cpu_to_lcd_cmd : std_logic;
 signal cpu_to_lcd_req : std_logic; 
 signal cpu_from_lcd_ack : std_logic;
@@ -379,6 +380,7 @@ port map(
 	reset => reset,
 	-- CPU signals
 	from_cpu => cpu_to_lcd,
+	to_cpu => cpu_from_lcd,
 	cmd => cpu_to_lcd_cmd,
 	req => cpu_to_lcd_req, 
 	ack => cpu_from_lcd_ack,
@@ -388,7 +390,7 @@ port map(
 	lcd_data_out => lcd_data_out,
 	lcd_data_in => lcd_data_in,
 	lcd_drive => lcd_drive,
-	lcd_reset => lcd_reset,
+	lcd_reset => open, -- lcd_reset,
 	lcd_cs => lcd_cs,
 	lcd_wr => lcd_wr,
 	lcd_rd => lcd_rd,
@@ -441,6 +443,7 @@ begin
 		currentstate<=WAITING;
 		sdram_state<=idle;
 		spi_cs<='1';
+		cpu_to_lcd_rw<='1';
 	elsif rising_edge(clk) then
 		mem_busy<='1';
 
@@ -448,6 +451,8 @@ begin
 
 		vga_reg_rw<='1';
 		vga_reg_req<='0';
+
+		cpu_to_lcd_req<='0';
 		
 		spi_trigger<='0';
 		
@@ -485,7 +490,8 @@ begin
 
 								when X"C4" => -- Peripheral CS
 									spi_cs<=not mem_write(0);
-									cpu_to_lcd_cs<=not mem_write(15);
+									cpu_to_lcd_cs<=not mem_write(1);
+									lcd_reset<=not mem_write(2);
 									spi_fast<=mem_write(8);
 									mem_busy<='0';
 
@@ -505,7 +511,7 @@ begin
 									cpu_to_lcd<=mem_write(15 downto 0);
 									cpu_to_lcd_cmd<=mem_write(31);	-- Would need to rethink this for TG68!
 									cpu_to_lcd_req<='1';
-									cpu_to_lcd_rw<='1';
+									cpu_to_lcd_rw<='0';
 									currentstate<=WAITLCD;
 									
 								when others =>
@@ -557,6 +563,12 @@ begin
 									host_to_spi<=X"FF";
 									currentstate<=WAITSPIR;
 
+								when X"D0" => -- LCD Data
+									cpu_to_lcd_cmd<='1';
+									cpu_to_lcd_req<='1';
+									cpu_to_lcd_rw<='1';
+									currentstate<=WAITLCD;
+
 								when X"F8" => -- Filename 1
 									mem_read(31 downto 0)<=manifest_file1; -- "SLID"
 									mem_busy<='0';
@@ -597,6 +609,7 @@ begin
 			when WAITLCD =>
 				if cpu_from_lcd_ack='1' then
 					mem_busy<='0';
+					mem_read(15 downto 0)<=cpu_from_lcd;
 					currentstate<=WAITING;
 				end if;
 

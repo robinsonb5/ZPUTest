@@ -51,14 +51,14 @@ IO_D(40) <= UART_TXD;
 UART_RXD <= IO_D(39);
 
 -- LCD signal mapping.
-IO_D(18 downto 3) <= LCD_data_out when LCD_drive='1' else (others => 'Z');
-LCD_data_in <= IO_D(18 downto 3);
-IO_D(19) <= LCD_rs;
-IO_D(20) <= LCD_cs;
-IO_D(21) <= LCD_rd;
-IO_D(22) <= LCD_wr;
-IO_D(23) <= LCD_blcnt;
-IO_D(24) <= LCD_reset;
+IO_D(16 downto 1) <= LCD_data_out when LCD_drive='1' else (others => 'Z');
+LCD_data_in <= IO_D(16 downto 1);
+IO_D(17) <= LCD_cs;
+IO_D(18) <= LCD_rs;
+IO_D(19) <= LCD_wr;
+IO_D(20) <= LCD_rd;
+IO_D(21) <= LCD_reset;
+IO_D(22) <= LCD_blcnt;
 
 -- Other IO mappings
 

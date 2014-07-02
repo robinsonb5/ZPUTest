@@ -9,6 +9,7 @@ port(
 	reset : in std_logic; -- Active low
 	-- CPU signals
 	from_cpu : in std_logic_vector(15 downto 0);
+	to_cpu : out std_logic_vector(15 downto 0);
 	cmd : in std_logic; -- '0' for command, '1' for data
 	req : in std_logic;
 	ack : out std_logic;
@@ -57,7 +58,6 @@ begin
 		-- Change state after a certain number of cycles have elapsed.
 		if delay="000000" then
 			currentstate<=nextstate;
-			delay<="000001";
 		else
 			delay<=delay-1;
 		end if;
@@ -74,22 +74,39 @@ begin
 						nextstate<=wr1;
 						lcd_wr<='0';
 						delay<="000010";
+					else	-- read cycle
+						nextstate<=rd1;
+						lcd_rd<='0';
+						lcd_drive<='0';
+						delay<="001000";
 					end if;
 				end if;
-				
+
+			when rd1 =>
+				delay<="000010";
+				to_cpu<=lcd_data_in;
+				lcd_rd<='1';
+				nextstate<=rd2;
+
+			when rd2 =>
+				ack<='1';
+				delay<="000001";
+				nextstate<=idle;
+
 			when wr1 =>
 				lcd_drive<='1';
-				delay<="000010";
+				delay<="001000";
 				nextstate<=wr2;
 			
 			when wr2 =>
 				lcd_wr<='1';
-				delay<="000010";
+				delay<="001000";
 				nextstate<=wr3;
 
 			when wr3 =>
 				lcd_drive<='0';
 				ack<='1';
+				delay<="000001";
 				nextstate<=idle;
 
 			when waiting =>

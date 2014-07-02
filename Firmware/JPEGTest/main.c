@@ -6,6 +6,7 @@
 
 #include "jpeglib.h"
 
+#include "minisoc_hardware.h"
 #include "fat.h"
 #include "small_printf.h"
 

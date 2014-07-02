@@ -1,11 +1,10 @@
-all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen VampireDiag.gen SDRAMTest.gen
+all: zpuromgen Dhrystone.gen SDBootstrap.gen RS232Bootstrap.gen VampireDiag.gen
 
 clean:
 	make -C SDBootstrap clean
 	make -C RS232Bootstrap clean
 	make -C Dhrystone clean
 	make -C VampireDiag clean
-	make -C SDRAMTest clean
 	rm *.vhd
 
 zpuromgen: zpuromgen.c
@@ -15,9 +14,9 @@ zpuromgen: zpuromgen.c
 
 %.gen: 
 	make -C $*/
-	sed 's/dualportram/$*_ROM/' >$*_ROM.vhd <rom_prologue
+	sed 's/dualportram/$*_ROM/' >$*_ROM.vhd <../ZPUFlex/RTL/rom_prologue.vhd
 	./zpuromgen $*/$*.bin >>$*_ROM.vhd
-	cat >>$*_ROM.vhd rom_epilogue
+	cat >>$*_ROM.vhd ../ZPUFlex/RTL/rom_epilogue.vhd
 
 #boot.gen:
 #	make -C SDBootstrap/
