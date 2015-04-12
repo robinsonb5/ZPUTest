@@ -1,6 +1,17 @@
 This project contains my experiments with the ZPU - the Zylin soft processor
 core.
 
+
+
+PLEASE NOTE:
+This project should be considered obsolete, superceded by the more actively
+maintained and much tider "ZPUDemos" and "ZPUFlex" repositories.  For now I'll
+leave the respository here in case anyone finds it useful, but I don't
+guarantee that the contents are buildable or functional.
+
+
+
+
 My aim is to see just how far the "small" variant of the core can be be taken
 while keeping it under 1000 logic elements.
 
